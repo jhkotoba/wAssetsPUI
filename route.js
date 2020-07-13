@@ -10,12 +10,12 @@ const pageCode = {
 };
 
 //페이지 이동
-router.get("/p/wAssets", (request, response) => {
+router.get("/wAssets", (request, response) => {
     response.sendFile(path.join(__dirname, "src", "page", "index", "index.html"));
 });
 
 //html가져오기
-router.get("/p/wAssets/getHtml", (request, response) => {
+router.get("/wAssets/getHtml", (request, response) => {
     let html = request.query.html;
     response.sendFile(path.join(__dirname, "src", "page", pageCode[html].TEXT + ".html"), null, error => {
         if(error) {
@@ -26,7 +26,7 @@ router.get("/p/wAssets/getHtml", (request, response) => {
 });
 
 //script 가져오기
-router.get("/p/wAssets/getScript", (request, response) => {
+router.get("/wAssets/getScript", (request, response) => {
     let script = request.query.script;
     response.sendFile(path.join(__dirname, "src", "page", pageCode[script].TEXT + ".js"), null, error => {
         if(error) {

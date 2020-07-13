@@ -15,9 +15,9 @@ export let wUtil = {
     },
 
     //비어있지 않으면 전달받은 함수 실행
-    runFunctionIfNotEmpty(fn){
+    runFunctionIfNotEmpty(fn, args){
         if(!this.isEmpty(fn)){
-            fn();
+            return fn(args);
         }
     }
 }
