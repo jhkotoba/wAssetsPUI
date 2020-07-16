@@ -16,9 +16,7 @@ window.wAssets = {
     //각 페이지 script
     script: {}, 
     //각 페이지 init
-    init: {},  
-    //각 페이지 event
-    event: {},
+    init: {},
     //전역 데이터 저장소
     repository: {}
 };
@@ -41,10 +39,11 @@ wRoute.route("MAIN");
 //nav 클릭이벤트
 wAssets.element.nav.addEventListener("click", event => {
     wRoute.route(event.target.dataset.menuCode);
+    event.stopPropagation();
 });
 
 //main 이벤트 - click
 wAssets.element.main.addEventListener("click", event => {
-    wUtil.runFunctionIfNotEmpty(wAssets.event[wAssets.element.main.dataset.pageNm].click, event);
+    wUtil.runFunctionIfNotEmpty(wFuntion.click, event);
     event.stopPropagation();
 });

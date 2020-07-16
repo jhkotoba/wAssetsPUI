@@ -20,8 +20,7 @@ export let wRoute = {
             if(script.resultCode === "200"){                
                 wAssets.script[pageNm] = script.data; //스크립트 저장
                 eval(wAssets.script[pageNm]); //스크립트 eval
-                wAssets.init[pageNm] = wFuntion.init; //init 등록함수 저장                
-                wAssets.event[pageNm] = wUtil.runFunctionIfNotEmpty(wFuntion.event); //이벤트 등록함수 저장                
+                wAssets.init[pageNm] = wFuntion.init; //init 등록함수 저장
             }else{
                 console.log(script.message);
             }

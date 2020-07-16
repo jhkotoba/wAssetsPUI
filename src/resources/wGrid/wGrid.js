@@ -20,7 +20,12 @@ export class wGrid {
         //엘린먼트
         this._element = {
             id: targetId,   //타켓 id
-            target: document.getElementById(targetId) //타겟
+            target: document.getElementById(targetId), //타겟
+            head : document.createElement("div"),
+            headTb : document.createElement("table"),
+            headTr : document.createElement("tr"),
+            body: document.createElement("div"),
+            bodyTb : document.createElement("table")
         }
 
         //그리드내 유틸함수
@@ -34,35 +39,66 @@ export class wGrid {
                     else return false;
                 }
             },
-        }
-
-        //그리드 인자값 디폴트(예시)
-        this.args = {
-            data: [],
-            option: {
-                isCreate: false, 
-                isHeaderCreate: true,
-                isBodyCreate: true,
-                isFooterCreate: true,
-                gridMode: "LIST" //list, thum
+            isNotEmpty(value){ 
+                return !this.isEmpty(value);
+            },
+            isEmptyRtn(value, emptyValue){
+                if(this.isEmpty(value)){
+                    return emptyValue;
+                }else{
+                    return value;
+                }
+            },
+            addElementStyleAttribute(element, style, attribute){
+                switch(style){
+                    case "width":
+                    case "height":
+                        if(this.isNotEmpty(attribute)){
+                            if(typeof attribute === "number"){
+                                element.style[style] = attribute + "px";
+                            }else{
+                                element.style[style] = attribute;
+                            }
+                        }
+                        break;
+                    default: 
+                        element.style[style] = attribute;
+                        break;
+                }
             }
         }
 
+        //필드저장
+        this._field = args.field;
+
+        //그리드 옵션값 세팅
+        let option = {
+            isInstantCreate: false,                
+            isHeaderCreate: true,
+            isBodyCreate: true,
+            isFooterCreate: true,
+            gridMode: "LIST" //list, thum
+        }
+
         //그리드 인자값 세팅
-        this._data = this.args.data; //args.data;
-        this._option = this.args.option; //args.option;
+        this._data = this.util.isEmptyRtn(args.data, []);        
+        this._option = option; 
 
-        //그리드 클래스 세팅
-        //this._element.target.classList.add("wgrid-field");
-
-        //isCreate true이면 dataCreate() 실행
-        if(this._option.isCreate === true) this.dataCreate();
+        this._option.isInstantCreate = args.option.isInstantCreate;
+        
+        //그리드 스타일세팅
+        this._element.target.classList.add("wgrid-field");
+        this.util.addElementStyleAttribute(this._element.target, "width", args.option.style.width);
+        this.util.addElementStyleAttribute(this._element.target, "height", args.option.style.height);        
+       
+        //생성시 바로 그리드 생성
+        if(this._option.isInstantCreate === true) this.create();
         return this;
     }
 
     //데이터 set
-    setData(list){
-        this._data = list;
+    setData(list){        
+        this._data = this.util.isEmptyRtn(list, []);
     }
     
     //데이터 추가
@@ -72,7 +108,6 @@ export class wGrid {
 
     //그리드 생성
     create(){
-        console.log("wGrid.create");
         if(this._option.isHeaderCreate === true) this._headerCreate();
         if(this._option.isBodyCreate === true) this._bodyCreate();
         if(this._option.isFooterCreate === true) this._footerCreate();
@@ -86,7 +121,6 @@ export class wGrid {
 
     //헤더 생성
     _headerCreate(){
-        console.log("wGrid._headerCreate");
         switch(this._option.gridMode){
             case "LIST": this._headerListCreate(); break;
             case "THUM": this._headerThumCreate(); break;
@@ -95,18 +129,41 @@ export class wGrid {
 
     //헤더 생성 - 리스트
     _headerListCreate(){
-        console.log("wGrid._headerListCreate");
+        let th, div = null;
+        this._field.forEach(field => {
+            //태그생성
+            th = document.createElement("th");
+            div = document.createElement("div");
+            
+            //제목적용
+            div.textContent = field.title;
+            
+            //스타일 적용
+            this.util.addElementStyleAttribute(th, "width", field.width);
+            this.util.addElementStyleAttribute(th, "textAlign", "center");            
 
+            //태그연결
+            th.appendChild(div);
+            this._element.headTr.appendChild(th);
+        });
+
+        //클래스 적용
+        this._element.head.classList.add("wgrid-div-header");
+        this._element.headTb.classList.add("wgrid-table-header");
+
+        //태그연결
+        this._element.headTb.appendChild(this._element.headTr);
+		this._element.head.appendChild(this._element.headTb);
+        this._element.target.appendChild(this._element.head);
     }
 
     //헤더 생성 - 섬네일
     _headerThumCreate(){
-        console.log("wGrid._headerThumCreate");
     }
 
     //바디 생성
     _bodyCreate(){
-        console.log("wGrid._bodyCreate");
+        //그리그 종류 분기
         switch(this._option.gridMode){
             case "LIST": this._bodyListCreate(); break;
             case "THUM": this._bodyThumCreate(); break;
@@ -115,17 +172,57 @@ export class wGrid {
 
     //바디 생성 - 리스트
     _bodyListCreate(){
-        console.log("wGrid._bodyListCreate");
+        this._data.forEach((row, rIdx) => {
+            this._element.bodyTb.appendChild(this._bodyListRowCreate(row, rIdx));
+        });
+        
+        //스타일, 클래스 적용
+        this._element.body.style.marginTop = this._element.headTr.offsetHeight + "px";
+        this._element.bodyTb.classList.add("wgrid-table-body");        
+        
+        //태그 연결
+        this._element.body.appendChild(this._element.bodyTb);
+        this._element.target.appendChild(this._element.body);
+    }
+
+    //바디 생성 - 리스트 - 행
+    _bodyListRowCreate(row, rIdx){
+        let tr = document.createElement("tr");
+
+        //cell 생성후 태그 연결
+        this._field.forEach((field, fIdx) => {           
+            tr.appendChild(this._bodyListCellCreate(field, fIdx, row, rIdx));               
+        });
+        return tr;
+    }
+
+    //바디 생성 - 리스트 - 행 - 셀
+    _bodyListCellCreate(field, fieldIdx, row, rowIdx){
+        let td = document.createElement("td");
+        let div = document.createElement("div");
+
+        //엘리먼트 분기
+        switch(field.element){
+        case "text":
+        default:
+            this.util.addElementStyleAttribute(div, "textAlign", "center"); 
+            div.textContent = row[[field.name]];
+            td.appendChild(div);
+            break;
+        }
+
+        //해당 셀 넒이 적용
+        this.util.addElementStyleAttribute(td, "width", field.width);
+        return td;
     }
 
     //바디 생성 - 섬네일
     _bodyThumCreate(){
-        console.log("wGrid._bodyThumCreate");
+
     }
 
     //풋터 생성
-    _footerCreate(){
-        console.log("wGrid._footerCreate");
+    _footerCreate(){       
         switch(this._option.gridMode){
             case "LIST": this._footerListCreate(); break;
             case "THUM": this._footerThumCreate(); break;
@@ -134,11 +231,11 @@ export class wGrid {
 
     //풋터 생성 - 리스트
     _footerListCreate(){
-        console.log("wGrid._footerListCreate");
+       
     }
 
     //풋터 생성 - 섬네일
     _footerThumCreate(){
-        console.log("wGrid._footerThumCreate");
+       
     }
 }
