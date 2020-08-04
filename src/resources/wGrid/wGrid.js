@@ -3,7 +3,7 @@
  * @author JeHoon 
  * @version 0.4.0
  */
-export class wGrid {
+class wGrid {
 
     //생성자
     constructor(targetId, args){
@@ -12,12 +12,11 @@ export class wGrid {
         //그리드 상태값
         this._state = {
             curSeq: 0,  //현재 시퀀스
-            createState: 0, //그리드 생성상태 (0:미생성, 1:데이터 생성, 2:화면태그 생성)
             seqIndex: {}, //데이터 맵 key sequence value index
             idxSequence: {}  //데이터 맵 key index value sequence
         };
 
-        //엘린먼트
+        //엘리먼트
         this._element = {
             id: targetId,   //타켓 id
             target: document.getElementById(targetId), //타겟
@@ -81,7 +80,8 @@ export class wGrid {
         }
 
         //그리드 인자값 세팅
-        this._data = this.util.isEmptyRtn(args.data, []);        
+        this._data = [];
+        this.setData(args.data); 
         this._option = option; 
 
         this._option.isInstantCreate = args.option.isInstantCreate;
@@ -96,13 +96,42 @@ export class wGrid {
         return this;
     }
 
+    _testShowData(){
+        console.log(this._data);
+    }
+
+    _getCurSeq(){
+        return this._state.curSeq;
+    }
+
+    _getNextSeq(){
+        return ++this._state.curSeq;
+    }   
+
     //데이터 set
-    setData(list){        
-        this._data = this.util.isEmptyRtn(list, []);
+    setData(list, isRefresh){
+        list.forEach(data => {
+            data._rowSeq = this._getNextSeq();
+            data._state = "SELECT";
+        });
+        this._data = list;
+        if(isRefresh === true) this.refresh();
+    }
+
+    prepend(data, option){
+
+    }
+
+    prepends(list, option){
+
+    }
+
+    append(data, option){
+
     }
     
     //데이터 추가
-    appendData(list){
+    appends(list, option){
 
     }
 
@@ -239,3 +268,4 @@ export class wGrid {
        
     }
 }
+window.wGrid = wGrid;

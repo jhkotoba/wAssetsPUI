@@ -1,8 +1,9 @@
-export let wRoute = {
+window.wRoute = {
     async route(pageNm){
 
         //main 태그에 값 입력
-        wAssets.element.main.dataset.pageNm = pageNm;       
+        wAssets.element.main.dataset.pageNm = pageNm;
+        wUtil.setCookie("pageNm", pageNm);
 
         //get HTML
         if(wUtil.isEmpty(wAssets.html[pageNm])){
@@ -18,16 +19,16 @@ export let wRoute = {
             //SCRIPT 조회
             let script = await wFetch.getScript(pageNm);
             if(script.resultCode === "200"){                
-                wAssets.script[pageNm] = script.data; //스크립트 저장
-                eval(wAssets.script[pageNm]); //스크립트 eval
+                wAssets.script[pageNm] = script.data; //스크립트 저장                
+                Function(wAssets.script[pageNm]); //스크립트
                 wAssets.init[pageNm] = wFuntion.init; //init 등록함수 저장
             }else{
                 console.log(script.message);
             }
         }else{            
-            wAssets.element.main.innerHTML = wAssets.html[pageNm]; //기존 HTML 활용            
-            eval(wAssets.script[pageNm]); //스크립트 eval
+            wAssets.element.main.innerHTML = wAssets.html[pageNm]; //기존 HTML 활용     
+            Function(wAssets.script[pageNm]); //스크립트
         }
-        wUtil.runFunctionIfNotEmpty(wAssets.init[pageNm])();
+        wUtil.runFunctionIfNotEmpty(wAssets.init[pageNm])();       
     }
 }

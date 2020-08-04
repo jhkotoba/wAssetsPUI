@@ -1,10 +1,6 @@
-const hostname = '127.0.0.1';
-const port = 3000;
+const hostname = "localhost";
+const port = 9020;
 
-
-
-//const compression = require("compression");
-//const cors = require("cors");
 const express = require("express");
 const app = express();
 

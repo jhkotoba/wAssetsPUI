@@ -12,15 +12,16 @@ wFuntion.click = event => {
 };
 
 //조회 클릭이벤트
-wFuntion.srhBtnClick = event => {
-    alert("srhBtn");
+wFuntion.srhBtnClick = event => {  
+    
 };
 
 //등록 클릭이벤트
 wFuntion.regBtnClick = event => {
-    alert("regBtn");
+    wRoute.route("LED_REG");
 };
 
+let grid = null;
 wFuntion.createGrid = () => {
     new wGrid("ledgerMgt", {
         field: [
@@ -44,6 +45,7 @@ wFuntion.createGrid = () => {
              }
         },
         /*TEST DATA*/
+        //data: [],
         data: [
             {ledMgt: "상세", ledNm: "테스트가계부1", userId: "jh", curAmt: 25000,
                 monIncmAmt: 5000, monExpsAmt: 2000, yearIncmAmt: 100000, yearExpsAmt: 30000, pblcYn: "Y", 
