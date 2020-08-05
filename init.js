@@ -26,10 +26,13 @@ const init = {
     initGlobalData: function(){
         //전역변수
         global.wAssets = {};
+        wAssets.gateway = {            
+            url: "http://localhost:9000"
+        }
 
         //메뉴코드 세팅
         wAssets.menuCd = {};     
-        request.get("http://localhost:9000/api/admin/getMenuCodeList", (error, response, body) => {
+        request.get(wAssets.gateway.url + "/api/admin/getMenuCodeList", (error, response, body) => {
             JSON.parse(body).forEach(menu => {
                 wAssets.menuCd[menu.menuCd] = menu;
             });
