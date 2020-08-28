@@ -1,6 +1,39 @@
 const fs = require("fs");
 const request = require("request");
 
+//전역상수
+global.PUI = {
+    GATEWAY_PORT: "9000",
+    GATEWAY_IP: "127.0.0.1",
+    GATEWAY_IP_PORT: "127.0.0.1:9000",
+    GATEWAY_URI: "http://127.0.0.1:9000",
+    PORT: "9020",
+    IP: "127.0.0.1",
+    URI: "http://127.0.0.1:9020"
+}
+
+//전역변수
+global.wAssets = {};
+global.wAssets.menuCd = {};
+
+//유틸
+global.UTIL = {
+    convert: text => {
+        if(text == null || text == undefined) return "";
+        else return text.replace(/{contextPath}/gi, PUI.URI);
+    },
+    
+    isEmpty: data => {
+        if(data === "" || data === null || data === undefined) return true;
+        else return false;
+    },
+
+    getMenuCode: menuCd => {
+        if(menuCd === "MAIN" || UTIL.isEmpty(menuCd)) return "/main/main";
+        else return wAssets.menuCd[menuCd].pagePath;
+    }
+}
+
 const init = {
     express: null,
     app: null,    
@@ -23,16 +56,9 @@ const init = {
     },
 
     //전역데이터 세팅
-    initGlobalData: function(){
-        //전역변수
-        global.wAssets = {};
-        wAssets.gateway = {            
-            url: "http://localhost:9000"
-        }
-
-        //메뉴코드 세팅
-        wAssets.menuCd = {};     
-        request.get(wAssets.gateway.url + "/api/admin/getMenuCodeList", (error, response, body) => {
+    initGlobalData: function(){        
+        //메뉴코드 세팅  
+        request.get(PUI.GATEWAY_URI + "/api/admin/getMenuCodeList", (error, response, body) => {           
             JSON.parse(body).forEach(menu => {
                 wAssets.menuCd[menu.menuCd] = menu;
             });
@@ -55,10 +81,10 @@ const init = {
         };
 
         //게이트웨이 확인
-        wFunction.isGateway = host => host === "127.0.0.1:9000" ? true : false;
+        wFunction.isGateway = host => host === PUI.GATEWAY_IP_PORT ? true : false;
 
         //게이트웨이 확인(request)
-        wFunction.isGatewayReq = request => wFunction.getHost(request) === "127.0.0.1:9000" ? true : false;
+        wFunction.isGatewayReq = request => wFunction.getHost(request) === PUI.GATEWAY_IP_PORT ? true : false;
 
         //헤더에서 HOST 추출
         wFunction.getHost = request => {

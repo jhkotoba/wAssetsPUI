@@ -2,7 +2,7 @@
   "name": "AssetsPUI",
   "version": "0.0.1",
   "description": "white assets",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "server": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"

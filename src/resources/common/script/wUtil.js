@@ -14,10 +14,21 @@ window.wUtil  = {
         }
     },
 
+    //빈값 체크 후 비어있지 않으면 인자값 반환, 비어있으면 2번째 인자값 반환
+    isEmptyRtn(confirmData, emptyRtnData){
+        if(isEmpty(confirmData)){
+           return confirmData;
+        }else{
+            return emptyRtnData;
+        }
+    },
+
     //비어있지 않으면 전달받은 함수 실행
     runFunctionIfNotEmpty(fn, args){
         if(!this.isEmpty(fn)){
-            return fn(args);
+            if(typeof fn === "function"){
+                return fn(args);
+            }
         }
     },
 
