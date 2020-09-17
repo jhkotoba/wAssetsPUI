@@ -16,7 +16,7 @@ wFuntion.click = event => {
 
 //조회 클릭이벤트
 wFuntion.srhBtnClick = event => {  
-    
+    alert("TEST");
 };
 
 //등록 클릭이벤트

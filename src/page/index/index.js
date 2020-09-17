@@ -1,12 +1,13 @@
  //세션체크
  wFetch.getSession().then(session => {       
+     console.log(session);
     if(session.isLogin){
         //페이지 세팅
         PUI.userId = session.userId;
         wFuntion.init();
     }else{
         //로그인페이지 이동
-        window.location.href = "/login?rtnUrl=" + window.location.href;
+        window.location.href = "/member/login?rtnUrl=" + window.location.href;
     }
  });
  
