@@ -1,6 +1,5 @@
  //세션체크
- wFetch.getSession().then(session => {       
-     console.log(session);
+ wFetch.getSession().then(session => {
     if(session.isLogin){
         //페이지 세팅
         PUI.userId = session.userId;
@@ -29,7 +28,7 @@
     
     //nav 클릭이벤트
     PUI.element.nav.addEventListener("click", event => {
-        wRoute.route(event.target.dataset.menuCd);
+        wRoute.route(event.target.dataset.pageCd);
         event.stopPropagation();
     });
     
@@ -42,6 +41,8 @@
     //메뉴생성
     wFuntion.createMenu = async () => {
         let menuList = await wFetch.getFetch("/api/admin/getMenuCodeList?mduTpCd=ASSETS");
+        console.log("menuList::", menuList);
+        
         let ul, li, div, a = null;
     
         //1레벨 메뉴 생성
@@ -50,6 +51,7 @@
             li = document.createElement("li");
             li.classList.add("dropdown");
             li.dataset.menuCd = menu.menuCd;
+            if(wUtil.isNotEmpty(menu.pageCd)) li.dataset.pageCd = menu.pageCd;
     
             a = document.createElement("a");
             a.textContent = menu.menuNm;
@@ -67,9 +69,12 @@
             for(element of ul.childNodes){
                 if(element.dataset.menuCd === menu.menuUprCd){
                     a = document.createElement("a");
-                    a.dataset.menuCd = menu.menuCd;
+                    a.dataset.menuCd = menu.menuCd;                    
                     a.textContent = menu.menuNm;
                     element.firstChild.nextSibling.appendChild(a);
+                    if(wUtil.isNotEmpty(menu.pageCd)){
+                        a.dataset.pageCd = menu.pageCd;
+                    }
                 }
             }
         });

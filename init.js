@@ -14,7 +14,7 @@ global.PUI = {
 
 //전역변수
 global.wAssets = {};
-global.wAssets.menuCd = {};
+global.wAssets.pageCd = {};
 
 //유틸
 global.UTIL = {
@@ -28,9 +28,9 @@ global.UTIL = {
         else return false;
     },
 
-    getMenuCode: menuCd => {
-        if(menuCd === "MAIN" || UTIL.isEmpty(menuCd)) return "/main/main";
-        else return wAssets.menuCd[menuCd].pagePath;
+    getPageCode: pageCd => {
+        if(pageCd === "MAIN" || UTIL.isEmpty(pageCd)) return "/main/main";
+        else return wAssets.pageCd[pageCd].pagePath + "/" + wAssets.pageCd[pageCd].pageFile;
     }
 }
 
@@ -56,11 +56,11 @@ const init = {
     },
 
     //전역데이터 세팅
-    initGlobalData: function(){        
-        //메뉴코드 세팅  
-        request.get(PUI.GATEWAY_URI + "/api/admin/getMenuCodeList", (error, response, body) => {           
-            JSON.parse(body).forEach(menu => {
-                wAssets.menuCd[menu.menuCd] = menu;
+    initGlobalData: function(){
+        //페이지코드 세팅  
+        request.get(PUI.GATEWAY_URI + "/api/admin/getPageCodeList?mduTpCd=ASSETS", (error, response, body) => {
+            JSON.parse(body).forEach(page => {
+                wAssets.pageCd[page.pageCd] = page;
             });
         });
     },
