@@ -32,6 +32,7 @@ body{background: #363636; font-size: 12px; color: #C6C6C6; width: 1400px; margin
 
 /* content */
 .content{background: #383838; border: 2px solid #323232; height: 600px; margin: 5px 0px 5px 0px; padding: 5px 5px 5px 5px;}
+.content .right-btn-box{text-align: right;}
 
 /* button */
 .btn-gray{background: #4C4C4C; border: 1px solid #585858; border-radius: 2px; color:#C6C6C6;  display: inline-block; overflow: visible; text-align: center; white-space: nowrap; user-select: none;  margin: 0; cursor: pointer; font-weight:600; padding: .25rem .5rem; height: 30px;}

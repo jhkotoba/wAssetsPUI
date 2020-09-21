@@ -41,8 +41,7 @@
     //메뉴생성
     wFuntion.createMenu = async () => {
         let menuList = await wFetch.getFetch("/api/admin/getMenuCodeList?mduTpCd=ASSETS");
-        console.log("menuList::", menuList);
-        
+
         let ul, li, div, a = null;
     
         //1레벨 메뉴 생성
