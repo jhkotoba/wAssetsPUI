@@ -18,7 +18,8 @@ window.wRoute = {
 
             //SCRIPT 조회
             let script = await wFetch.getScript(wApageNm);
-            if(script.resultCode === "200"){                
+            if(script.resultCode === "200"){
+                wFuntion.init = {};
                 PUI.script[wApageNm] = script.data; //스크립트 저장
                 window.eval(PUI.script[wApageNm]); //스크립트
                 PUI.init[wApageNm] = wFuntion.init; //init 등록함수 저장
