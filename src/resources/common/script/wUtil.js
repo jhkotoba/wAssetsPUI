@@ -56,5 +56,31 @@ window.wUtil  = {
 
     removeCookie(name){
         document.cookie = name + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;';
+    },
+
+    setAttributes(element, obj){
+        for(key in obj){
+            element.setAttribute(key, obj[key]);
+        }        
+    },
+
+    childEmpty(elementId){
+        let el = document.getElementById(elementId);
+        while(el.hasChildNodes()){
+            el.removeChild(el.firstChild);
+        }
+    },
+
+    blindShow(){
+        let blind = document.getElementById("blind");
+        blind.classList.remove("hide");
+    },
+    blindHide(){
+        let blind = document.getElementById("blind");
+        blind.classList.add("hide");
     }
+
+
+
+    
 }

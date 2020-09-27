@@ -1,5 +1,8 @@
 window.wRoute = {
-    async route(wApageNm){       
+    async route(wApageNm){
+
+        //페이지변수 초기화
+        PUI.v = {};
 
         //main 태그에 값 입력
         PUI.element.main.dataset.wApageNm = wApageNm;

@@ -4,7 +4,7 @@ window.PUI = {
         //<nav> 태그
         nav: [...document.getElementsByTagName("nav")][0],
         //<main> 태그
-        main: [...document.getElementsByTagName("main")][0],
+        main: [...document.getElementsByTagName("main")][0]
     },
     //각 페이지 html
     html: {},
@@ -16,7 +16,9 @@ window.PUI = {
     session: {},
     //전역 데이터 저장소
     repository: {},
-    contextPath: contextPath
+    contextPath: contextPath,
+    //페이지 변수 저장공간
+    v: {}
 };
 //함수 정의
 window.wFuntion = {init: function(){}};
