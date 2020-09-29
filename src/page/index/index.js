@@ -64,11 +64,11 @@
         });
     
         //2레벨 메뉴 생성
-        menuList.filter(menu => menu.menuLv == 2).forEach(menu => {        
+        menuList.filter(menu => menu.menuLv == 2).forEach(menu => {
             for(element of ul.childNodes){
                 if(element.dataset.menuCd === menu.menuUprCd){
                     a = document.createElement("a");
-                    a.dataset.menuCd = menu.menuCd;                    
+                    a.dataset.menuCd = menu.menuCd;
                     a.textContent = menu.menuNm;
                     element.firstChild.nextSibling.appendChild(a);
                     if(wUtil.isNotEmpty(menu.pageCd)){

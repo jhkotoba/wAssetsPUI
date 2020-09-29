@@ -46,7 +46,7 @@ body{background: #363636; font-size: 12px; color: #C6C6C6; width: 1400px; margin
 
 /* input */
 .input-gray{background: #383838; color:#C6C6C6; font-size: 1em; height: 30px; border: 1px solid #646464; border-radius: 2px; text-indent: 5px;}
-.input-gray:disabled{background: #4e4e4e;}
+.input-gray:disabled{background: #4e4e4e; color: #656565;}
 
 /* select */
 .select-gray{background: #4e4e4e; color:#C6C6C6; font-size: 1em; height: 30px; border: 1px solid #585858; border-radius: 2px; padding: .25rem .5rem;}

@@ -1,12 +1,12 @@
 <div>
-    <div class="path">자산관리 > 계좌관리 > 계좌등록</div>    
+    <div class="path">자산관리 > 계좌관리 > 계좌등록</div>
 </div>
 
 <section class="content">
     <div class="table-title">■ 계좌정보 등록</div>
-    <div class="right-btn-box">        
-        <button class="btn-gray">취소</button>                                
-        <button class="btn-gray">저장</button>
+    <div class="right-btn-box">
+        <button class="btn-gray" id="cancel">취소</button>
+        <button class="btn-gray" id="save">저장</button>
     </div>   
     <div>        
         <div class="table-box">
@@ -14,7 +14,7 @@
                 <colgroup>
                     <col width="100px">
                     <col width="*">
-                </colgroup>                
+                </colgroup>
                 <tbody>
                     <tr>
                         <th>사용처</th>
@@ -27,12 +27,12 @@
                         <td>
                             <div id="acctType"></div>
                         </td>
-                    </tr>                    
+                    </tr>
                     <tr>
                         <th>계좌번호</th>
                         <td>
                             <div>
-                                <input type="text" class="input-gray">
+                                <input id="acctNum" type="text" class="input-gray">
                             </div>
                         </td>
                     </tr>
@@ -40,7 +40,7 @@
                         <th>생성일</th>
                         <td>
                             <div>
-                                <input type="text" class="input-gray">
+                                <input id="cratDt" type="text" class="input-gray">
                             </div>
                         </td>
                     </tr>
@@ -49,8 +49,8 @@
                         <td>
                             <div>
                                 <input type="checkbox" id="epyDtUseYn">
-                                <label for="">만기일 사용</label>
-                                <input type="text" id="epyDt" class="input-gray" disabled>
+                                <label for="epyDtUseYn">만기일 사용</label>
+                                <input type="text" id="epyDt" class="input-gray" value="9999-12-31"disabled>
                             </div>
                         </td>
                     </tr>
@@ -67,17 +67,17 @@
                     </tr>
                     <tr>
                         <th>장부연결</th>
-                        <td>추후개발</td>
+                        <td>추후개발(장부개발 완료후 연결)</td>
                     </tr>
                     <tr>
                         <th>비고</th>
                         <td>
-                            <textarea class="input-gray">
+                            <textarea id="rmk" class="input-gray">
                             </textarea>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-    </div>    
+    </div>
 </section>

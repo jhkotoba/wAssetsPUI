@@ -8,7 +8,7 @@ window.wFetch = {
         });
     },
     getScript(wApageNm){
-        return new Promise((resolve, reject) => {            
+        return new Promise((resolve, reject) => {
             fetch(PUI.contextPath + "/assets/getScript?script=" + wApageNm)
                 .then(response => response.text())
                 .then(script => resolve({data:script, resultCode:"200", message:"success"}))
@@ -36,7 +36,7 @@ window.wFetch = {
                 },
                 body: JSON.stringify({})
             })
-            .then(response => response.json())            
+            .then(response => response.json())
             .then(data => resolve(data));
         });
     }
