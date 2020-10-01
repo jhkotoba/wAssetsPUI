@@ -15,7 +15,7 @@ wFuntion.init = () => {
             //라디오버튼 생성
             input = document.createElement("input");
             input.value = code.code;
-            wUtil.setAttributes(input, {name: "useTgt", type: "radio", id: code.code});
+            wUtil.setAttributes(input, {name: "acctTgtCd", type: "radio", id: code.code});
             if(index === 0){ input.checked = true; }
             useTgt.appendChild(input);
 
@@ -37,7 +37,7 @@ wFuntion.init = () => {
             //라디오버튼 생성
             input = document.createElement("input");
             input.value = code.code;
-            wUtil.setAttributes(input, {name: "acctType", type: "radio", id: code.code});
+            wUtil.setAttributes(input, {name: "acctDivCd", type: "radio", id: code.code});
             if(index === 0){ input.checked = true; }
             acctType.appendChild(input);
 
@@ -92,8 +92,8 @@ wFuntion.epyDtUseYnClick = event => {
 //저장
 wFuntion.saveClick = event => {
     let param = wUtil.getParams([
-        {name:"useTgt"},
-        {name:"acctType"},
+        {name:"acctTgtCd"},
+        {name:"acctDivCd"},
         {id:"acctNum", vali:["notEmpty", "accountNumber"]},
         {id:"cratDt", vali:["notEmpty", "date"]},
         {id:"epyDtUseYn"},
@@ -103,7 +103,18 @@ wFuntion.saveClick = event => {
     
     if(param.isVali){
         if(confirm("저장하시겠습니까?")){
-            console.log("save");
+
+            param.data.cratDt = param.data.cratDt.replace(/-/gi, "");
+            param.data.cratDt = param.data.cratDt.replace(/-/gi, "");
+
+            wFetch.postFetch("/api/assets/saveAccount" , param.data)
+                .then(response => {
+                    if(response.resultCode === "0000"){
+                        alert("저장하였습니다.");
+                    }else{
+                        alert("저장실패");
+                    }
+                });
         }
     }else{
         alert(param.msg);
