@@ -144,7 +144,7 @@ window.wUtil  = {
                         if(this.isArray(item.vali)){
                             let resVali;
                             for(let i=0; i<item.vali.length; i++){
-                                resVali = this.valiCheck(item.vali[i], element.value);
+                                resVali = this.validCheck(item.vali[i], element.value);
                                 if(resVali.isVali === false){
                                     result.isVali = resVali.isVali;
                                     result.msg = resVali.msg;
@@ -173,7 +173,7 @@ window.wUtil  = {
     //  accountNum  => 계좌번호 형식체크                => "계좌번호 형식이 아닙니다."
     //  date        => 날짜체크(YYYY-MM-DD)             => "날짜형식이 아닙니다."
     //  datetime    => 날짜체크(YYYY-MM-DD HH:MM:SS)    => "날짜형식이 아닙니다."
-    valiCheck(valiNm, value){
+    validCheck(valiNm, value){
         let result = {};
 
         switch(valiNm){
@@ -220,13 +220,13 @@ window.wUtil  = {
 
         switch(pattern.toUpperCase()){
         case "YYYY-MM-DD":	
-            datePattern = /^[0-9]{4}\-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1])$/;	
+            datePattern = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1])$/;	
             break;
         case "YYYY-MM-DD HH:MM":
-            datePattern = /^[0-9]{4}\-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1]) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
+            datePattern = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1]) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
             break;	
         case "YYYY-MM-DD HH:MM:SS":
-            datePattern = /^[0-9]{4}\-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1]) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;	
+            datePattern = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1]) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
             break;
         }
 

@@ -24,6 +24,23 @@ window.wFetch = {
         });
     },
 
+    postFetch(url, data){
+        return new Promise((resolve, reject) => {
+            fetch(url, {
+                method: "POST",
+                mode: "same-origin",
+                credentials: "include",
+                headers: {
+                     "Accept": "application/json",
+                     "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => resolve(data));
+        });
+    },
+
     getSession(){
         return new Promise((resolve, reject) => {
             fetch("/api/member/getSession", {
