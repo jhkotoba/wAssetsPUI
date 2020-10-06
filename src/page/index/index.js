@@ -37,6 +37,18 @@
         wUtil.runFunctionIfNotEmpty(wFuntion.click, event);
         event.stopPropagation();
     });
+
+    //main 이벤트 - change
+    PUI.element.main.addEventListener("change", event => {
+        wUtil.runFunctionIfNotEmpty(wFuntion.change, event);
+        event.stopPropagation();
+    });
+
+    //main 이벤트 - keyup
+    PUI.element.main.addEventListener("keyup", event => {
+        wUtil.runFunctionIfNotEmpty(wFuntion.keyup, event);
+        event.stopPropagation();
+    });
     
     //메뉴생성
     wFuntion.createMenu = async () => {

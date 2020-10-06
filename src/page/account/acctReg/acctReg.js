@@ -94,19 +94,22 @@ wFuntion.saveClick = event => {
     let param = wUtil.getParams([
         {name:"acctTgtCd"},
         {name:"acctDivCd"},
-        {id:"acctNum", vali:["notEmpty", "accountNumber"]},
-        {id:"cratDt", vali:["notEmpty", "date"]},
+        {id:"acctNum", valid:["notEmpty", "accountNumber"]},
+        {id:"cratDt", valid:["notEmpty", "date"]},
         {id:"epyDtUseYn"},
-        {id:"epyDt", vali:["notEmpty", "date"]},
+        {id:"epyDt", valid:["notEmpty", "date"]},
+        {id:"fontClor"},
+        {id:"bkgdClor"},
         {id:"rmk"}
     ]);
     
-    if(param.isVali){
-        if(confirm("저장하시겠습니까?")){
-
+    if(param.isValid){
+        
+        if(param.data.fontClor === param.data.bkgdClor){
+            alert("글자색과 배경색이 동일합니다.");
+        }else if(confirm("저장하시겠습니까?")){
             param.data.cratDt = param.data.cratDt.replace(/-/gi, "");
             param.data.cratDt = param.data.cratDt.replace(/-/gi, "");
-
             wFetch.postFetch("/api/assets/saveAccount" , param.data)
                 .then(response => {
                     if(response.resultCode === "0000"){
@@ -119,5 +122,34 @@ wFuntion.saveClick = event => {
     }else{
         alert(param.msg);
         param.target.focus();
+    }
+}
+
+//keyup 이벤트 switch
+wFuntion.keyup = event => {
+    switch(event.target.id){
+        case "fontClor":
+        case "bkgdClor":
+            let regex = /^#(?:[0-9a-f]{3}){1,2}$/i;
+            let element = document.getElementById(event.target.id + "Dsp");    
+            if(regex.test(event.target.value)){
+                element.style.background = event.target.value;
+            }else{
+                element.style.background = "";
+            }
+        break;
+    }
+}
+
+//change 이벤트 switch
+wFuntion.change = event => {
+    switch(event.target.id){
+        case "fontClor":
+        case "bkgdClor":
+            let regex = /^#(?:[0-9a-f]{3}){1,2}$/i;            
+            if(!regex.test(event.target.value)){
+                event.target.value = "";
+            }
+        break;
     }
 }

@@ -120,7 +120,7 @@ window.wUtil  = {
     //id값의 value값 가져오기 id는 밸류데이션 체크
     //name값은 radio버튼 값에한 한함.
     getParams(objs){
-        let result = {isVali: true, msg: null, data: null};
+        let result = {isValid: true, msg: null, data: null};
         if(this.isNotArray(objs)){
             return result;
         }
@@ -128,7 +128,7 @@ window.wUtil  = {
         let data = {}, element = null;
         objs.forEach(item => {
 
-            if(result.isVali === false) return;
+            if(result.isValid === false) return;
             
             if(this.isNotEmpty(item.id) && typeof item.id === "string"){
                 element = document.getElementById(item.id);
@@ -141,20 +141,20 @@ window.wUtil  = {
 
                     default :
                         //밸류데이션 체크
-                        if(this.isArray(item.vali)){
-                            let resVali;
-                            for(let i=0; i<item.vali.length; i++){
-                                resVali = this.validCheck(item.vali[i], element.value);
-                                if(resVali.isVali === false){
-                                    result.isVali = resVali.isVali;
-                                    result.msg = resVali.msg;
+                        if(this.isArray(item.valid)){
+                            let resValid;
+                            for(let i=0; i<item.valid.length; i++){
+                                resValid = this.validCheck(item.valid[i], element.value);
+                                if(resValid.isValid === false){
+                                    result.isValid = resValid.isValid;
+                                    result.msg = resValid.msg;
                                     result.target = element;
                                     data = null;
                                     break;
                                 }
                             }
                         }
-                        if(result.isVali){
+                        if(result.isValid){
                             data[item.id] = element.value;
                         }
                         break;
@@ -173,28 +173,28 @@ window.wUtil  = {
     //  accountNum  => 계좌번호 형식체크                => "계좌번호 형식이 아닙니다."
     //  date        => 날짜체크(YYYY-MM-DD)             => "날짜형식이 아닙니다."
     //  datetime    => 날짜체크(YYYY-MM-DD HH:MM:SS)    => "날짜형식이 아닙니다."
-    validCheck(valiNm, value){
+    validCheck(validNm, value){
         let result = {};
 
-        switch(valiNm){
+        switch(validNm){
         case "notEmpty":
-            result.isVali = this.isNotEmpty(value);
+            result.isValid = this.isNotEmpty(value);
             result.msg = "값이 비어있습니다.";
             break;
         case "accountNumber":
-            result.isVali = this.isAccountNumber(value);
+            result.isValid = this.isAccountNumber(value);
             result.msg = "계좌번호 형식이 아닙니다.";
             break;
         case "date":
-            result.isVali = this.isDate(value, "YYYY-MM-DD");
+            result.isValid = this.isDate(value, "YYYY-MM-DD");
             result.msg = "날짜형식이 아닙니다.";
             break;
         case "dateMinute":
-            result.isVali = this.isDate(value, "YYYY-MM-DD HH:MM");
+            result.isValid = this.isDate(value, "YYYY-MM-DD HH:MM");
             result.msg = "날짜형식이 아닙니다.";
             break;
         case "datetime":
-            result.isVali = this.isDate(value, "YYYY-MM-DD HH:MM:SS");
+            result.isValid = this.isDate(value, "YYYY-MM-DD HH:MM:SS");
             result.msg = "날짜형식이 아닙니다.";
             break;
         }
