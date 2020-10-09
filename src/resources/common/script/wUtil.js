@@ -21,7 +21,7 @@ window.wUtil  = {
 
     //빈값 체크 후 비어있지 않으면 인자값 반환, 비어있으면 2번째 인자값 반환
     isEmptyRtn(confirmData, emptyRtnData){
-        if(isEmpty(confirmData)){
+        if(!this.isEmpty(confirmData)){
            return confirmData;
         }else{
             return emptyRtnData;
@@ -144,7 +144,7 @@ window.wUtil  = {
                         if(this.isArray(item.valid)){
                             let resValid;
                             for(let i=0; i<item.valid.length; i++){
-                                resValid = this.validCheck(item.valid[i], element.value);
+                                resValid = this.validCheck(item.valid[i], element.value, item.title);
                                 if(resValid.isValid === false){
                                     result.isValid = resValid.isValid;
                                     result.msg = resValid.msg;
@@ -170,32 +170,35 @@ window.wUtil  = {
 
     //밸리데이션 체크
     //  notEmpty    => 비어있는 값 체크                 => "값이 비어있습니다."
-    //  accountNum  => 계좌번호 형식체크                => "계좌번호 형식이 아닙니다."
-    //  date        => 날짜체크(YYYY-MM-DD)             => "날짜형식이 아닙니다."
-    //  datetime    => 날짜체크(YYYY-MM-DD HH:MM:SS)    => "날짜형식이 아닙니다."
-    validCheck(validNm, value){
+    //  accountNum  => 계좌번호 형식체크                => "계좌번호 형식이 바르지 않습니다."
+    //  date        => 날짜체크(YYYY-MM-DD)             => "날짜형식이 바르지 않습니다."
+    //  datetime    => 날짜체크(YYYY-MM-DD HH:MM:SS)    => "날짜형식이 바르지 않습니다."
+    validCheck(validNm, value, title){
         let result = {};
+
+        let titleValue = this.isEmptyRtn(title, "");
+        titleValue = titleValue == "" ? "" : titleValue + "의 "
 
         switch(validNm){
         case "notEmpty":
             result.isValid = this.isNotEmpty(value);
-            result.msg = "값이 비어있습니다.";
+            result.msg = titleValue + "값이 비어있습니다.";
             break;
         case "accountNumber":
             result.isValid = this.isAccountNumber(value);
-            result.msg = "계좌번호 형식이 아닙니다.";
+            result.msg = "계좌번호 형식이 바르지 않습니다.";
             break;
         case "date":
             result.isValid = this.isDate(value, "YYYY-MM-DD");
-            result.msg = "날짜형식이 아닙니다.";
+            result.msg = titleValue + "날짜형식이 바르지 않습니다.";
             break;
         case "dateMinute":
             result.isValid = this.isDate(value, "YYYY-MM-DD HH:MM");
-            result.msg = "날짜형식이 아닙니다.";
+            result.msg = titleValue + "날짜형식이 바르지 않습니다.";
             break;
         case "datetime":
             result.isValid = this.isDate(value, "YYYY-MM-DD HH:MM:SS");
-            result.msg = "날짜형식이 아닙니다.";
+            result.msg = titleValue + "날짜형식이 바르지 않습니다.";
             break;
         }
 

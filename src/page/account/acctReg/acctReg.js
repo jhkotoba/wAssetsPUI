@@ -94,28 +94,30 @@ wFuntion.saveClick = event => {
     let param = wUtil.getParams([
         {name:"acctTgtCd"},
         {name:"acctDivCd"},
-        {id:"acctNum", valid:["notEmpty", "accountNumber"]},
-        {id:"cratDt", valid:["notEmpty", "date"]},
+        {id:"acctNum", title:"계좌번호", valid:["notEmpty", "accountNumber"]},
+        {id:"acctNm", title:"계좌명", valid:["notEmpty"]},
+        {id:"cratDt", title:"생성일", valid:["notEmpty", "date"]},
         {id:"epyDtUseYn"},
-        {id:"epyDt", valid:["notEmpty", "date"]},
+        {id:"epyDt"},
         {id:"fontClor"},
         {id:"bkgdClor"},
+        {name:"useYn"},
         {id:"rmk"}
     ]);
     
     if(param.isValid){
-        
-        if(param.data.fontClor === param.data.bkgdClor){
+        if(wUtil.isNotEmpty(param.data.fontClor) && wUtil.isNotEmpty(param.data.bkgdClor) &&
+            param.data.fontClor === param.data.bkgdClor){
             alert("글자색과 배경색이 동일합니다.");
         }else if(confirm("저장하시겠습니까?")){
             param.data.cratDt = param.data.cratDt.replace(/-/gi, "");
-            param.data.cratDt = param.data.cratDt.replace(/-/gi, "");
+            param.data.epyDt = param.data.epyDt.replace(/-/gi, "");
             wFetch.postFetch("/api/assets/saveAccount" , param.data)
                 .then(response => {
                     if(response.resultCode === "0000"){
                         alert("저장하였습니다.");
                     }else{
-                        alert("저장실패");
+                        alert("ERROR CODE::" + response.resultCode);
                     }
                 });
         }
