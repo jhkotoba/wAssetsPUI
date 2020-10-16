@@ -1,14 +1,13 @@
 //초기화면 세팅
-wFuntion.init = () => {
+PUI.FN.INIT = () => {
     let input, label;
 
     wUtil.blindShow();
-    PUI.v.fetchCnt = 0;
-    PUI.v.wApageNm = wUtil.getCookie("wApageNm");
+    PUI.V.fetchCnt = 0;    
 
     //계좌사용처코드 조회 및 세팅
     wFetch.getFetch("/api/admin/getCodeList?grpCode=ACCT_TGT_CD").then(list => {
-        PUI.v.acctTpCdList = list;
+        PUI.V.acctTpCdList = list;
 
         let useTgt = document.getElementById("useTgt");
         list.forEach((code, index) => {
@@ -26,11 +25,11 @@ wFuntion.init = () => {
             useTgt.appendChild(label);
         });
         input = null;
-    }).then(wFuntion.isInitFetchEnd);
+    }).then(PUI.FN.isInitFetchEnd);
 
     //계좌구분코드 조회 및 세팅
     wFetch.getFetch("/api/admin/getCodeList?grpCode=ACCT_DIV_CD").then(list => {
-        PUI.v.acctType = list;
+        PUI.V.acctType = list;
 
         let acctType = document.getElementById("acctType");
         list.forEach((code, index) => {
@@ -51,34 +50,36 @@ wFuntion.init = () => {
 
 
     })
-    .then(wFuntion.isInitFetchEnd);
+    .then(PUI.FN.isInitFetchEnd);
 };
 
 //init end 체크
-wFuntion.isInitFetchEnd = () =>{
-    PUI.v.fetchCnt = PUI.v.fetchCnt+1;
-    if(PUI.v.fetchCnt > 1){
+PUI.FN.isInitFetchEnd = () =>{
+    PUI.V.fetchCnt = PUI.V.fetchCnt+1;
+    if(PUI.V.fetchCnt > 1){
         wUtil.blindHide();
     }
 }
 
 //클릭 이벤트 switch
-wFuntion.click = event => {
+PUI.FN.click = event => {
     switch(event.target.id){
         case "epyDtUseYn" :
-            wFuntion.epyDtUseYnClick(event);
+            PUI.FN.epyDtUseYnClick(event);
             break;
         case "cancel" :
-            wRoute.route(PUI.v.wApageNm);
+            if(confirm("계좌등록을 취소 하시겠습니까?")){
+                wRoute.route("ACCT_LIST");
+            }
             break;
         case "save" : 
-            wFuntion.saveClick(event);
+            PUI.FN.saveClick(event);
             break;
     }
 }
 
 //만기일 클릭 이벤트
-wFuntion.epyDtUseYnClick = event => {
+PUI.FN.epyDtUseYnClick = event => {
     let epyDt = document.getElementById("epyDt");
     if(event.target.checked){
         epyDt.value = "";
@@ -90,7 +91,7 @@ wFuntion.epyDtUseYnClick = event => {
 }
 
 //저장
-wFuntion.saveClick = event => {
+PUI.FN.saveClick = event => {
     let param = wUtil.getParams([
         {name:"acctTgtCd"},
         {name:"acctDivCd"},
@@ -128,7 +129,7 @@ wFuntion.saveClick = event => {
 }
 
 //keyup 이벤트 switch
-wFuntion.keyup = event => {
+PUI.FN.keyup = event => {
     switch(event.target.id){
         case "fontClor":
         case "bkgdClor":
@@ -144,7 +145,7 @@ wFuntion.keyup = event => {
 }
 
 //change 이벤트 switch
-wFuntion.change = event => {
+PUI.FN.change = event => {
     switch(event.target.id){
         case "fontClor":
         case "bkgdClor":
