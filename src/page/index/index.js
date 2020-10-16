@@ -3,7 +3,7 @@
     if(session.isLogin){
         //페이지 세팅
         PUI.userId = session.userId;
-        wFuntion.init();
+        PUI.initialize();
     }else{
         //로그인페이지 이동
         window.location.href = "/member/login?rtnUrl=" + window.location.href;
@@ -11,7 +11,7 @@
  });
  
  //초기화면 세팅
- wFuntion.init = () => {
+ PUI.initialize = () => {
     
     //쿠키체크 페이지 조회
     if(wUtil.isCookie("wApageNm")){
@@ -34,24 +34,24 @@
     
     //main 이벤트 - click
     PUI.element.main.addEventListener("click", event => {
-        wUtil.runFunctionIfNotEmpty(wFuntion.click, event);
+        wUtil.runFunctionIfNotEmpty(PUI.FN.click, event);
         event.stopPropagation();
     });
 
     //main 이벤트 - change
     PUI.element.main.addEventListener("change", event => {
-        wUtil.runFunctionIfNotEmpty(wFuntion.change, event);
+        wUtil.runFunctionIfNotEmpty(PUI.FN.change, event);
         event.stopPropagation();
     });
 
     //main 이벤트 - keyup
     PUI.element.main.addEventListener("keyup", event => {
-        wUtil.runFunctionIfNotEmpty(wFuntion.keyup, event);
+        wUtil.runFunctionIfNotEmpty(PUI.FN.keyup, event);
         event.stopPropagation();
     });
     
     //메뉴생성
-    wFuntion.createMenu = async () => {
+    PUI.FN.createMenu = async () => {
         let menuList = await wFetch.getFetch("/api/admin/getMenuCodeList?mduTpCd=ASSETS");
 
         let ul, li, div, a = null;
@@ -92,7 +92,7 @@
     
         PUI.element.nav.appendChild(ul);
     };
-    wFuntion.createMenu();
+    PUI.FN.createMenu();
  }
 
 

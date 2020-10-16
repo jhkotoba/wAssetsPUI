@@ -2,7 +2,7 @@ window.wRoute = {
     async route(wApageNm){
 
         //페이지변수 초기화
-        PUI.v = {};
+        PUI.V = {};
 
         //main 태그에 값 입력
         PUI.element.main.dataset.wApageNm = wApageNm;
@@ -22,10 +22,10 @@ window.wRoute = {
             //SCRIPT 조회
             let script = await wFetch.getScript(wApageNm);
             if(script.resultCode === "200"){
-                wFuntion.init = {};
+                PUI.FN.INIT = {};
                 PUI.script[wApageNm] = script.data; //스크립트 저장
                 window.eval(PUI.script[wApageNm]); //스크립트
-                PUI.init[wApageNm] = wFuntion.init; //init 등록함수 저장
+                PUI.init[wApageNm] = PUI.FN.INIT; //init 등록함수 저장
             }else{
                 console.log(script.message);
             }

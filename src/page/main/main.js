@@ -5,6 +5,6 @@
 //     }
 // }
 
-wFuntion.init = () => () => {
+PUI.FN.INIT = () => {
     console.log("main.js init");
 }

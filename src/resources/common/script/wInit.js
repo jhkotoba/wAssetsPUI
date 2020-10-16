@@ -13,12 +13,13 @@ window.PUI = {
     //각 페이지 init
     init: {},
     //세션정보
-    session: {},
-    //전역 데이터 저장소
-    repository: {},
+    session: {},   
     contextPath: contextPath,
-    //페이지 변수 저장공간
-    v: {}
+    //전역변수
+    RV: {},
+    //페이지내 변수 저장공간
+    V: {},
+    //페이지내 함수
+    FN: {INIT: function(){}}
+    
 };
-//함수 정의
-window.wFuntion = {init: function(){}};
