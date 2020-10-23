@@ -108,14 +108,22 @@ class wGrid {
         return ++this._state.curSeq;
     }   
 
-    //데이터 set
-    setData(list, isRefresh){
-        list.forEach(data => {
-            data._rowSeq = this._getNextSeq();
-            data._state = "SELECT";
-        });
-        this._data = list;
-        if(isRefresh === true) this.refresh();
+    //데이터 set   
+    setData(obj){
+        if(this.util.isNotEmpty(obj)){
+
+            //내부데이터 세팅
+            obj.list.forEach(data => {
+                data._rowSeq = this._getNextSeq();
+                data._state = "SELECT";
+            });
+            this._data = obj.list;
+
+            //새로고침 false아니면 새로고침
+            if(obj.isRefresh !== false){
+                this.refresh();
+            }
+        }
     }
 
     prepend(data, option){
