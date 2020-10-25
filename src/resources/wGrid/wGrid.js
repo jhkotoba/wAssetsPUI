@@ -7,7 +7,6 @@ class wGrid {
 
     //생성자
     constructor(targetId, args){
-        console.log("wGrid.constructor");
 
         //그리드 상태값
         this._state = {
@@ -64,6 +63,12 @@ class wGrid {
                         element.style[style] = attribute;
                         break;
                 }
+            },
+            //자식 노드 비우기
+            childElementEmpty(element){
+                while(element.hasChildNodes()){
+                    element.removeChild(element.firstChild);
+                }
             }
         }
 
@@ -72,19 +77,17 @@ class wGrid {
 
         //그리드 옵션값 세팅
         let option = {
-            isInstantCreate: false,                
-            isHeaderCreate: true,
-            isBodyCreate: true,
-            isFooterCreate: true,
+            isCreate: {isHeader:true, isBody:true, isFooter:false},
             gridMode: "LIST" //list, thum
         }
 
         //그리드 인자값 세팅
         this._data = [];
-        this.setData(args.data); 
-        this._option = option; 
-
-        this._option.isInstantCreate = args.option.isInstantCreate;
+        this._option = option;
+        if(this.util.isNotEmpty(args.option.isInitCreate)){
+            this._option.isInitCreate = args.option.isInitCreate;
+        }
+        
         
         //그리드 스타일세팅
         this._element.target.classList.add("wgrid-field");
@@ -92,7 +95,7 @@ class wGrid {
         this.util.addElementStyleAttribute(this._element.target, "height", args.option.style.height);        
        
         //생성시 바로 그리드 생성
-        if(this._option.isInstantCreate === true) this.create();
+        this._create(this._option.isInitCreate);
         return this;
     }
 
@@ -108,10 +111,10 @@ class wGrid {
         return ++this._state.curSeq;
     }   
 
-    //데이터 set   
+    //데이터 set
+    //list: 데이터, isRefresh: setData시 갱신여부, callbackFn: 완료후 콜백함수
     setData(obj){
         if(this.util.isNotEmpty(obj)){
-
             //내부데이터 세팅
             obj.list.forEach(data => {
                 data._rowSeq = this._getNextSeq();
@@ -122,6 +125,10 @@ class wGrid {
             //새로고침 false아니면 새로고침
             if(obj.isRefresh !== false){
                 this.refresh();
+            }
+            //완료후 콜백함수
+            if(typeof obj.callbackFn === "function"){
+                this.callbackFn();
             }
         }
     }
@@ -144,16 +151,27 @@ class wGrid {
     }
 
     //그리드 생성
-    create(){
-        if(this._option.isHeaderCreate === true) this._headerCreate();
-        if(this._option.isBodyCreate === true) this._bodyCreate();
-        if(this._option.isFooterCreate === true) this._footerCreate();
+    _create(obj){
+        if(obj.isHeader === true) this._headerCreate();
+        if(obj.isBody === true) this._bodyCreate();
+        if(obj.isFooter === true) this._footerCreate();
         return this;
     }
 
     //그리드 새로고침
-    refresh(){
+    refresh(obj){
+        if(this.util.isEmpty(obj)){
+            //TABLE 태그만 수정 - 비우기
+            this.util.childElementEmpty(this._element.bodyTb);
+            //TABLE 태그만 수정 - TD생성
+            this._data.forEach((row, rIdx) => {
+                this._element.bodyTb.appendChild(this._bodyListRowCreate(row, rIdx));
+            });
+        }else{
 
+
+        }
+        
     }
 
     //헤더 생성
@@ -242,8 +260,14 @@ class wGrid {
         switch(field.element){
         case "text":
         default:
-            this.util.addElementStyleAttribute(div, "textAlign", "center"); 
-            div.textContent = row[[field.name]];
+            this.util.addElementStyleAttribute(div, "textAlign", "center");
+
+            //코드맵핑
+            if(this.util.isNotEmpty(field.codeMapping)){
+                div.textContent = field.codeMapping[row[field.name]];
+            }else{
+                div.textContent = row[field.name];
+            }
             td.appendChild(div);
             break;
         }

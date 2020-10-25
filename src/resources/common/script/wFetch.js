@@ -18,9 +18,11 @@ window.wFetch = {
 
     getFetch(url){
         return new Promise((resolve, reject) => {
-            fetch(url)
-                .then(response => response.json())
-                .then(data => resolve(data));
+            fetch(url, {
+                credentials: "same-origin"
+            })
+            .then(response => response.json())
+            .then(data => resolve(data));
         });
     },
 

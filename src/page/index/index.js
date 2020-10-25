@@ -38,6 +38,12 @@
         event.stopPropagation();
     });
 
+    //main 이벤트 - dbClick
+    PUI.element.main.addEventListener("dblclick", event => {
+        wUtil.runFunctionIfNotEmpty(PUI.FN.dblclick, event);
+        event.stopPropagation();
+    });
+
     //main 이벤트 - change
     PUI.element.main.addEventListener("change", event => {
         wUtil.runFunctionIfNotEmpty(PUI.FN.change, event);
