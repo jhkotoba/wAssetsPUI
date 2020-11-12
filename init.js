@@ -9,7 +9,7 @@ global.PUI = {
     GATEWAY_URI: "http://127.0.0.1:9000",
     PORT: "9020",
     IP: "127.0.0.1",
-    URI: "http://127.0.0.1:9020"
+    //URI: "http://127.0.0.1:9020"
 }
 
 //전역변수
@@ -18,10 +18,10 @@ global.wAssets.pageCd = {};
 
 //유틸
 global.UTIL = {
-    convert: text => {
-        if(text == null || text == undefined) return "";
-        else return text.replace(/{contextPath}/gi, PUI.URI);
-    },
+    // convert: text => {
+    //     if(text == null || text == undefined) return "";
+    //     else return text.replace(/{contextPath}/gi, PUI.URI);
+    // },
     
     isEmpty: data => {
         if(data === "" || data === null || data === undefined) return true;

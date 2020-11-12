@@ -12,7 +12,7 @@ app.use("/", route);
 
 //404
 app.use((request, response, next) => {
-  response.status(404).send("404");
+  response.status(404).send("Assets PC 404");
 });
 
 //500
