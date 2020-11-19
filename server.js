@@ -17,7 +17,6 @@ app.use((request, response, next) => {
 
 //500
 app.use((error, request, response, next) => {
-  console.error(error.stack);
   response.status(500).status("500");
 });
 
