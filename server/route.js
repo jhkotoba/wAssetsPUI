@@ -10,8 +10,7 @@ router.get("/assets", (request, response) => {
         fs.readFile(path.join(__dirname, "..", "src", "assets", "page", "index", "index.html"), "UTF-8", (err, text) => {
             response.send(text);
         });
-    }else{
-        console.log("FFF");
+    }else {
         response.send("");
     }
 });
