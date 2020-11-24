@@ -4,10 +4,10 @@ const port = 9020;
 const express = require("express");
 const app = express();
 
-const init = require("./init.js");
+const init = require("./server/init.js");
 init.start(express, app);
 
-const route = require("./route.js");
+const route = require("./server/route.js");
 app.use("/", route);
 
 //404

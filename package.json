@@ -4,7 +4,7 @@
   "description": "white assets",
   "main": "server.js",
   "scripts": {
-    "server": "node server.js",
+    "server": "node server/server.js",
     "build": "npm run build"
   },
   "keywords": [],
