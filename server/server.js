@@ -4,9 +4,22 @@ const port = 9020;
 const express = require("express");
 const app = express();
 
-const init = require("./init.js");
-init.start(express, app);
+//설정 스크립트
+require("./config.js");
 
+//정적 리소스 임포트
+const fs = require("fs");
+fs.readdirSync("./src", { withFileTypes: true }).forEach(item => {            
+  if(item.isDirectory()){               
+      app.use("/"+item.name, express.static(PUI.UTL.getViewPath()  + '\\' + "src" + '\\' +item.name));
+  }
+});
+
+//쿠키설정
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
+//루터설정
 const route = require("./route.js");
 app.use("/", route);
 
@@ -17,7 +30,7 @@ app.use((request, response, next) => {
 
 //500
 app.use((error, request, response, next) => {
-  response.status(500).status("500");
+  response.status(500).status("Assets PC 500");
 });
 
 //서버시작
