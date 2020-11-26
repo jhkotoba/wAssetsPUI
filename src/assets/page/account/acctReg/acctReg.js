@@ -2,7 +2,7 @@
 PUI.FN.INIT = () => {
     let input, label;
 
-    wUtil.blindShow();
+    UTIL.blindShow();
     PUI.V.fetchCnt = 0;    
 
     //계좌사용처코드 조회 및 세팅
@@ -14,7 +14,7 @@ PUI.FN.INIT = () => {
             //라디오버튼 생성
             input = document.createElement("input");
             input.value = code.code;
-            wUtil.setAttributes(input, {name: "acctTgtCd", type: "radio", id: code.code});
+            UTIL.setAttributes(input, {name: "acctTgtCd", type: "radio", id: code.code});
             if(index === 0){ input.checked = true; }
             useTgt.appendChild(input);
 
@@ -36,7 +36,7 @@ PUI.FN.INIT = () => {
             //라디오버튼 생성
             input = document.createElement("input");
             input.value = code.code;
-            wUtil.setAttributes(input, {name: "acctDivCd", type: "radio", id: code.code});
+            UTIL.setAttributes(input, {name: "acctDivCd", type: "radio", id: code.code});
             if(index === 0){ input.checked = true; }
             acctType.appendChild(input);
 
@@ -57,7 +57,7 @@ PUI.FN.INIT = () => {
 PUI.FN.isInitFetchEnd = () =>{
     PUI.V.fetchCnt = PUI.V.fetchCnt+1;
     if(PUI.V.fetchCnt > 1){
-        wUtil.blindHide();
+        UTIL.blindHide();
     }
 }
 
@@ -92,7 +92,7 @@ PUI.FN.epyDtUseYnClick = event => {
 
 //저장
 PUI.FN.saveClick = event => {
-    let param = wUtil.getParams([
+    let param = UTIL.getParams([
         {name:"acctTgtCd"},
         {name:"acctDivCd"},
         {id:"acctNum", title:"계좌번호", valid:["notEmpty", "accountNumber"]},
@@ -107,7 +107,7 @@ PUI.FN.saveClick = event => {
     ]);
     
     if(param.isValid){
-        if(wUtil.isNotEmpty(param.data.fontClor) && wUtil.isNotEmpty(param.data.bkgdClor) &&
+        if(UTIL.isNotEmpty(param.data.fontClor) && UTIL.isNotEmpty(param.data.bkgdClor) &&
             param.data.fontClor === param.data.bkgdClor){
             alert("글자색과 배경색이 동일합니다.");
         }else if(confirm("저장하시겠습니까?")){

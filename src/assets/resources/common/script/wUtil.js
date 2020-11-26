@@ -1,4 +1,4 @@
-window.wUtil  = {
+export const wUtil = {
     //빈값 체크
     isEmpty(data){
         let val = null;
