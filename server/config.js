@@ -15,9 +15,6 @@ global.PUI = {
     GV: wGlobal,
     UTL: wUtil,
     REQ: wRequest
-
-
-    
 }
 
 

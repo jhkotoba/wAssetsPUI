@@ -43,7 +43,12 @@ router.get("/assets/:pattern1", async (request, response) => {
             }
         );
     }else {
-        response.redirect(PUI.GV.GATEWAY_URI + "/member/login?rtnUrl?rtnUrl="+ PUI.GV.GATEWAY_URI + "/assets");
+        response.redirect(PUI.GV.GATEWAY_URI 
+            + "/member/login?rtnUrl?rtnUrl="
+            + PUI.GV.GATEWAY_URI 
+            + "/assets/"
+            + request.params.pattern1
+        );
     }
 });
 
@@ -69,13 +74,20 @@ router.get("/assets/:pattern1/:pattern2", async (request, response) => {
             }
         );
     }else {
-        response.redirect(PUI.GV.GATEWAY_URI + "/member/login?rtnUrl?rtnUrl="+ PUI.GV.GATEWAY_URI + "/assets");
+        response.redirect(PUI.GV.GATEWAY_URI
+            + "/member/login?rtnUrl?rtnUrl="
+            + PUI.GV.GATEWAY_URI
+            + "/assets/"
+            + request.params.pattern1
+            + "/"
+            + request.params.pattern2
+            );
     }
 });
 
 //페이지 이동 (pattern3)
 router.get("/assets/:pattern1/:pattern2/::pattern3", async (request, response) => {
-    if(UTIL.isGatewayReq(request) && await PUI.REQ.isSession(request)){
+    if(PUI.UTL.isGatewayReq(request) && await PUI.REQ.isSession(request)){
         fs.readFile(
             path.join(
                 __dirname,
@@ -89,14 +101,23 @@ router.get("/assets/:pattern1/:pattern2/::pattern3", async (request, response) =
                 request.params.pattern3 + ".html"
             ), "UTF-8", (err, text) => {
                 if(PUI.UTL.isNotEmpty(err) || PUI.UTL.isEmpty(text)){
-                    response.redirect("/assets/"+request.params.pattern2);
+                    response.redirect("/assets/"+ request.params.pattern1 + "/" + request.params.pattern2);
                 }else{
                     response.send(text);
                 }
             }
         );
     }else {
-        response.redirect(PUI.GV.GATEWAY_URI + "/member/login?rtnUrl?rtnUrl="+ PUI.GV.GATEWAY_URI + "/assets");
+        response.redirect(PUI.GV.GATEWAY_URI
+            + "/member/login?rtnUrl?rtnUrl="
+            + PUI.GV.GATEWAY_URI
+            + "/assets/"            
+            + request.params.pattern1
+            + "/"
+            + request.params.pattern2
+            + "/"
+            + request.params.pattern3
+            );
     }
 });
 

@@ -29,25 +29,4 @@ const wRequest = {
         });
     }
 }
-
-//세션조회 API 호출
-// getSession: (SESSION_TOKEN) => {
-//     return new Promise((resolve, reject) => {
-//         //console.log(request.jar());            
-//         //
-//         request.post({
-//             headers: {
-//                 "content-type" : "application/json",
-//                 "Accept" : "application/json",
-//                 "cookie": "SESSION_TOKEN=" + SESSION_TOKEN
-//             },
-//             url: PUI.GV.GATEWAY_URI + "/api/member/getSession",
-//             body: "{}"
-//         }, (error, response, body) => {
-//             resolve(JSON.parse(body));
-//         });
-//     });
-// }
-
-
 module.exports = wRequest;
