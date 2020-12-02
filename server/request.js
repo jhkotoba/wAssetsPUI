@@ -24,7 +24,8 @@ const wRequest = {
                 url: PUI.GV.GATEWAY_URI + "/api/member/getSession",
                 body: "{}"
                 }, (error, response, body) => {
-                resolve(JSON.parse(body));
+                    if(error) reject(error)
+                    else resolve(JSON.parse(body));
             });
         });
     }

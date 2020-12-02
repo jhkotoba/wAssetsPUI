@@ -1,125 +1,115 @@
 const express = require("express");
-const path = require("path");
 const router = express.Router();
-const fs = require("fs");
 
 //페이지 이동
-router.get("/assets", async (request, response) => {
+router.get("/assets", async (request, response) => {   
     if(PUI.UTL.isGatewayReq(request) && await PUI.REQ.isSession(request)){
-        fs.readFile(
-            path.join(
-                __dirname,
-                "..",
-                "src",
-                "assets",
-                "page",
-                "index",
-                "index.html"
-            ), "UTF-8", (err, text) => response.send(text)
-        );
+        let index = await PUI.FS.readFile(PUI.GV.PAGE_PATH + "\\index\\index.html");
+        let main = await PUI.FS.readFile(PUI.GV.PAGE_PATH + "\\main\\main.html");
+        response.send(index.replace("<main>", "<main>" + main));
     }else{
         response.redirect(PUI.GV.GATEWAY_URI + "/member/login?rtnUrl?rtnUrl="+ PUI.GV.GATEWAY_URI + "/assets");
     }
 });
 
 //페이지 이동 (pattern1)
-router.get("/assets/:pattern1", async (request, response) => {
-    if(PUI.UTL.isGatewayReq(request) && await PUI.REQ.isSession(request)){
-        fs.readFile(
-            path.join(
-                __dirname,
-                "..",
-                "src",
-                "assets",
-                "page",
-                request.params.pattern1,
-                request.params.pattern1 + ".html"
-            ), "UTF-8", (err, text) => {
-                if(PUI.UTL.isNotEmpty(err) || PUI.UTL.isEmpty(text)){
-                    response.redirect("/assets");
-                }else{
-                    response.send(text);
-                }
-            }
-        );
-    }else {
-        response.redirect(PUI.GV.GATEWAY_URI 
-            + "/member/login?rtnUrl?rtnUrl="
-            + PUI.GV.GATEWAY_URI 
-            + "/assets/"
-            + request.params.pattern1
-        );
-    }
-});
+// router.get("/assets/:pattern1", async (request, response) => {
+//     if(PUI.UTL.isGatewayReq(request) && await PUI.REQ.isSession(request)){
+//         fs.readFile(
+//             path.join(
+//                 __dirname,
+//                 "..",
+//                 "src",
+//                 "assets",
+//                 "page",
+//                 request.params.pattern1,
+//                 request.params.pattern1 + ".html"
+//             ), "UTF-8", (err, text) => {
+//                 if(PUI.UTL.isNotEmpty(err) || PUI.UTL.isEmpty(text)){
+//                     response.redirect("/assets");
+//                 }else{
+//                     response.send(text);
+//                 }
+//             }
+//         );
+//     }else {
+//         response.redirect(PUI.GV.GATEWAY_URI 
+//             + "/member/login?rtnUrl?rtnUrl="
+//             + PUI.GV.GATEWAY_URI 
+//             + "/assets/"
+//             + request.params.pattern1
+//         );
+//     }
+// });
 
 //페이지 이동 (pattern2)
-router.get("/assets/:pattern1/:pattern2", async (request, response) => {
-    if(PUI.UTL.isGatewayReq(request) && await PUI.REQ.isSession(request)){
-        fs.readFile(
-            path.join(
-                __dirname,
-                "..",
-                "src",
-                "assets",
-                "page",
-                request.params.pattern1,
-                request.params.pattern2,
-                request.params.pattern2 + ".html"
-            ), "UTF-8", (err, text) => {
-                if(PUI.UTL.isNotEmpty(err) || PUI.UTL.isEmpty(text)){
-                    response.redirect("/assets/"+request.params.pattern1);
-                }else{
-                    response.send(text);
-                }
-            }
-        );
-    }else {
-        response.redirect(PUI.GV.GATEWAY_URI
-            + "/member/login?rtnUrl?rtnUrl="
-            + PUI.GV.GATEWAY_URI
-            + "/assets/"
-            + request.params.pattern1
-            + "/"
-            + request.params.pattern2
-            );
-    }
-});
+// router.get("/assets/:pattern1/:pattern2", async (request, response) => {
+//     if(PUI.UTL.isGatewayReq(request) && await PUI.REQ.isSession(request)){
+//         fs.readFile(
+//             path.join(
+//                 __dirname,
+//                 "..",
+//                 "src",
+//                 "assets",
+//                 "page",
+//                 request.params.pattern1,
+//                 request.params.pattern2,
+//                 request.params.pattern2 + ".html"
+//             ), "UTF-8", (err, text) => {
+//                 if(PUI.UTL.isNotEmpty(err) || PUI.UTL.isEmpty(text)){
+//                     response.redirect("/assets/"+request.params.pattern1);
+//                 }else{
+//                     response.send(text);
+//                 }
+//             }
+//         );
+//     }else {
+//         response.redirect(PUI.GV.GATEWAY_URI
+//             + "/member/login?rtnUrl?rtnUrl="
+//             + PUI.GV.GATEWAY_URI
+//             + "/assets/"
+//             + request.params.pattern1
+//             + "/"
+//             + request.params.pattern2
+//             );
+//     }
+// });
 
 //페이지 이동 (pattern3)
-router.get("/assets/:pattern1/:pattern2/::pattern3", async (request, response) => {
-    if(PUI.UTL.isGatewayReq(request) && await PUI.REQ.isSession(request)){
-        fs.readFile(
-            path.join(
-                __dirname,
-                "..",
-                "src",
-                "assets",
-                "page",
-                request.params.pattern1,
-                request.params.pattern2,
-                request.params.pattern3,
-                request.params.pattern3 + ".html"
-            ), "UTF-8", (err, text) => {
-                if(PUI.UTL.isNotEmpty(err) || PUI.UTL.isEmpty(text)){
-                    response.redirect("/assets/"+ request.params.pattern1 + "/" + request.params.pattern2);
-                }else{
-                    response.send(text);
-                }
-            }
-        );
-    }else {
-        response.redirect(PUI.GV.GATEWAY_URI
-            + "/member/login?rtnUrl?rtnUrl="
-            + PUI.GV.GATEWAY_URI
-            + "/assets/"            
-            + request.params.pattern1
-            + "/"
-            + request.params.pattern2
-            + "/"
-            + request.params.pattern3
-            );
-    }
-});
+// router.get("/assets/:pattern1/:pattern2/:pattern3", async (request, response) => {
+//     if(PUI.UTL.isGatewayReq(request) && await PUI.REQ.isSession(request)){
+//         fs.readFile(
+//             path.join(
+//                 __dirname,
+//                 "..",
+//                 "src",
+//                 "assets",
+//                 "page",
+//                 request.params.pattern1,
+//                 request.params.pattern2,
+//                 request.params.pattern3,
+//                 request.params.pattern3 + ".html"
+//             ), "UTF-8", (err, text) => {
+//                 if(PUI.UTL.isNotEmpty(err) || PUI.UTL.isEmpty(text)){
+//                     response.redirect("/assets/"+ request.params.pattern1 + "/" + request.params.pattern2);
+//                 }else{
+//                     response.send(text);
+//                 }
+//             }
+//         );
+//     }else {
+//         response.redirect(PUI.GV.GATEWAY_URI
+//             + "/member/login?rtnUrl?rtnUrl="
+//             + PUI.GV.GATEWAY_URI
+//             + "/assets/"            
+//             + request.params.pattern1
+//             + "/"
+//             + request.params.pattern2
+//             + "/"
+//             + request.params.pattern3
+//             );
+//     }
+// });
 
 //html가져오기
 // router.get("/assets/getHtml", cors({origin: PUI.GV.GATEWAY_URI}), (request, response) => {
