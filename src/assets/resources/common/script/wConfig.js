@@ -27,7 +27,7 @@ window.PUI = {
     // V: {},
     // //페이지내 함수
     // //FN: {INIT: function(){}}
-
+   
     //전역상수
     GV: wGlobal,
     //route
@@ -35,5 +35,7 @@ window.PUI = {
     //유틸리티
     UTL: wUtil,
     //fetch
-    FT: wFetch
+    FT: wFetch,
+    //화면 엘리먼트
+    EL: {}
 };
