@@ -8,10 +8,9 @@ const app = express();
 require("./config.js");
 
 //정적 리소스 임포트
-const fs = require("fs");
-fs.readdirSync("./src", { withFileTypes: true }).forEach(item => {            
+PUI.FS.readdirSync("./src", { withFileTypes: true }).forEach(item => {            
   if(item.isDirectory()){               
-      app.use("/"+item.name, express.static(PUI.UTL.getViewPath()  + '\\' + "src" + '\\' +item.name));
+      app.use("/"+item.name, express.static(PUI.UTL.getViewPath()  + '\\src\\' +item.name));
   }
 });
 

@@ -8,7 +8,8 @@ const wFs = {
                 else resolve(text);
             });
         });
-    }
+    },
+    readdirSync: (path, type)  => fs.readdirSync(path, type)
 }
 
 module.exports = wFs;
