@@ -29,7 +29,7 @@ window.PUI = {
     // //FN: {INIT: function(){}}
    
     //전역상수
-    GV: wGlobal,
+    GV: wGlobal,    
     //route
     RUT: wRoute,
     //유틸리티
@@ -37,5 +37,10 @@ window.PUI = {
     //fetch
     FT: wFetch,
     //화면 엘리먼트
-    EL: {}
+    EL: {},
+    //전역변수
+    V:{},
+    //등록함수
+    FN:{}
+
 };
