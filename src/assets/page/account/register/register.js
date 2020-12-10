@@ -1,6 +1,6 @@
 
 //초기세팅
-PUI.FN.initialize = function(){
+PUI.FN.initialize = async function(){
 
 }
 

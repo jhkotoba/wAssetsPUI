@@ -1,11 +1,11 @@
 /**
  * 페이지 루팅
  */
-export const wRoute = {
-    test(){
-        return "TEST";
-    }
-}
+// export const wRoute = {
+//     test(){
+//         return "TEST";
+//     }
+// }
 
 
 // window.wRoute = {

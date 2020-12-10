@@ -1,5 +1,5 @@
 import { wGlobal } from "./wGlobal.js"
-import { wRoute } from "./wRoute.js"
+//import { wRoute } from "./wRoute.js"
 import { wFetch } from "./wFetch.js"
 import { wUtil } from "./wUtil.js"
 
@@ -31,7 +31,7 @@ window.PUI = {
     //전역상수
     GV: wGlobal,    
     //route
-    RUT: wRoute,
+    //RUT: wRoute,
     //유틸리티
     UTL: wUtil,
     //fetch
