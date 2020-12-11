@@ -8,7 +8,7 @@ PUI.FN.createMenu = function(menuList){
     menuList.filter(menu => menu.menuLv == 1).forEach(menu => {
         li = document.createElement("li");
         li.classList.add("dropdown");
-        li.dataset.menuCd = menu.menuCd;
+        li.dataset.menuUrl = menu.menuUrl;
         if(PUI.UTL.isNotEmpty(menu.pageCd)) li.dataset.pageCd = menu.pageCd;
 
         a = document.createElement("a");
@@ -25,14 +25,12 @@ PUI.FN.createMenu = function(menuList){
     //2레벨 메뉴 생성
     menuList.filter(menu => menu.menuLv == 2).forEach(menu => {
         for(let element of ul.childNodes){
-            if(element.dataset.menuCd === menu.menuUprCd){
+            if(menu.menuUrl.includes(element.dataset.menuUrl)){
+                console.log(menu);
                 a = document.createElement("a");
-                a.dataset.menuCd = menu.menuCd;
+                a.href = "/assets" + menu.menuUrl;
                 a.textContent = menu.menuNm;
                 element.firstChild.nextSibling.appendChild(a);
-                if(PUI.UTL.isNotEmpty(menu.pageCd)){
-                    a.dataset.pageCd = menu.pageCd;
-                }
             }
         }
     });
