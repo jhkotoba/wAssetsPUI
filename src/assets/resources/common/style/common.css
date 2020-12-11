@@ -56,6 +56,7 @@ body{background: #363636; font-size: 12px; color: #C6C6C6; width: 1400px; margin
 
 /* table */
 .table{border: 1px solid #585858;}
+.table-box{margin: 3px 0px 0px 0px;}
 .table th{background: #585858; padding: 5px 5px 5px 5px; height: 33px; font-size: 13px;}
 .table td{padding: 5px 5px 5px 5px; height: 33px; border: 1px solid #585858;}
 .table input[type=radio]{cursor: pointer;}
@@ -65,8 +66,11 @@ body{background: #363636; font-size: 12px; color: #C6C6C6; width: 1400px; margin
 .blind {z-index: 9999; background: rgba(234, 234, 234, 0.1);}
 
 /* width */
-.w100{width: 100%;}
+.w100pc{width: 100% !important;}
+.w98pc{width: 98% !important;}
+
+/* hight */
+.h100px{height: 100px !important;}
 
 /* color */
 .color-display{display: inline-block; width: 20px; height: 20px; vertical-align: middle; border: 1px solid #646464; cursor: pointer;}
-

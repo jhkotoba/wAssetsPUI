@@ -3,103 +3,93 @@
 </div>
 
 <section class="content">
-    <div class="table-title">■ 계좌정보 등록</div>
-    <div class="right-btn-box">
-        <button class="btn-gray" id="cancel">취소</button>
-        <button class="btn-gray" id="save">저장</button>
-    </div>   
-    <div>        
-        <div class="table-box">
-            <table class="table w100">
-                <colgroup>
-                    <col width="100px">
-                    <col width="*">
-                </colgroup>
-                <tbody>
-                    <tr>
-                        <th>사용처</th>
-                        <td>
-                            <div id="useTgt"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>계좌구분</th>
-                        <td>
-                            <div id="acctType"></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>계좌명</th>
-                        <td>
-                            <div>
-                                <input id="acctNm" type="text" class="input-gray">
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>계좌번호</th>
-                        <td>
-                            <div>
-                                <input id="acctNum" type="text" class="input-gray">
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>생성일</th>
-                        <td>
-                            <div>
-                                <input id="cratDt" type="text" class="input-gray">
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>만기일</th>
-                        <td>
-                            <div>
-                                <input type="checkbox" id="epyDtUseYn">
-                                <label for="epyDtUseYn">만기일 사용</label>
-                                <input type="text" id="epyDt" class="input-gray" value="2099-12-31" disabled>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>색상</th>
-                        <td>
-                            <div>
-                                <span>글자색</span>
-                                <div id="fontClorDsp" class="color-display"></div>
-                                <input id="fontClor" type="text" class="input-gray">
-                                <span>배경색</span>
-                                <div id="bkgdClorDsp" class="color-display"></div>
-                                <input id="bkgdClor" type="text" class="input-gray">
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>사용여부</th>
-                        <td>
-                            <div>
-                                <input type="radio" id="useY" name="useYn" value="Y" checked>
-                                <label for="useY">사용</label>
-                                <input type="radio" id="useN" name="useYn" value="N">
-                                <label for="useN">미사용/해약</label>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>장부연결</th>
-                        <td>추후개발(장부개발 완료후 연결)</td>
-                    </tr>
-                    <tr>
-                        <th>비고</th>
-                        <td>
-                            <textarea id="rmk" class="input-gray">
-                            </textarea>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <div class="table-title">■ 계좌 기본정보 등록</div>           
+    <div class="table-box">
+        <table class="table">
+            <colgroup>
+                <col width="100px">
+                <col width="240px">
+                <col width="100px">
+                <col width="240px">
+                <col width="100px">
+                <col width="240px">
+                <col width="100px">
+                <col width="240px">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th>사용처</th>
+                    <td>
+                        <div>
+                            <input id="acctTgt" type="text" class="input-gray w98pc">
+                        </div>
+                    </td>
+                    <th>계좌구분</th>
+                    <td>
+                        <div>
+                            <input id="acctType" type="text" class="input-gray w98pc">
+                        </div>
+                    </td>
+                    <th>계좌명</th>
+                    <td>
+                        <div>
+                            <input id="acctNm" type="text" class="input-gray w98pc">
+                        </div>
+                    </td>
+                    <th>계좌번호</th>
+                    <td>
+                        <div>
+                            <input id="acctNum" type="text" class="input-gray w98pc">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>사용여부</th>
+                    <td>
+                        <div>
+                            <input type="radio" id="useY" name="useYn" value="Y" checked>
+                            <label for="useY">사용</label>
+                            <input type="radio" id="useN" name="useYn" value="N">
+                            <label for="useN">미사용/해약</label>
+                        </div>
+                    </td>
+                    <th>생성일</th>
+                    <td>
+                        <div>
+                            <input id="cratDt" type="text" class="input-gray w98pc">
+                        </div>
+                    </td>
+                    <th>만기일</th>
+                    <td colspan="3">
+                        <div>
+                            <input type="checkbox" id="epyDtUseYn">
+                            <label for="epyDtUseYn">만기일 사용</label>
+                            <input type="text" id="epyDt" class="input-gray" value="2099-12-31" disabled>
+                        </div>
+                    </td>                    
+                </tr>                
+                <tr>
+                    <th>색상</th>
+                    <td colspan="7">
+                        <div>
+                            <span>글자색</span>
+                            <div id="fontClorDsp" class="color-display"></div>
+                            <input id="fontClor" type="text" class="input-gray">
+                            <span>배경색</span>
+                            <div id="bkgdClorDsp" class="color-display"></div>
+                            <input id="bkgdClor" type="text" class="input-gray">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>비고</th>
+                    <td colspan="9">
+                        <textarea id="remak" class="input-gray w100pc h100px">
+                        </textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>    
 </section>
 <script type="module" src="/assets/page/account/register/register.js"></script>
