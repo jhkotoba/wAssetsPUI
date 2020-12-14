@@ -1,5 +1,4 @@
 import { wGlobal } from "./wGlobal.js"
-//import { wRoute } from "./wRoute.js"
 import { wFetch } from "./wFetch.js"
 import { wUtil } from "./wUtil.js"
 
@@ -7,31 +6,8 @@ import { wUtil } from "./wUtil.js"
  * 웹 공통 유틸
  */
 window.PUI = {
-    // element: {
-    //     //<nav> 태그
-    //     nav: [...document.getElementsByTagName("nav")][0],
-    //     //<main> 태그
-    //     main: [...document.getElementsByTagName("main")][0]
-    // },
-    // //각 페이지 html
-    // html: {},
-    // //각 페이지 script
-    // script: {}, 
-    // //각 페이지 init
-    // init: {},
-    // //세션정보
-    // session: {},
-    // //전역변수
-    // RV: {},
-    // //페이지내 변수 저장공간
-    // V: {},
-    // //페이지내 함수
-    // //FN: {INIT: function(){}}
-   
     //전역상수
-    GV: wGlobal,    
-    //route
-    //RUT: wRoute,
+    GV: wGlobal,
     //유틸리티
     UTL: wUtil,
     //fetch
@@ -41,6 +17,16 @@ window.PUI = {
     //전역변수
     V:{},
     //등록함수
-    FN:{}
-
+    FN:{},
+    //공통이벤트
+    EV:{}
 };
+
+//클릭이벤트
+PUI.GV.MAIN.addEventListener("click", event => PUI.UTL.runFunctionIfNotEmpty(PUI.EV.CLICK, event));
+//더블클릭이벤트
+PUI.GV.MAIN.addEventListener("dblclick", event => PUI.UTL.runFunctionIfNotEmpty(PUI.EV.DBCLICK, event));
+//변경이벤트
+PUI.GV.MAIN.addEventListener("change", event => PUI.UTL.runFunctionIfNotEmpty(PUI.EV.CHANGE, event));
+//키업이벤트
+PUI.GV.MAIN.addEventListener("keyup", event => PUI.UTL.runFunctionIfNotEmpty(PUI.EV.KEYUP, event));
