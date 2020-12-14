@@ -1,16 +1,68 @@
-
 //초기세팅
-PUI.FN.initialize = async function(){
+PUI.FN.INIT = function(){};
 
+//클릭이벤트
+PUI.EV.CLICK = function(event){
+    switch(event.target.id){
+        case "register" :
+            PUI.FN.accountRegister(event);
+            break;
+        case "cancel" :
+            if(confirm("계좌등록을 취소 하시겠습니까?")){
+                window.location.href = "/assets/account/list";
+            }
+            break;
+        case "epyDtUseYn" :
+            let epyDt = document.getElementById("epyDt");
+            if(event.target.checked){
+                epyDt.value = "";
+                epyDt.disabled = false;
+            }else{
+                epyDt.value = "9999-12-31";
+                epyDt.disabled = true;
+            }
+            break;
+    }
 }
 
-//이벤트
-PUI.FN.event = function(){
+//계좌저장
+PUI.FN.accountRegister = function(event){
+    let param = PUI.UTL.getParams([
+        {id:"acctTgt", title:"사용처", valid:["notEmpty"]},
+        {id:"acctDiv", title:"계좌구분", valid:["notEmpty"]},
+        {id:"acctNm", title:"계좌명", valid:["notEmpty"]},
+        {id:"acctNum", title:"계좌번호", valid:["notEmpty", "accountNumber"]},
+        {id:"cratDt", title:"생성일", valid:["notEmpty", "date"]},
+        {id:"epyDtUseYn"},
+        {id:"epyDt"},
+        {id:"fontClor"},
+        {id:"bkgdClor"},
+        {name:"useYn"},
+        {id:"rmk"}
+    ]);
     
+    if(param.isValid){
+        if(UTIL.isNotEmpty(param.data.fontClor) && UTIL.isNotEmpty(param.data.bkgdClor) &&
+            param.data.fontClor === param.data.bkgdClor){
+            alert("글자색과 배경색이 동일합니다.");
+        }else if(confirm("저장하시겠습니까?")){
+            param.data.cratDt = param.data.cratDt.replace(/-/gi, "");
+            param.data.epyDt = param.data.epyDt.replace(/-/gi, "");
+            wFetch.postFetch("/api/assets/saveAccount" , param.data)
+                .then(response => {
+                    if(response.resultCode === "0000"){
+                        alert("저장하였습니다.");
+                    }else{
+                        alert("ERROR CODE::" + response.resultCode);
+                    }
+                });
+        }
+    }else{
+        alert(param.msg);
+        param.target.focus();
+    }
 }
 
-PUI.FN.initialize();
-PUI.FN.event();
 
 
 // //초기화면 세팅
