@@ -26,7 +26,6 @@ PUI.FN.createMenu = function(menuList){
     menuList.filter(menu => menu.menuLv == 2).forEach(menu => {
         for(let element of ul.childNodes){
             if(menu.menuUrl.includes(element.dataset.menuUrl)){
-                console.log(menu);
                 a = document.createElement("a");
                 a.href = "/assets" + menu.menuUrl;
                 a.textContent = menu.menuNm;
@@ -49,6 +48,11 @@ if(PUI.UTL.getCookie("SESSION_TOKEN") && window.sessionStorage.getItem("menuList
         }
     });
 }
+
+
+
+//이벤트 설정
+//document.getElementsByTagName("main")[0].addEventListener("click", PUI.UTL.runFunctionIfNotEmpty(PUI.EV.CLICK));
 
 // //메뉴생성
 // PUI.FT.getFetch("/api/admin/getMenuCodeList?mduTpCd=ASSETS").then(menu =>{
