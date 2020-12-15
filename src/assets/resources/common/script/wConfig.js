@@ -30,3 +30,5 @@ PUI.GV.MAIN.addEventListener("dblclick", event => PUI.UTL.runFunctionIfNotEmpty(
 PUI.GV.MAIN.addEventListener("change", event => PUI.UTL.runFunctionIfNotEmpty(PUI.EV.CHANGE, event));
 //키업이벤트
 PUI.GV.MAIN.addEventListener("keyup", event => PUI.UTL.runFunctionIfNotEmpty(PUI.EV.KEYUP, event));
+//초기실행
+window.addEventListener('DOMContentLoaded', () => PUI.UTL.runFunctionIfNotEmpty(PUI.FN.INIT));

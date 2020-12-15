@@ -1,5 +1,94 @@
 //초기세팅
-PUI.FN.INIT = function(){};
+PUI.FN.INIT = async function(){
+    //계좌사용처, 계좌구분 세팅
+    let response = await PUI.FT.getFetch("/api/admin/getCodeList?grpCode=ACCT_TGT_CD,ACCT_DIV_CD");
+    PUI.V.acctTgtCd = response.data.filter(item => item.grpCode === "ACCT_TGT_CD");
+    PUI.V.acctDivCd = response.data.filter(item => item.grpCode === "ACCT_DIV_CD");
+
+    let input, label = null;
+    let acctTgt = document.getElementById("acctTgt");
+    let acctDiv = document.getElementById("acctDiv");
+
+    console.log("PUI.V.acctTgtCd::", PUI.V.acctTgtCd);
+
+    //계좌사용처 생성
+    PUI.V.acctTgtCd.forEach((itme, index) => {          
+        //라디오버튼 생성
+        input = document.createElement("input");
+        input.value = itme.code;
+        PUI.UTL.setAttributes(input, {name: "acctTgtCd", type: "radio", id: itme.code});
+        if(index === 0){ input.checked = true; }
+        acctTgt.appendChild(input);
+
+        //라벨 생성
+        label = document.createElement("label");
+        label.setAttribute("for", itme.code);
+        label.textContent =  itme.codeNm;
+        acctTgt.appendChild(label);
+    });
+
+    //계좌구분
+    PUI.V.acctDivCd.forEach((itme, index) => {
+        //라디오버튼 생성
+        input = document.createElement("input");
+        input.value = itme.code;
+        PUI.UTL.setAttributes(input, {name: "acctDivCd", type: "radio", id: code.code});
+        if(index === 0){ input.checked = true; }
+        acctDiv.appendChild(input);
+
+        //라벨 생성
+        label = document.createElement("label");
+        label.setAttribute("for", itme.code);
+        label.textContent =  itme.codeNm;
+        acctDiv.appendChild(label);
+    });
+
+     //계좌구분코드 조회 및 세팅
+//     wFetch.getFetch("/api/admin/getCodeList?grpCode=ACCT_DIV_CD").then(list => {
+//         PUI.V.acctType = list;
+
+//         let acctType = document.getElementById("acctType");
+//         list.forEach((code, index) => {
+//             //라디오버튼 생성
+//             input = document.createElement("input");
+//             input.value = code.code;
+//             UTIL.setAttributes(input, {name: "acctDivCd", type: "radio", id: code.code});
+//             if(index === 0){ input.checked = true; }
+//             acctType.appendChild(input);
+
+//             //라벨 생성
+//             label = document.createElement("label");
+//             label.setAttribute("for", code.code);
+//             label.textContent =  code.codeNm;
+//             acctType.appendChild(label);
+//         });
+//         input = null;
+
+
+//     })
+    
+    
+    // .then(list => {
+    //     PUI.V.acctTpCdList = list;
+
+    //     let useTgt = document.getElementById("useTgt");
+    //     list.forEach((code, index) => {
+    //         //라디오버튼 생성
+    //         input = document.createElement("input");
+    //         input.value = code.code;
+    //         UTIL.setAttributes(input, {name: "acctTgtCd", type: "radio", id: code.code});
+    //         if(index === 0){ input.checked = true; }
+    //         useTgt.appendChild(input);
+
+    //         //라벨 생성
+    //         label = document.createElement("label");
+    //         label.setAttribute("for", code.code);
+    //         label.textContent =  code.codeNm;
+    //         useTgt.appendChild(label);
+    //     });
+    //     input = null;
+    // }).then(PUI.FN.isInitFetchEnd);
+};
 
 //클릭이벤트
 PUI.EV.CLICK = function(event){

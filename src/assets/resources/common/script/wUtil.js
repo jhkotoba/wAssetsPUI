@@ -81,7 +81,7 @@ export const wUtil = {
 
     //속성s 추가
     setAttributes(element, obj){
-        for(key in obj){
+        for(let key in obj){
             element.setAttribute(key, obj[key]);
         }        
     },
@@ -118,7 +118,6 @@ export const wUtil = {
 
     //파라미터 가져오기 및 밸리데이션 체크
     //id값의 value값 가져오기 id는 밸류데이션 체크
-    //name값은 radio버튼 값에한 한함.
     getParams(objs){
         let result = {isValid: true, msg: null, data: null};
         if(this.isNotArray(objs)){
