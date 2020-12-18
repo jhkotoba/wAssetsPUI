@@ -42,8 +42,21 @@ export const wFetch = {
     },
 
     //POST 조회
-    postFetch(){
-
+    postFetch(url, param){
+        return new Promise((resolve, reject) => {
+            fetch(url, {
+                method: "POST",
+                mode: "same-origin",
+                credentials: "include",
+                headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                },
+                body: JSON.stringify(param)
+            })
+            .then(response => response.json())
+            .then(data => resolve(data));
+        });
     }
 
 }

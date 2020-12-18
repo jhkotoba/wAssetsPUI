@@ -116,9 +116,79 @@ export const wUtil = {
         }
     },
 
+    //파라미터 가져오기
+    getParams(list, option){
+        let element, value, temp = null, data = {};
+        let result = {isValid: true, message: null, data: null};
+
+        list.forEach(item => {
+
+            if(result.isValid === false) return;
+
+            switch(item.type){
+            case "input" :
+                element = document.getElementById(item.target);
+                value = element.value;
+                break;
+            case "raido" :
+                value = this.getRadioValue(item.target);
+                break;
+            case "check" :
+                element = document.getElementById(item.target);
+                value = element.checked ? "Y" : "N";
+                break;
+            case "select" :
+                element = document.getElementById(item.target);
+                value = element.value;
+                break;
+            }
+            
+            if(option.isValid && item.valid){
+                for(let i=0; i<item.valid.length; i++){
+                    let valid = this.validCheck(item.valid[i], value, item.title);                    
+                    if(valid.isValid === false){
+                        result.isValid = valid.isValid;
+                        result.message = valid.message;
+                        result.element = element;
+                        result.data = null;
+                        
+                        if(option.isAlert){
+                            alert(valid.message);
+                        }
+                        if(option.isFocus){
+                            switch(item.type){
+                                case "input": 
+                                case "select": 
+                                    element.focus();
+                                    break;
+                                case "raido":
+                                    element = document.getElementsByName(item.target);
+                                    if(this.isNotEmpty(element) && element.length > 0){                                        
+                                        element[0].focus();
+                                    }
+                                    break;
+                                case "check":
+                                    element.focus(); 
+                                    break;
+                            }
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            if(result.isValid){
+                data[item.target] = value;
+            }
+        });
+        result.data = data;
+        return result;
+    },
+
     //파라미터 가져오기 및 밸리데이션 체크
     //id값의 value값 가져오기 id는 밸류데이션 체크
-    getParams(objs){
+    getParams_old(objs){
         let result = {isValid: true, msg: null, data: null};
         if(this.isNotArray(objs)){
             return result;
@@ -175,29 +245,31 @@ export const wUtil = {
     validCheck(validNm, value, title){
         let result = {};
 
+        console.log("validCheck:", validNm );
+
         let titleValue = this.isEmptyRtn(title, "");
         titleValue = titleValue == "" ? "" : titleValue + "의 "
 
         switch(validNm){
         case "notEmpty":
             result.isValid = this.isNotEmpty(value);
-            result.msg = titleValue + "값이 비어있습니다.";
+            result.message = titleValue + "값이 비어있습니다.";
             break;
         case "accountNumber":
             result.isValid = this.isAccountNumber(value);
-            result.msg = "계좌번호 형식이 바르지 않습니다.";
+            result.message = "계좌번호 형식이 바르지 않습니다.";
             break;
         case "date":
             result.isValid = this.isDate(value, "YYYY-MM-DD");
-            result.msg = titleValue + "날짜형식이 바르지 않습니다.";
+            result.message = titleValue + "날짜형식이 바르지 않습니다.";
             break;
         case "dateMinute":
             result.isValid = this.isDate(value, "YYYY-MM-DD HH:MM");
-            result.msg = titleValue + "날짜형식이 바르지 않습니다.";
+            result.message = titleValue + "날짜형식이 바르지 않습니다.";
             break;
         case "datetime":
             result.isValid = this.isDate(value, "YYYY-MM-DD HH:MM:SS");
-            result.msg = titleValue + "날짜형식이 바르지 않습니다.";
+            result.message = titleValue + "날짜형식이 바르지 않습니다.";
             break;
         }
 
@@ -219,7 +291,8 @@ export const wUtil = {
 
     //날짜 밸리데이션 체크
     isDate(date, pattern){
-
+        let datePattern = null;
+        
         switch(pattern.toUpperCase()){
         case "YYYY-MM-DD":	
             datePattern = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1])$/;	
