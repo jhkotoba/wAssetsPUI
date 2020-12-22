@@ -8,7 +8,7 @@ export const wFetch = {
         if(PUI.UTL.isEmpty(session)){
             return false;
         }else{
-            return session.isLogin;
+            return session.loginYn == "Y";
         }
     },
 
