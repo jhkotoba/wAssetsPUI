@@ -338,5 +338,19 @@ export const wUtil = {
         }catch(err){
             return false;
         }
+    },
+   
+    //리스트 -> 코드Map형식으로 변환
+    listToCode(list){
+        return this.listToMap(list, "code", "codeNm");
+    },
+
+    //리스트 -> Map형식으로 변환
+    listToMap(list, keyName, valueName){
+        let result = new Object();        
+        list.forEach(item => {
+            result[item[keyName]] = item[valueName];
+        });
+        return result;
     }
 }

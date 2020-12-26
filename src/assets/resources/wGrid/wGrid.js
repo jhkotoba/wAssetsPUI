@@ -26,51 +26,8 @@ class wGrid {
             bodyTb : document.createElement("table")
         }
 
-        //그리드내 유틸함수
-        this.util = {
-            isEmpty(value){
-                if(typeof value === "string"){
-                    if(value.trim() === "") return true;
-                    else return false;
-                }else{
-                    if(value === undefined || value === null) return true;
-                    else return false;
-                }
-            },
-            isNotEmpty(value){ 
-                return !this.isEmpty(value);
-            },
-            isEmptyRtn(value, emptyValue){
-                if(this.isEmpty(value)){
-                    return emptyValue;
-                }else{
-                    return value;
-                }
-            },
-            addElementStyleAttribute(element, style, attribute){
-                switch(style){
-                    case "width":
-                    case "height":
-                        if(this.isNotEmpty(attribute)){
-                            if(typeof attribute === "number"){
-                                element.style[style] = attribute + "px";
-                            }else{
-                                element.style[style] = attribute;
-                            }
-                        }
-                        break;
-                    default: 
-                        element.style[style] = attribute;
-                        break;
-                }
-            },
-            //자식 노드 비우기
-            childElementEmpty(element){
-                while(element.hasChildNodes()){
-                    element.removeChild(element.firstChild);
-                }
-            }
-        }
+        //그리드내 유틸함수 생성
+        this._createUtil();
 
         //필드저장
         this._field = args.field;
@@ -92,7 +49,10 @@ class wGrid {
         //그리드 스타일세팅
         this._element.target.classList.add("wgrid-field");
         this.util.addElementStyleAttribute(this._element.target, "width", args.option.style.width);
-        this.util.addElementStyleAttribute(this._element.target, "height", args.option.style.height);        
+        this.util.addElementStyleAttribute(this._element.target, "height", args.option.style.height);
+
+        //이벤트 연결
+        this._createEvent(args.event);
        
         //생성시 바로 그리드 생성
         this._create(this._option.isInitCreate);
@@ -130,6 +90,14 @@ class wGrid {
             if(typeof obj.callbackFn === "function"){
                 this.callbackFn();
             }
+        }
+    }
+
+    getData(rowSeq){
+        if(this.util.isEmpty(rowSeq)){
+            return this._data;
+        }else{
+            return this._data[rowSeq];
         }
     }
 
@@ -243,6 +211,7 @@ class wGrid {
     //바디 생성 - 리스트 - 행
     _bodyListRowCreate(row, rIdx){
         let tr = document.createElement("tr");
+        tr.dataset.rowSeq = rIdx;
 
         //cell 생성후 태그 연결
         this._field.forEach((field, fIdx) => {           
@@ -298,6 +267,107 @@ class wGrid {
     //풋터 생성 - 섬네일
     _footerThumCreate(){
        
+    }
+
+    //이벤트 생성
+    _createEvent(cEvent){
+        //이벤트 연결 - click
+        this._element.target.addEventListener("click", event => {
+            if(this.util.isFunction(cEvent.click)){
+                cEvent.click(event, this.getData(this.util.getTrNode(event.target).dataset.rowSeq));
+            }
+            event.stopPropagation();
+        });
+        //이벤트 연결 - dbclick
+        this._element.target.addEventListener("dblclick", event => {            
+            if(this.util.isFunction(cEvent.dblclick)){
+                cEvent.dblclick(event, this.getData(this.util.getTrNode(event.target).dataset.rowSeq));
+            }
+            event.stopPropagation();
+        });
+    }
+
+    //그리드내 유틸생성
+    _createUtil(){
+        this.util = {
+            isEmpty(value){
+                if(typeof value === "string"){
+                    if(value.trim() === "") return true;
+                    else return false;
+                }else{
+                    if(value === undefined || value === null) return true;
+                    else return false;
+                }
+            },
+            isNotEmpty(value){ 
+                return !this.isEmpty(value);
+            },
+            isEmptyRtn(value, emptyValue){
+                if(this.isEmpty(value)){
+                    return emptyValue;
+                }else{
+                    return value;
+                }
+            },
+            isFunction(fn){
+                if(fn == null || fn == undefined){
+                    return false;
+                }else if(typeof fn === "function"){
+                    return true;
+                }else{
+                    return false;
+                }
+            },
+            addElementStyleAttribute(element, style, attribute){
+                switch(style){
+                    case "width":
+                    case "height":
+                        if(this.isNotEmpty(attribute)){
+                            if(typeof attribute === "number"){
+                                element.style[style] = attribute + "px";
+                            }else{
+                                element.style[style] = attribute;
+                            }
+                        }
+                        break;
+                    default: 
+                        element.style[style] = attribute;
+                        break;
+                }
+            },
+            //자식 노드 비우기
+            childElementEmpty(element){
+                while(element.hasChildNodes()){
+                    element.removeChild(element.firstChild);
+                }
+            },
+            //현재 노드의 부모를 찾다가 TR태그 만날시 멈추고 반환
+            getTrNode(node){
+                while(true){
+                    if(node.tagName === "TR"){
+                        break;						
+                    }else if(node.tagName === "TABLE" || node.tagName === "BODY" || node.tagName === "HTML"){
+                        return null;						
+                    }else{
+                        node = node.parentNode;
+                    }
+                }
+                return node;
+            },
+            //현재 노드의 부모를 찾다가 TD태그 만날시 멈추고 반환
+	        getTdNode(node){
+                while(true){
+                    if(node.tagName === "TD"){
+                        break;						
+                    }else if(node.tagName === "TABLE" || node.tagName === "BODY" || node.tagName === "HTML"){
+                        return null;						
+                    }else{
+                        node = node.parentNode;
+                    }
+                }
+                return node;
+	        }
+        }
     }
 }
 window.wGrid = wGrid;
