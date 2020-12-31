@@ -1,7 +1,12 @@
 //초기세팅
 PUI.FN.INIT = async function(){
+
+    let acctSeq = new URLSearchParams(location.search).get("acctSeq");
+    if(PUI.UTL.isEmpty(acctSeq)) window.location.href = "/assets";
+
     //계좌사용처, 계좌구분 세팅
-    let response = await PUI.FT.getFetch("/api/admin/getCodeList?grpCode=ACCT_TGT_CD,ACCT_DIV_CD");
+    let response = null;
+    response = await PUI.FT.getFetch("/api/admin/getCodeList?grpCode=ACCT_TGT_CD,ACCT_DIV_CD");
     PUI.V.acctTgtCd = response.data.filter(item => item.grpCode === "ACCT_TGT_CD");
     PUI.V.acctDivCd = response.data.filter(item => item.grpCode === "ACCT_DIV_CD");
 
@@ -38,6 +43,23 @@ PUI.FN.INIT = async function(){
         label.textContent =  itme.codeNm;
         acctDiv.appendChild(label);
     });
+
+    //계좌정보 조회
+    response = await PUI.FT.getFetch("/api/assets/getAccount?acctSeq="+acctSeq);    
+    PUI.V.account = response.data;
+    if(PUI.UTL.isNotEmpty(PUI.V.account)){
+        document.getElementById(PUI.V.account.acctTgtCd).checked = true;
+        document.getElementById(PUI.V.account.acctDivCd).checked = true;
+        document.getElementById("acctNm").value = PUI.V.account.acctNm;
+        document.getElementById("acctNum").value = PUI.V.account.acctNum;
+        document.getElementById("use"+PUI.V.account.useYn).checked = true;
+        document.getElementById("cratDt").value = PUI.V.account.cratDt;
+        if(PUI.V.account.epyDtUseYn === PUI.GV.Y){
+            document.getElementById("epyDtUseYn").checked = true;
+            document.getElementById("epyDt").value = PUI.V.account.epyDt;
+        }
+        document.getElementById("remark").value = PUI.V.account.remark;
+    }
 };
 
 //클릭이벤트
@@ -47,7 +69,7 @@ PUI.EV.CLICK = function(event){
             PUI.FN.accountRegister(event);
             break;
         case "cancel" :
-            if(confirm("계좌등록을 취소 하시겠습니까?")){
+            if(confirm("계좌수정을 취소 하시겠습니까?")){
                 window.location.href = "/assets/account/list";
             }
             break;
@@ -93,8 +115,8 @@ PUI.EV.CHANGE = event => {
     }
 }
 
-//계좌저장
-PUI.FN.accountRegister = function(event){
+//계좌수정
+PUI.FN.accountModify = function(event){
     let param = PUI.UTL.getParams([
         {target:"acctTgtCd", type:"raido", title:"사용처", valid:["notEmpty"]},
         {target:"acctDivCd", type:"raido", title:"계좌구분", valid:["notEmpty"]},
@@ -115,13 +137,13 @@ PUI.FN.accountRegister = function(event){
         if(PUI.UTL.isNotEmpty(param.data.fontClor) && PUI.UTL.isNotEmpty(param.data.bkgdClor) &&
             param.data.fontClor === param.data.bkgdClor){
             alert("글자색과 배경색이 동일합니다.");
-        }else if(confirm("저장하시겠습니까?")){
+        }else if(confirm("수정하시겠습니까?")){
             param.data.cratDt = param.data.cratDt.replace(/-/gi, "");
             param.data.epyDt = param.data.epyDt.replace(/-/gi, "");
             PUI.FT.postFetch("/api/assets/saveAccount" , param.data)
                 .then(response => {
                     if(response.resultCode === "0000"){
-                        alert("저장하였습니다.");
+                        alert("수정하였습니다.");
                         window.location.href = "/assets/account/list";
                     }else{
                         alert("ERROR CODE::" + response.resultCode);
