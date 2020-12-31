@@ -2,5 +2,6 @@
  * 전역상수
  */
 export const wGlobal = {
-    MAIN : document.getElementsByTagName("main")[0]
+    MAIN: document.getElementsByTagName("main")[0],
+    Y: "Y"
 }

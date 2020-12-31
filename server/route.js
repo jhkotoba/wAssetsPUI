@@ -22,7 +22,7 @@ router.get("/assets/:pattern1", async (request, response) => {
             response.send(index.replace("<main>", "<main>" + main));
         }else{
             response.redirect(PUI.GV.GATEWAY_URI + "/member/login?rtnUrl?rtnUrl="+ 
-                PUI.GV.GATEWAY_URI + PUI.GV.PAGE_PATH + p1 + "\\" + p1 + ".html");
+                PUI.GV.GATEWAY_URI + "/assets/" + p1);
         }
     }catch(error){
         response.redirect(PUI.GV.GATEWAY_URI + "/assets");
@@ -40,7 +40,7 @@ router.get("/assets/:pattern1/:pattern2", async (request, response) => {
             response.send(index.replace("<main>", "<main>" + main));
         }else{
             response.redirect(PUI.GV.GATEWAY_URI + "/member/login?rtnUrl?rtnUrl="+ 
-                PUI.GV.GATEWAY_URI + PUI.GV.PAGE_PATH + p1 + "\\" + p2 + "\\" + p2 + ".html");
+                PUI.GV.GATEWAY_URI + "/assets/" + p1 + "/" + p2);
         }
     }catch(error){
         response.redirect(PUI.GV.GATEWAY_URI + "/assets");
@@ -59,7 +59,7 @@ router.get("/assets/:pattern1/:pattern2/:pattern3", async (request, response) =>
             response.send(index.replace("<main>", "<main>" + main));
         }else{
             response.redirect(PUI.GV.GATEWAY_URI + "/member/login?rtnUrl?rtnUrl="+ 
-                PUI.GV.GATEWAY_URI + PUI.GV.PAGE_PATH + p1 + "\\" + p2 + "\\" + p3 + "\\" + p3 + ".html");
+                PUI.GV.GATEWAY_URI + "/assets/" + p1 + "/" + p2 + "/" + p3);
         }
     }catch(error){
         response.redirect(PUI.GV.GATEWAY_URI + "/assets");
