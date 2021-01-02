@@ -45,20 +45,28 @@ PUI.FN.INIT = async function(){
     });
 
     //계좌정보 조회
-    response = await PUI.FT.getFetch("/api/assets/getAccount?acctSeq="+acctSeq);    
-    PUI.V.account = response.data;
-    if(PUI.UTL.isNotEmpty(PUI.V.account)){
-        document.getElementById(PUI.V.account.acctTgtCd).checked = true;
-        document.getElementById(PUI.V.account.acctDivCd).checked = true;
-        document.getElementById("acctNm").value = PUI.V.account.acctNm;
-        document.getElementById("acctNum").value = PUI.V.account.acctNum;
-        document.getElementById("use"+PUI.V.account.useYn).checked = true;
-        document.getElementById("cratDt").value = PUI.V.account.cratDt;
-        if(PUI.V.account.epyDtUseYn === PUI.GV.Y){
-            document.getElementById("epyDtUseYn").checked = true;
-            document.getElementById("epyDt").value = PUI.V.account.epyDt;
+    try{
+        response = await PUI.FT.getFetch("/api/assets/getAccount?acctSeq="+acctSeq);
+        if(response.resultCode === "0000"){
+            PUI.V.account = response.data;
+            document.getElementById(PUI.V.account.acctTgtCd).checked = true;
+            document.getElementById(PUI.V.account.acctDivCd).checked = true;
+            document.getElementById("acctNm").value = PUI.V.account.acctNm;
+            document.getElementById("acctNum").value = PUI.V.account.acctNum;
+            document.getElementById("use"+PUI.V.account.useYn).checked = true;
+            document.getElementById("cratDt").value = PUI.V.account.cratDt;
+            if(PUI.V.account.epyDtUseYn === PUI.GV.Y){
+                document.getElementById("epyDtUseYn").checked = true;
+                document.getElementById("epyDt").value = PUI.V.account.epyDt;
+            }
+            document.getElementById("remark").value = PUI.V.account.remark;
+        }else{
+            alert("계좌정보가 없습니다.");
+            document.location.href = "/assets/account/list";
         }
-        document.getElementById("remark").value = PUI.V.account.remark;
+    }catch(error){
+        alert("error: " + error);
+        document.location.href = "/assets/account/list";
     }
 };
 
