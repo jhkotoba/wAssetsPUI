@@ -8,6 +8,16 @@ class wGrid {
     //생성자
     constructor(targetId, args){
 
+        //그리드내 상수값
+        this.const = {
+            STATE : {
+                SELECT : "SELECT",
+                INSERT : "INSERT",
+                UPDATE : "UPDATE",
+                REMOVE : "REMOVE"
+            }
+        }
+
         //그리드 상태값
         this._state = {
             curSeq: 0,  //현재 시퀀스
@@ -40,11 +50,14 @@ class wGrid {
 
         //그리드 인자값 세팅
         this._data = [];
+        this._orgData = [];
         this._option = option;
         if(this.util.isNotEmpty(args.option.isInitCreate)){
             this._option.isInitCreate = args.option.isInitCreate;
         }
-        
+        if(this.util.isNotEmpty(args.option.style)){
+            this._option.style = args.option.style;
+        }
         
         //그리드 스타일세팅
         this._element.target.classList.add("wgrid-field");
@@ -52,7 +65,9 @@ class wGrid {
         this.util.addElementStyleAttribute(this._element.target, "height", args.option.style.height);
 
         //이벤트 연결
-        this._createEvent(args.event);
+        if(args.event){
+            this._createEvent(args.event);
+        }
        
         //생성시 바로 그리드 생성
         this._create(this._option.isInitCreate);
@@ -78,9 +93,10 @@ class wGrid {
             //내부데이터 세팅
             obj.list.forEach(data => {
                 data._rowSeq = this._getNextSeq();
-                data._state = "SELECT";
+                data._state = this.const.STATE.SELECT;
             });
             this._data = obj.list;
+            this._orgData = this._data;
 
             //새로고침 false아니면 새로고침
             if(obj.isRefresh !== false){
@@ -101,21 +117,37 @@ class wGrid {
         }
     }
 
-    prepend(data, option){
-
-    }
-
-    prepends(list, option){
-
-    }
-
+     /**
+     * 데이터 추가
+     * @param {*} data
+     * @param {*} option 
+     */
     append(data, option){
 
     }
     
-    //데이터 추가
+    /**
+     * 데이터목록 추가
+     * @param {*} list
+     * @param {*} option 
+     */
     appends(list, option){
 
+    }   
+
+    //신규행 추가
+    appendNewRow(){
+        let row = {};
+        this._field.forEach(item =>{
+            if(item.element.includes("controller") === false){
+                row[item.name] = "";
+            }
+            row._rowSeq = this._getNextSeq();
+            row._state = this.const.STATE.INSERT;
+        });
+        let tr = this._bodyListRowCreate(row, row._rowSeq);
+        tr.classList.add("wgrid-insert-tr")
+        this._element.bodyTb.appendChild(tr);
     }
 
     //그리드 생성
@@ -126,20 +158,20 @@ class wGrid {
         return this;
     }
 
+    //그리드 최후 조회상태로 리셋
+    reset(){
+        this._data = this._orgData;
+        this.refresh();
+    }
+
     //그리드 새로고침
-    refresh(obj){
-        if(this.util.isEmpty(obj)){
-            //TABLE 태그만 수정 - 비우기
-            this.util.childElementEmpty(this._element.bodyTb);
-            //TABLE 태그만 수정 - TD생성
-            this._data.forEach((row, rIdx) => {
-                this._element.bodyTb.appendChild(this._bodyListRowCreate(row, rIdx));
-            });
-        }else{
-
-
-        }
-        
+    refresh(){        
+        //TABLE 태그만 수정 - 비우기
+        this.util.childElementEmpty(this._element.bodyTb);
+        //TABLE 태그만 수정 - TD생성
+        this._data.forEach((row, rIdx) => {
+            this._element.bodyTb.appendChild(this._bodyListRowCreate(row, rIdx));
+        });
     }
 
     //헤더 생성
@@ -152,18 +184,71 @@ class wGrid {
 
     //헤더 생성 - 리스트
     _headerListCreate(){
-        let th, div = null;
+        let th, div, tag = null;
         this._field.forEach(field => {
             //태그생성
             th = document.createElement("th");
             div = document.createElement("div");
             
-            //제목적용
-            div.textContent = field.title;
-            
-            //스타일 적용
-            this.util.addElementStyleAttribute(th, "width", field.width);
-            this.util.addElementStyleAttribute(th, "textAlign", "center");            
+            switch(field.element){
+
+                //헤더 - 체크박스
+                case "controller-checkbox" :
+                    //타이틀이 있는경우 체크박스 무시
+                    if(field.title){                        
+                        div.textContent = field.title;                       
+                    }else{
+                        //체크박스 속성
+                        tag = document.createElement("input");
+                        tag.setAttribute("type", "checkbox");
+                        //tag.setAttribute("name", field.name);
+                        tag.setAttribute("id", field.name);
+
+                        //체크박스 이벤트(헤더 바디체크박스 전체선택/전체해제)
+                        tag.addEventListener("change", event => {
+                            document.getElementsByName(event.target.id).forEach(bodyChk => {
+                                if(event.target.checked){
+                                    bodyChk.checked = true;
+                                }else{
+                                    bodyChk.checked = false;
+                                }
+                            });
+                        });
+                        div.appendChild(tag);
+                    }
+                    break;
+                //헤더 - 버튼
+                case "controller-button" :
+                    //타이틀이 있는경우 버튼 무시
+                    if(field.title){                        
+                        div.textContent = field.title;     
+                    }else{
+                        //버튼속성
+                        tag = document.createElement("button");
+                        tag.classList.add("wgrid-btn");
+                        tag.textContent = field.button.title;
+                        
+                        //버튼이벤트(사용자 정의)
+                        if(typeof field.click === "function"){
+                            tag.addEventListener("click", event => {
+                                field.button.click(event, {isBody:false});
+                                event.stopPropagation();
+                            });
+                        }
+                        div.appendChild(tag);
+                    }
+                    break;
+                //헤더 - 디폴트(텍스트)
+                case "text":
+                default :
+                    //제목적용
+                    div.textContent = field.title;
+                    break;
+            }
+
+            //스타일 적용             
+            this.util.addElementStyleAttribute(div, "width", field.width);
+            this.util.addElementStyleAttribute(div, "textAlign", "center");
 
             //태그연결
             th.appendChild(div);
@@ -171,7 +256,7 @@ class wGrid {
         });
 
         //클래스 적용
-        this._element.head.classList.add("wgrid-div-header");
+        this._element.head.classList.add("wgrid-div-header");        
         this._element.headTb.classList.add("wgrid-table-header");
 
         //태그연결
@@ -200,7 +285,7 @@ class wGrid {
         });
         
         //스타일, 클래스 적용
-        this._element.body.style.marginTop = this._element.headTr.offsetHeight + "px";
+        this._element.body.classList.add("wgrid-div-body");
         this._element.bodyTb.classList.add("wgrid-table-body");        
         
         //태그 연결
@@ -224,25 +309,86 @@ class wGrid {
     _bodyListCellCreate(field, fieldIdx, row, rowIdx){
         let td = document.createElement("td");
         let div = document.createElement("div");
+        let tag = null;
 
         //엘리먼트 분기
         switch(field.element){
+        //바디 - 체크박스
+        case "controller-checkbox":
+
+            //신규행은 체크박스 생성하지 않음.
+            //if(row._state === this.const.STATE.INSERT) break;
+            
+            tag = document.createElement("input");
+            tag.setAttribute("type", "checkbox");
+            tag.setAttribute("name", field.name);
+
+            //체크박스 이벤트등록(헤더체크박스가 생성된 경우)
+            if(this.util.isEmpty(field.title)){
+                tag.addEventListener("change", event => {
+
+                    //바디 체크박스 전체 체크(전체 체크시 헤더 체크박스 선택, 전체가 아닐경우 해제)
+                    let isCheck = true;                    
+                    for(let chk of this._element.bodyTb.querySelectorAll("input[name=" + event.target.name + "]")){
+                        if(chk.checked == false){
+                            isCheck = false;
+                            break;
+                        }
+                    }
+                    let chkId = document.getElementById(event.target.name);
+                    if(isCheck){
+                        chkId.checked = true;
+                    }else{
+                        chkId.checked = false;
+                    }
+                });
+            }
+
+            div.appendChild(tag);
+            break;
+        case "controller-button":
+
+            //신규행은 체크박스 생성하지 않음.
+            //if(row._state === this.const.STATE.INSERT) break;
+
+            //버튼속성
+            tag = document.createElement("button");
+            tag.classList.add("wgrid-btn");
+            
+            //타입이 문자열이면 텍스트 대입
+            if(typeof field.button.title === "string"){
+                tag.textContent = field.button.title;
+            //아닌경우 엘리먼트 태그라고 판단하여 append
+            }else{
+                tag.appendChild(field.button.title);
+            }
+
+            //버튼이벤트
+            if(typeof field.button.click === "function"){
+                tag.addEventListener("click", event => {
+                    field.button.click(event, {isBody:true, index:rowIdx, data:row});
+                    event.stopPropagation();
+                });
+            }
+            div.appendChild(tag);
+            break;
+        //바디 - 디폴트(텍스트)
         case "text":
         default:
-            this.util.addElementStyleAttribute(div, "textAlign", "center");
-
             //코드맵핑
             if(this.util.isNotEmpty(field.codeMapping)){
                 div.textContent = field.codeMapping[row[field.name]];
             }else{
                 div.textContent = row[field.name];
             }
-            td.appendChild(div);
             break;
         }
 
-        //해당 셀 넒이 적용
-        this.util.addElementStyleAttribute(td, "width", field.width);
+        td.appendChild(div);
+
+        //스타일 적용        
+        this.util.addElementStyleAttribute(div, "width", field.width);
+        this.util.addElementStyleAttribute(div, "textAlign", "center"); 
         return td;
     }
 
@@ -269,23 +415,18 @@ class wGrid {
        
     }
 
-    //이벤트 생성
-    _createEvent(cEvent){
-        //이벤트 연결 - click
-        this._element.target.addEventListener("click", event => {
-            if(this.util.isFunction(cEvent.click)){
-                cEvent.click(event, this.getData(this.util.getTrNode(event.target).dataset.rowSeq));
-            }
-            event.stopPropagation();
-        });
-        //이벤트 연결 - dbclick
-        this._element.target.addEventListener("dblclick", event => {            
-            if(this.util.isFunction(cEvent.dblclick)){
-                cEvent.dblclick(event, this.getData(this.util.getTrNode(event.target).dataset.rowSeq));
-            }
-            event.stopPropagation();
-        });
-    }
+    // //그리드 이벤트 생성
+    // _createEvent(gEvent){
+    //     //이벤트 연결 - click
+    //     if(gEvent.click){
+    //         this._element.target.addEventListener("click", event => {
+    //             if(this.util.isFunction(gEvent.click)){
+    //                 gEvent.click(event, this.getData(this.util.getTrNode(event.target).dataset.rowSeq));
+    //             }
+    //             event.stopPropagation();
+    //         });
+    //     }
+    // }
 
     //그리드내 유틸생성
     _createUtil(){

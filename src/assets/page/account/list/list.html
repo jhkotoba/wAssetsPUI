@@ -3,10 +3,45 @@
     <div class="path">자산관리 > 계좌관리 > 계좌목록</div>    
 </div>
 
-<section class="content">
+<section class="search-content">
+    <div class="label-div"><span>사용여부</span></div>
+    <div class="radio-div">
+        <input type="radio" id="srhUserYn_ALL" name="srhUserYn" checked>
+        <label for="srhUserYn_ALL">전체</label>
+        <input type="radio" id="srhUserYn_Y" name="srhUserYn">
+        <label for="srhUserYn_Y">사용</label>
+        <input type="radio" id="srhUserYn_N" name="srhUserYn">
+        <label for="srhUserYn_N">미사용</label>
+    </div>
+
+    <div class="label-div"><span>검색어</span></div>
+    <select class="select-gray" id="searchType">
+        <option value="acctTgtCd">계좌사용처</option>
+        <option value="acctDivCd">계좌구분</option>
+        <option value="acctNm">계좌명</option>
+        <option value="acctNum">계좌번호</option>
+    </select>
+    <input type="text" class="input-search-gray" style="width: 699px;">
+    <button class="btn-gray" id="search">조회</button>   
+
+    <div class="label-div"><span>페이지 수</span></div>
+    <select class="select-gray" id="pagingCnt">
+        <option value=15>15건</option>
+        <option value=50>50건</option>
+        <option value=100>100건</option>
+    </select>
+</section>
+
+<section class="content">    
     <div class="table-title">■ 계좌목록</div>
-    <div class="right-btn-box">        
-        <button class="btn-gray" id="acctReg">계좌등록</button>
+    <div class="botton-box">
+        <button class="btn-gray" id="acctAdd" title="계좌목록에 하나의 행을 추가합니다.">추가</button>
+        <button class="btn-gray" id="acctMod" title="선택한 행을 수정할 수 있도록 합니다. 삭제가 우선시 됩니다.">수정</button>
+        <button class="btn-gray" id="acctDel" title="선택한 행을 삭제할 수 있도록 합니다.">삭제</button>
+        <button class="btn-gray" id="acctCan" title="선택한 삭제, 수정상태를 취소합니다.">취소</button>
+        <button class="btn-gray" id="acctRst" title="마지막으로 조회한 상태로 되돌립니다.">초기화</button>
+        <button class="btn-gray" id="acctReg" title="변경사항을 저장 합니다.">저장</button>
+        <button class="btn-gray" id="acctDtlReg" title="계좌정보 상세하게 등록할 수 있는 화면으로 이동합니다.">계좌상세 등록</button>
     </div>
     <div id="acctList"></div>
 </section>
