@@ -29,14 +29,14 @@ body{background: #363636; font-size: 12px; color: #C6C6C6; width: 1400px; margin
 @keyframes fadeIn{from{opacity:0}to{opacity:.92}}
 
 /* path */
-.path{margin: 5px 0px 0px 3px;}
+.path{margin: 10px 0px 0px 3px;}
 
 /* content */
 .content{background: #383838; border: 2px solid #323232; height: 600px; margin: 5px 0px 5px 0px; padding: 5px 5px 5px 5px;}
 .content .table-title{display: inline;}
 
 .search-content{position: relative; padding: 10px 5px 10px 5px; margin-bottom: 5px; border: 2px solid #323232; background:#383838; border-radius: 2px;}
-.search-content .radio-div{display: inline-block; height: 24px; padding: 4px 7px 0px 5px; border: 1px solid #585858; border-radius: 2px; background: #4e4e4e;}
+.search-content .radio-div{display: inline-block; height: 24px; padding: 4px 7px 0px 5px; border: 1px solid #585858; border-radius: 2px; background: #404040;}
 
 
 
@@ -54,10 +54,10 @@ body{background: #363636; font-size: 12px; color: #C6C6C6; width: 1400px; margin
 .input-gray:disabled{background: #4e4e4e; color: #656565;}
 
 /* select */
-.select-gray{background: #4e4e4e; color:#C6C6C6; font-size: 1em; height: 30px; border: 1px solid #585858; border-radius: 2px; vertical-align: top; padding: .25rem .5rem;}
+.select-gray{background: #404040; color:#C6C6C6; font-size: 1em; height: 30px; border: 1px solid #585858; border-radius: 2px; vertical-align: top; padding: .25rem .5rem;}
 
 /* label */
-.label-div{background: #404040; width: 90px; height: 28px; font-weight: 600; margin-right: -5px; text-align: center; display: inline-block; vertical-align: top; border-radius: 2px; border: 1px solid #585858;}
+.label-div{background: #4e4e4e; width: 90px; height: 28px; font-weight: 600; margin-right: -5px; text-align: center; display: inline-block; vertical-align: top; border-radius: 2px; border: 1px solid #585858;}
 .label-div span{display: inline-block; padding-top: 7px;}
 
 /* table */
@@ -78,6 +78,7 @@ body{background: #363636; font-size: 12px; color: #C6C6C6; width: 1400px; margin
 .w50px{width: 50px !important;}
 .w70px{width: 70px !important;}
 .w80px{width: 80px !important;}
+.w100px{width: 100px !important;}
 .w195px{width: 195px !important;}
 .w200px{width: 200px !important;}
  

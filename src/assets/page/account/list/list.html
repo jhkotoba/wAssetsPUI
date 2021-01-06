@@ -13,15 +13,21 @@
         <input type="radio" id="srhUserYn_N" name="srhUserYn">
         <label for="srhUserYn_N">미사용</label>
     </div>
+    <div class="label-div"><span>계좌사용처</span></div>
+    <select class="select-gray w100px" id="acctTgtCd">
+        <option>전체</option>
+    </select>
+    <div class="label-div"><span>계좌구분</span></div>
+    <select class="select-gray w100px" id="acctDivCd">
+        <option>전체</option>
+    </select>
 
     <div class="label-div"><span>검색어</span></div>
     <select class="select-gray" id="searchType">
-        <option value="acctTgtCd">계좌사용처</option>
-        <option value="acctDivCd">계좌구분</option>
         <option value="acctNm">계좌명</option>
         <option value="acctNum">계좌번호</option>
     </select>
-    <input type="text" class="input-search-gray" style="width: 699px;">
+    <input type="text" class="input-search-gray" style="width:320px;">
     <button class="btn-gray" id="search">조회</button>   
 
     <div class="label-div"><span>페이지 수</span></div>
