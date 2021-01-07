@@ -28,8 +28,39 @@ PUI.FN.createGrid = function(){
             {element:"checkbox", name: "check", width:30, align:"center",                 
                 event: {
                     change:{
-                        header: (event, item) => {},
-                        body: (event, item) => {}
+                        header: event => {
+                            //헤드 체크박스 클릭시 바디 체크박스 전체선택 & 전체해제
+                            PUI.V.wGrid
+                                .getElementBody()
+                                .querySelectorAll("input[name=" + event.target.name + "]")
+                                .forEach(check => {
+                                    if(event.target.checked){
+                                        check.checked = true;
+                                    }else{
+                                        check.checked = false;
+                                    }
+                                });
+                        },
+                        body: (event, item) => {
+                            //바디 체크박스 전체 체크(전체 체크시 헤더 체크박스 선택, 전체가 아닐경우 해제)
+                            let isCheck = true;
+                            let check = null;
+                            for(check of PUI.V.wGrid.getElementBody().querySelectorAll("input[name=" + event.target.name + "]")){
+                                if(check.checked == false){
+                                    isCheck = false;
+                                    break;
+                                }
+                            }
+                            //바디 체크박스 전체 선택시 헤드체크박스 선택 / 반대인경우 해제
+                            check = PUI.V.wGrid
+                                .getElementHeadTableRow()
+                                .querySelectorAll("input[name=" + event.target.name + "]")[0];
+                            if(isCheck){
+                                check.checked = true;
+                            }else{
+                                check.checked = false;
+                            }
+                        }
                     }
                 }
             },
@@ -50,9 +81,7 @@ PUI.FN.createGrid = function(){
             {title: "생성일", element:"text", name:"cratDt", width:100, align:"left", edit:"text"}, 
             {title: "만기일", element:"text", name:"epyDt", width:100, align:"left", edit:"text"}, 
             {title: "사용여부", element:"text", name:"useYn", width:65, align:"left", edit:"text",
-                data:{
-                        mapping: {Y: "사용", N: "미사용"}
-                }
+                data:{mapping: {Y: "사용", N: "미사용"}}
             },
             {title: "상세정보", element:"button", name:"detail", width:80, text:"보기",
                 event:{

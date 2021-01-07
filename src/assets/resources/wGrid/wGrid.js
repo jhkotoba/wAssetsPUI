@@ -1,7 +1,7 @@
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.4.0
+ * @version 0.5.0
  */
 class wGrid {
 
@@ -16,7 +16,8 @@ class wGrid {
                 UPDATE: "UPDATE",
                 REMOVE: "REMOVE"
             },
-            EMPTY: "EMPTY"
+            EMPTY: "EMPTY",
+            EVENT_LIST: ["click", "change"]
         }
 
         //그리드 상태값
@@ -65,10 +66,9 @@ class wGrid {
         this.util.addElementStyleAttribute(this._element.target, "width", args.option.style.width);
         this.util.addElementStyleAttribute(this._element.target, "height", args.option.style.height);
 
-        //이벤트 연결
-        if(args.event){
-            this._createEvent(args.event);
-        }
+        //이벤트 생성
+        this._event = {};
+        this._createEvent();
        
         //생성시 바로 그리드 생성
         this._create(this._option.isInitCreate);
@@ -85,7 +85,31 @@ class wGrid {
 
     _getNextSeq(){
         return ++this._state.curSeq;
-    }   
+    }
+
+    getElementTarget(){
+        return this._element.target;
+    }
+
+    getElementHeader(){
+        return this._element.head;
+    }
+
+    getElementHeadTable(){
+        return this._element.headTb;
+    }
+
+    getElementHeadTableRow(){
+        return this._element.headTr;
+    }
+
+    getElementBody(){
+        return this._element.body;
+    }
+
+    getElementBodyTable(){
+        return this._element.bodyTb;
+    }
 
     //데이터 set
     //list: 데이터, isRefresh: setData시 갱신여부, callbackFn: 완료후 콜백함수
@@ -224,18 +248,18 @@ class wGrid {
                         //체크박스 속성
                         tag = document.createElement("input");
                         tag.setAttribute("type", "checkbox");
-                        tag.setAttribute("id", field.name);
+                        tag.setAttribute("name", field.name);
 
-                        //체크박스 이벤트(헤더 바디체크박스 전체선택/전체해제)
-                        tag.addEventListener("change", event => {
-                            document.getElementsByName(event.target.id).forEach(bodyChk => {
-                                if(event.target.checked){
-                                    bodyChk.checked = true;
-                                }else{
-                                    bodyChk.checked = false;
-                                }
-                            });
-                        });
+                        // //체크박스 이벤트(헤더 바디체크박스 전체선택/전체해제)
+                        // tag.addEventListener("change", event => {
+                        //     document.getElementsByName(event.target.id).forEach(bodyChk => {
+                        //         if(event.target.checked){
+                        //             bodyChk.checked = true;
+                        //         }else{
+                        //             bodyChk.checked = false;
+                        //         }
+                        //     });
+                        // });
                         div.appendChild(tag);
                     }
                     break;
@@ -353,23 +377,28 @@ class wGrid {
 
             //체크박스 이벤트등록(헤더체크박스가 생성된 경우)
             if(this.util.isEmpty(field.title)){
-                tag.addEventListener("change", event => {
 
-                    //바디 체크박스 전체 체크(전체 체크시 헤더 체크박스 선택, 전체가 아닐경우 해제)
-                    let isCheck = true;                    
-                    for(let chk of this._element.bodyTb.querySelectorAll("input[name=" + event.target.name + "]")){
-                        if(chk.checked == false){
-                            isCheck = false;
-                            break;
-                        }
-                    }
-                    let chkId = document.getElementById(event.target.name);
-                    if(isCheck){
-                        chkId.checked = true;
-                    }else{
-                        chkId.checked = false;
-                    }
-                });
+                
+
+                
+
+                // tag.addEventListener("change", event => {
+
+                //     //바디 체크박스 전체 체크(전체 체크시 헤더 체크박스 선택, 전체가 아닐경우 해제)
+                //     let isCheck = true;                    
+                //     for(let chk of this._element.bodyTb.querySelectorAll("input[name=" + event.target.name + "]")){
+                //         if(chk.checked == false){
+                //             isCheck = false;
+                //             break;
+                //         }
+                //     }
+                //     let chkId = document.getElementById(event.target.name);
+                //     if(isCheck){
+                //         chkId.checked = true;
+                //     }else{
+                //         chkId.checked = false;
+                //     }
+                // });
             }
 
             div.appendChild(tag);
@@ -486,18 +515,92 @@ class wGrid {
        
     }
 
-    // //그리드 이벤트 생성
-    // _createEvent(gEvent){
-    //     //이벤트 연결 - click
-    //     if(gEvent.click){
-    //         this._element.target.addEventListener("click", event => {
-    //             if(this.util.isFunction(gEvent.click)){
-    //                 gEvent.click(event, this.getData(this.util.getTrNode(event.target).dataset.rowSeq));
-    //             }
-    //             event.stopPropagation();
-    //         });
-    //     }
-    // }
+    //그리드 이벤트 세팅
+    _createEvent(){
+        //필드 이벤트 세팅
+        this._field.forEach(item => {
+            //빈값이면 통과
+            if(this.util.isEmpty(item.event)){
+                return;
+            }
+            //이벤트 종류만큼 루프
+            this.CONSTANT.EVENT_LIST.forEach(evNm => {
+                if(this.util.isNotEmpty(item.event[evNm])){                    
+                    this._event[item.name] = {};
+                    this._event[item.name][evNm] = {};
+                    //헤더
+                    if(this.util.isFunction(item.event[evNm].header)){
+                        this._event[item.name][evNm]["header"] = item.event[evNm].header;
+                    }
+                    //바디
+                    if(this.util.isFunction(item.event[evNm].body)){
+                        this._event[item.name][evNm]["body"] = item.event[evNm].body;
+                    }
+                }
+            });
+        });
+
+        //헤드 클릭이벤트
+        this._element.head.addEventListener("click", event => {
+             //빈값 체크 후
+            if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "click", "header")){
+                if(this.util.isFunction(this._event[event.target.name].click.header)){
+                    this._event[event.target.name].click.header(event);
+                }
+            }
+            event.stopPropagation();
+        });
+        //바디 클릭이벤트        
+        this._element.body.addEventListener("click", event => {
+            //빈값 체크 후
+           if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "click", "body")){
+               if(this.util.isFunction(this._event[event.target.name].click.body)){
+                   //연결된 이벤트 호출(event, row)
+                   this._event[event.target.name].click.body(event, this._data[this.util.getTrNode(event.target).dataset.rowSeq]);
+               }
+           }
+           event.stopPropagation();
+        });
+
+        //헤드 체인지이벤트
+        this._element.head.addEventListener("change", event => {
+            //빈값 체크 후
+            if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "change", "header")){
+                if(this.util.isFunction(this._event[event.target.name].change.header)){
+                    this._event[event.target.name].change.header(event);
+                }
+            }
+            event.stopPropagation();
+        });
+        //바디 체인지이벤트        
+        this._element.body.addEventListener("change", event => {
+            //빈값 체크 후
+            if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "change", "body")){
+                if(this.util.isFunction(this._event[event.target.name].change.body)){
+                    //연결된 이벤트 호출(event, row)
+                    this._event[event.target.name].change.body(event, this._data[this.util.getTrNode(event.target).dataset.rowSeq]);
+                }
+            }
+            event.stopPropagation();
+        });
+
+
+
+        // //클릭이벤트
+        // this._element.target.addEventListener("click", event => {
+        //     event.target
+
+        // });
+        // //이벤트 연결 - click
+        // if(gEvent.click){
+        //     this._element.target.addEventListener("click", event => {
+        //         if(this.util.isFunction(gEvent.click)){
+        //             gEvent.click(event, this.getData(this.util.getTrNode(event.target).dataset.rowSeq));
+        //         }
+        //         event.stopPropagation();
+        //     });
+        // }
+    }
 
     //그리드내 유틸생성
     _createUtil(){
@@ -514,6 +617,15 @@ class wGrid {
             },
             isNotEmpty(value){ 
                 return !this.isEmpty(value);
+            },
+            isFunction(value){
+                if(this.isEmpty(value)){
+                    return false;
+                }else if(typeof value === "function"){
+                    return true;
+                }else{
+                    return false;
+                }
             },
             isNotEmptyChildObjct(value, ...arge){
                 if(this.isEmpty(value)){
