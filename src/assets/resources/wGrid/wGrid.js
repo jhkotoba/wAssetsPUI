@@ -163,7 +163,7 @@ class wGrid {
     //신규행 추가
     appendNewRow(){
         let row = {};
-        this._field.forEach(item =>{
+        this._field.forEach(item => {
             row[item.name] = "";
             row._rowSeq = this._getNextSeq();
             row._state = this.CONSTANT.STATE.INSERT;
@@ -249,17 +249,6 @@ class wGrid {
                         tag = document.createElement("input");
                         tag.setAttribute("type", "checkbox");
                         tag.setAttribute("name", field.name);
-
-                        // //체크박스 이벤트(헤더 바디체크박스 전체선택/전체해제)
-                        // tag.addEventListener("change", event => {
-                        //     document.getElementsByName(event.target.id).forEach(bodyChk => {
-                        //         if(event.target.checked){
-                        //             bodyChk.checked = true;
-                        //         }else{
-                        //             bodyChk.checked = false;
-                        //         }
-                        //     });
-                        // });
                         div.appendChild(tag);
                     }
                     break;
@@ -273,6 +262,7 @@ class wGrid {
                         //버튼속성
                         tag = document.createElement("button");
                         tag.classList.add("wgrid-btn");
+                        tag.setAttribute("name", field.name);
                         tag.textContent = field.button.title;
                         
                         //버튼이벤트(사용자 정의)
@@ -357,13 +347,12 @@ class wGrid {
         
         //태그 생성전 엘리먼트 타입 구분
         if(this.util.isInsert(row._state) || this.util.isUpdate(row._state)){
-            if(this.util.isNotEmpty(field.edit) && field.edit.toLocaleLowerCase == "text"){
+            if(this.util.isNotEmpty(field.edit) && field.edit.toLowerCase() == "text"){
                 elementType = "text-edit";
             }else{
                 elementType = field.edit;
             }
         }else{
-           
             elementType = field.element;
         }
 
@@ -374,33 +363,6 @@ class wGrid {
             tag = document.createElement("input");
             tag.setAttribute("type", "checkbox");
             tag.setAttribute("name", field.name);
-
-            //체크박스 이벤트등록(헤더체크박스가 생성된 경우)
-            if(this.util.isEmpty(field.title)){
-
-                
-
-                
-
-                // tag.addEventListener("change", event => {
-
-                //     //바디 체크박스 전체 체크(전체 체크시 헤더 체크박스 선택, 전체가 아닐경우 해제)
-                //     let isCheck = true;                    
-                //     for(let chk of this._element.bodyTb.querySelectorAll("input[name=" + event.target.name + "]")){
-                //         if(chk.checked == false){
-                //             isCheck = false;
-                //             break;
-                //         }
-                //     }
-                //     let chkId = document.getElementById(event.target.name);
-                //     if(isCheck){
-                //         chkId.checked = true;
-                //     }else{
-                //         chkId.checked = false;
-                //     }
-                // });
-            }
-
             div.appendChild(tag);
             break;
         
@@ -410,6 +372,7 @@ class wGrid {
             //버튼속성
             tag = document.createElement("button");
             tag.classList.add("wgrid-btn");
+            tag.setAttribute("name", field.name);
 
             //버튼명
             tag.textContent = field.text;
@@ -443,8 +406,8 @@ class wGrid {
             if(this.util.isNotEmptyChildObjct(field, "data", "select", "list")){
                 field.data.select.list.forEach(item =>{
                     option = document.createElement("option");
-                    option.value = item[field.data.select.value];
-                    option.textContent = item[field.data.select.text];
+                    option.value = item[field.data.select.value ? field.data.select.value : "value"];
+                    option.textContent = item[field.data.select.text ? field.data.select.text : "text"];
 
                     if(option.value == row[field.name]){
                         option.selected = true;
@@ -459,7 +422,12 @@ class wGrid {
 
         //텍스트(입력)
         case "text-edit":
-
+            tag = document.createElement("input");
+            tag.classList.add("wgrid-input");
+            tag.classList.add("wgrid-wth90p");
+            
+            tag.value = row[field.name];
+            div.appendChild(tag);
             break;
 
         //바디 - 디폴트(텍스트)
@@ -583,23 +551,6 @@ class wGrid {
             }
             event.stopPropagation();
         });
-
-
-
-        // //클릭이벤트
-        // this._element.target.addEventListener("click", event => {
-        //     event.target
-
-        // });
-        // //이벤트 연결 - click
-        // if(gEvent.click){
-        //     this._element.target.addEventListener("click", event => {
-        //         if(this.util.isFunction(gEvent.click)){
-        //             gEvent.click(event, this.getData(this.util.getTrNode(event.target).dataset.rowSeq));
-        //         }
-        //         event.stopPropagation();
-        //     });
-        // }
     }
 
     //그리드내 유틸생성
@@ -632,17 +583,14 @@ class wGrid {
                     return false;
                 }else{
                     let obj = value;
-                    for(let i in arge){
-                        if(this.isEmpty(obj[arge[i]])){
-                            return false;
+                    for(var i=0; i<arge.length; i++){
+                        if(obj[arge[i]]){
+                            obj = obj[arge[i]];
                         }else{
-                            if(arge.length+1 == i){
-                                obj = value[arge[i]];
-                            }else{
-                                return true;
-                            }
+                            return false;
                         }
                     }
+                    return true;
                 }
             },
             isEmptyRtn(value, emptyValue){

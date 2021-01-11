@@ -45,12 +45,16 @@ PUI.FN.createGrid = function(){
                             //바디 체크박스 전체 체크(전체 체크시 헤더 체크박스 선택, 전체가 아닐경우 해제)
                             let isCheck = true;
                             let check = null;
-                            for(check of PUI.V.wGrid.getElementBody().querySelectorAll("input[name=" + event.target.name + "]")){
+                            let checks = PUI.V.wGrid
+                                .getElementBody()
+                                .querySelectorAll("input[name=" + event.target.name + "]");
+                            for(check of checks){
                                 if(check.checked == false){
                                     isCheck = false;
                                     break;
                                 }
                             }
+                            
                             //바디 체크박스 전체 선택시 헤드체크박스 선택 / 반대인경우 해제
                             check = PUI.V.wGrid
                                 .getElementHeadTableRow()
@@ -78,19 +82,24 @@ PUI.FN.createGrid = function(){
             }, 
             {title: "계좌명", element:"text", name:"acctNm", width:330, align:"left", edit:"text"}, 
             {title: "계좌번호", element:"text", name:"acctNum", width:200, align:"left", edit:"text"}, 
-            {title: "생성일", element:"text", name:"cratDt", width:100, align:"left", edit:"text"}, 
-            {title: "만기일", element:"text", name:"epyDt", width:100, align:"left", edit:"text"}, 
-            {title: "사용여부", element:"text", name:"useYn", width:65, align:"left", edit:"text",
-                data:{mapping: {Y: "사용", N: "미사용"}}
+            {title: "생성일", element:"date", name:"cratDt", width:100, align:"left", edit:"date"}, 
+            {title: "만기일", element:"date", name:"epyDt", width:100, align:"left", edit:"date"}, 
+            {title: "사용여부", element:"text", name:"useYn", width:65, align:"left", edit:"select",
+                data:{
+                    mapping: {Y: "사용", N: "미사용"},
+                    select: {list: [{value:"Y", text:"사용"}, {value:"N", text:"미사용"}]}
+                }
             },
-            {title: "상세정보", element:"button", name:"detail", width:80, text:"보기",
+            {title: "상세정보", element:"button", name:"detail", width:80, text:"보기", edit: "empty",
                 event:{
-                    click: (event, item) => {
-                        if(item.data.acctSeq){
-                            document.location.href = "/assets/account/detail?acctSeq="+ item.data.acctSeq
+                    click:{
+                        body: (event, item) => {
+                            if(item.acctSeq){
+                                document.location.href = "/assets/account/detail?acctSeq="+ item.acctSeq
+                            }
                         }
                     }
-                }, edit: "empty"
+                }
             }
         ],
         option: {
