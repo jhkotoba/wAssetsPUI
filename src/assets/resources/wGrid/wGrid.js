@@ -1,3 +1,5 @@
+import { util } from "./plugin/util.js"
+
 /**
  * wGrid
  * @author JeHoon 
@@ -7,6 +9,9 @@ class wGrid {
 
     //생성자
     constructor(targetId, args){
+
+        //그리드 유틸
+        this.util = util;
 
         //그리드내 상수값
         this.CONSTANT = {
@@ -38,9 +43,6 @@ class wGrid {
             bodyTb : document.createElement("table")
         }
 
-        //그리드내 유틸함수 생성
-        this._createUtil();
-
         //필드저장
         this._field = args.field;
 
@@ -54,9 +56,6 @@ class wGrid {
         this._data = [];
         this._orgData = [];
         this._option = option;
-        if(this.util.isNotEmpty(args.option.isInitCreate)){
-            this._option.isInitCreate = args.option.isInitCreate;
-        }
         if(this.util.isNotEmpty(args.option.style)){
             this._option.style = args.option.style;
         }
@@ -71,7 +70,7 @@ class wGrid {
         this._createEvent();
        
         //생성시 바로 그리드 생성
-        this._create(this._option.isInitCreate);
+        this._create();
         return this;
     }
 
@@ -215,18 +214,15 @@ class wGrid {
     }
 
     //그리드 생성
-    _create(obj){
-        if(obj.isHeader === true) this._headerCreate();
-        if(obj.isBody === true) this._bodyCreate();
-        if(obj.isFooter === true) this._footerCreate();
+    _create(){
+        this._headerCreate();
+        this._bodyCreate();
         return this;
     }
 
     //헤더 생성
     _headerCreate(){
-        switch(this._option.gridMode){
-            case "LIST": this._headerListCreate(); break;           
-        }
+        this._headerListCreate();
     }
 
     //헤더 생성 - 리스트
@@ -305,10 +301,7 @@ class wGrid {
 
     //바디 생성
     _bodyCreate(){
-        //그리그 종류 분기
-        switch(this._option.gridMode){
-            case "LIST": this._bodyListCreate(); break;
-        }
+        this._bodyListCreate();
     }
 
     //바디 생성 - 리스트
@@ -346,9 +339,13 @@ class wGrid {
         let elementType = null;
         
         //태그 생성전 엘리먼트 타입 구분
-        if(this.util.isInsert(row._state) || this.util.isUpdate(row._state)){
-            if(this.util.isNotEmpty(field.edit) && field.edit.toLowerCase() == "text"){
-                elementType = "text-edit";
+        if(this.isInsert(row._state) || this.isUpdate(row._state)){
+            if(this.util.isNotEmpty(field.edit)){
+                switch(field.edit.toLowerCase()){
+                    case "text": elementType = "text-edit"; break;
+                    case "date": elementType = "date-edit"; break;
+                    default: elementType = field.edit; break;
+                }
             }else{
                 elementType = field.edit;
             }
@@ -419,6 +416,22 @@ class wGrid {
 
             div.appendChild(tag);
             break;
+        //날짜(YYYY-MM-DD)
+        case "date":
+            div.textContent = this.util.dateFormat(row[field.name]);
+            break;
+        
+        //날짜 입력(YYYY-MM-DD)
+        case "date-edit":
+            tag = document.createElement("input");
+            tag.classList.add("wgrid-input");
+            tag.classList.add("wgrid-wth90p");
+            tag.setAttribute("maxlength", 10);
+            tag.dataset.event = "date";
+
+            tag.value = row[field.name];
+            div.appendChild(tag);
+            break;
 
         //텍스트(입력)
         case "text-edit":
@@ -463,24 +476,6 @@ class wGrid {
         this.util.addElementStyleAttribute(div, "width", field.width);
         this.util.addElementStyleAttribute(div, "textAlign", "center"); 
         return td;
-    }ㄴ
-
-    //풋터 생성
-    _footerCreate(){       
-        switch(this._option.gridMode){
-            case "LIST": this._footerListCreate(); break;
-            case "THUM": this._footerThumCreate(); break;
-        }
-    }
-
-    //풋터 생성 - 리스트
-    _footerListCreate(){
-       
-    }
-
-    //풋터 생성 - 섬네일
-    _footerThumCreate(){
-       
     }
 
     //그리드 이벤트 세팅
@@ -551,122 +546,41 @@ class wGrid {
             }
             event.stopPropagation();
         });
+
+        //헤드 키업 이벤트
+        this._element.head.addEventListener("keyup", event => {
+            //빈값 체크 후
+            if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "keyup", "header")){
+                if(this.util.isFunction(this._event[event.target.name].change.header)){
+                    this._event[event.target.name].keyup.header(event);
+                }
+            }
+            event.stopPropagation();
+        });
+        //바디 키업 이벤트
+        this._element.body.addEventListener("keyup", event => {
+            
+            //date 포멧 이벤트
+            if(event.target.dataset.event === "date"){
+            	event.target.value = event.target.value.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+            //빈값 체크 후
+			}else if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "keyup", "body")){
+                if(this.util.isFunction(this._event[event.target.name].change.body)){
+                    //연결된 이벤트 호출(event, row)
+                    this._event[event.target.name].keyup.body(event, this._data[this.util.getTrNode(event.target).dataset.rowSeq]);
+                }
+            }
+            event.stopPropagation();
+        });
     }
 
-    //그리드내 유틸생성
-    _createUtil(){
-        let _self = this;
-        this.util = {
-            isEmpty(value){
-                if(typeof value === "string"){
-                    if(value.trim() === "") return true;
-                    else return false;
-                }else{
-                    if(value === undefined || value === null) return true;
-                    else return false;
-                }
-            },
-            isNotEmpty(value){ 
-                return !this.isEmpty(value);
-            },
-            isFunction(value){
-                if(this.isEmpty(value)){
-                    return false;
-                }else if(typeof value === "function"){
-                    return true;
-                }else{
-                    return false;
-                }
-            },
-            isNotEmptyChildObjct(value, ...arge){
-                if(this.isEmpty(value)){
-                    return false;
-                }else{
-                    let obj = value;
-                    for(var i=0; i<arge.length; i++){
-                        if(obj[arge[i]]){
-                            obj = obj[arge[i]];
-                        }else{
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-            },
-            isEmptyRtn(value, emptyValue){
-                if(this.isEmpty(value)){
-                    return emptyValue;
-                }else{
-                    return value;
-                }
-            },
-            isFunction(fn){
-                if(fn == null || fn == undefined){
-                    return false;
-                }else if(typeof fn === "function"){
-                    return true;
-                }else{
-                    return false;
-                }
-            },
-            addElementStyleAttribute(element, style, attribute){
-                switch(style){
-                    case "width":
-                    case "height":
-                        if(this.isNotEmpty(attribute)){
-                            if(typeof attribute === "number"){
-                                element.style[style] = attribute + "px";
-                            }else{
-                                element.style[style] = attribute;
-                            }
-                        }
-                        break;
-                    default: 
-                        element.style[style] = attribute;
-                        break;
-                }
-            },
-            //자식 노드 비우기
-            childElementEmpty(element){
-                while(element.hasChildNodes()){
-                    element.removeChild(element.firstChild);
-                }
-            },
-            //현재 노드의 부모를 찾다가 TR태그 만날시 멈추고 반환
-            getTrNode(node){
-                while(true){
-                    if(node.tagName === "TR"){
-                        break;						
-                    }else if(node.tagName === "TABLE" || node.tagName === "BODY" || node.tagName === "HTML"){
-                        return null;						
-                    }else{
-                        node = node.parentNode;
-                    }
-                }
-                return node;
-            },
-            //현재 노드의 부모를 찾다가 TD태그 만날시 멈추고 반환
-	        getTdNode(node){
-                while(true){
-                    if(node.tagName === "TD"){
-                        break;						
-                    }else if(node.tagName === "TABLE" || node.tagName === "BODY" || node.tagName === "HTML"){
-                        return null;						
-                    }else{
-                        node = node.parentNode;
-                    }
-                }
-                return node;
-            },
-            //상태체크 SELECT
-            isSelect(state){ return _self.CONSTANT.STATE.SELECT === state},
-            //상태체크 INSERT
-            isInsert(state){ return _self.CONSTANT.STATE.INSERT === state},
-            //상태체크 SELECT
-            isUpdate(state){ return _self.CONSTANT.STATE.UPDATE === state},
-            //상태체크 REMOVE
-            isRemove(state){ return _self.CONSTANT.STATE.REMOVE === state}
-        }
-    }
+    //상태체크 SELECT
+    isSelect(state){ return this.CONSTANT.STATE.SELECT === state}
+    //상태체크 INSERT
+    isInsert(state){ return this.CONSTANT.STATE.INSERT === state}
+    //상태체크 SELECT
+    isUpdate(state){ return this.CONSTANT.STATE.UPDATE === state}
+    //상태체크 REMOVE
+    isRemove(state){ return this.CONSTANT.STATE.REMOVE === state}
 }
 window.wGrid = wGrid;

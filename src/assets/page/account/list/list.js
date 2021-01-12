@@ -10,14 +10,7 @@ PUI.FN.INIT = async function(){
     PUI.FN.createGrid();
 };
 
-//클릭이벤트
-PUI.EV.CLICK = function(event){
-    switch(event.target.id){
-        case "acctDtlReg" :
-            document.location.href = "/assets/account/register";
-            break;
-    }
-};
+
 
 //그리드 생성
 PUI.FN.createGrid = function(){
@@ -25,7 +18,7 @@ PUI.FN.createGrid = function(){
     //그리드
     PUI.V.wGrid = new wGrid("acctList", {
         field: [
-            {element:"checkbox", name: "check", width:30, align:"center",                 
+            {element:"checkbox", name: "check", width:30, align:"center",  edit: "checkbox",           
                 event: {
                     change:{
                         header: event => {
@@ -90,7 +83,7 @@ PUI.FN.createGrid = function(){
                     select: {list: [{value:"Y", text:"사용"}, {value:"N", text:"미사용"}]}
                 }
             },
-            {title: "상세정보", element:"button", name:"detail", width:80, text:"보기", edit: "empty",
+            {title: "상세정보", element:"button", name:"detail", width:80, text:"보기",
                 event:{
                     click:{
                         body: (event, item) => {
@@ -103,7 +96,6 @@ PUI.FN.createGrid = function(){
             }
         ],
         option: {
-            isInitCreate: {isHeader:true, isBody:true, isFooter:false},
             style: {
                 width: 1385,
                 height: 566
@@ -123,6 +115,9 @@ PUI.EV.CLICK = function(event){
     switch(event.target.id){
         case "acctAdd":
             PUI.V.wGrid.appendNewRow();
+            PUI.V.wGrid.getElementHeadTableRow()
+                .querySelectorAll("input[name=check]")[0]
+                .checked = false;
             break;
         case "acctRst":
             PUI.V.wGrid.reset();
