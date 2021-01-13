@@ -352,5 +352,33 @@ export const wUtil = {
             result[item[keyName]] = item[valueName];
         });
         return result;
-    }
+    },
+
+    //현재 노드의 부모를 찾다가 TR태그 만날시 멈추고 반환
+    getTrNode(node){
+        while(true){
+            if(node.tagName === "TR"){
+                break;						
+            }else if(node.tagName === "TABLE" || node.tagName === "BODY" || node.tagName === "HTML"){
+                return null;						
+            }else{
+                node = node.parentNode;
+            }
+        }
+        return node;
+    },
+    
+    //현재 노드의 부모를 찾다가 TD태그 만날시 멈추고 반환
+    getTdNode(node){
+        while(true){
+            if(node.tagName === "TD"){
+                break;						
+            }else if(node.tagName === "TABLE" || node.tagName === "BODY" || node.tagName === "HTML"){
+                return null;						
+            }else{
+                node = node.parentNode;
+            }
+        }
+        return node;
+    },
 }

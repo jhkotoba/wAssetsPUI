@@ -163,10 +163,12 @@ class wGrid {
     appendNewRow(){
         let row = {};
         this._field.forEach(item => {
-            row[item.name] = "";
-            row._rowSeq = this._getNextSeq();
-            row._state = this.CONSTANT.STATE.INSERT;
+             row[item.name] = "";
         });
+        row._rowSeq = this._getNextSeq();
+        row._state = this.CONSTANT.STATE.INSERT;
+        this._data.push(row);
+
         let tr = this._bodyListRowCreate(row, row._rowSeq);
         tr.classList.add("wgrid-insert-tr")
         this._element.bodyTb.appendChild(tr);
@@ -391,6 +393,7 @@ class wGrid {
             tag = document.createElement("select");
             tag.classList.add("wgrid-select");            
             tag.classList.add("wgrid-wth100p");
+            tag.setAttribute("name", field.name);
 
             let option = null;
 
@@ -427,6 +430,7 @@ class wGrid {
             tag.classList.add("wgrid-input");
             tag.classList.add("wgrid-wth90p");
             tag.setAttribute("maxlength", 10);
+            tag.setAttribute("name", field.name);
             tag.dataset.event = "date";
 
             tag.value = row[field.name];
@@ -438,6 +442,7 @@ class wGrid {
             tag = document.createElement("input");
             tag.classList.add("wgrid-input");
             tag.classList.add("wgrid-wth90p");
+            tag.setAttribute("name", field.name);
             
             tag.value = row[field.name];
             div.appendChild(tag);

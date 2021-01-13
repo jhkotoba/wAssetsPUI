@@ -14,6 +14,9 @@ PUI.FN.INIT = async function(){
 
 //그리드 생성
 PUI.FN.createGrid = function(){
+
+    let useYn = {Y: "사용", N: "미사용"};
+    let useYnList = [{value:"Y", text:"사용"}, {value:"N", text:"미사용"}];
     
     //그리드
     PUI.V.wGrid = new wGrid("acctList", {
@@ -61,7 +64,7 @@ PUI.FN.createGrid = function(){
                     }
                 }
             },
-            {title: "계좌사용처", element:"text", name:"acctTgtCd", width:210, align:"left", edit:"select",
+            {title: "계좌사용처", element:"text", name:"acctTgtCd", width:175, align:"left", edit:"select",
                 data:{
                     mapping: PUI.UTL.listToCode(PUI.V.acctTgtCd),
                     select: {list: PUI.V.acctTgtCd, value: "code", text: "codeNm", empty:"선택"}
@@ -73,14 +76,33 @@ PUI.FN.createGrid = function(){
                     select: {list: PUI.V.acctDivCd, value: "code", text: "codeNm", empty:"선택"}
                 },
             }, 
-            {title: "계좌명", element:"text", name:"acctNm", width:330, align:"left", edit:"text"}, 
+            {title: "계좌명", element:"text", name:"acctNm", width:280, align:"left", edit:"text"}, 
             {title: "계좌번호", element:"text", name:"acctNum", width:200, align:"left", edit:"text"}, 
             {title: "생성일", element:"date", name:"cratDt", width:100, align:"left", edit:"date"}, 
+            {title: "만기일여부", element:"text", name:"epyDtUseYn", width:75, align:"left", edit:"select",
+                data: {
+                    mapping: useYn,
+                    select: {list: useYnList}
+                },
+                event: {
+                    change: {
+                        body: event => {
+                            let epyDt = PUI.UTL.getTrNode(event.target).querySelectorAll("input[name='epyDt']")[0];
+                            if(event.target.value == "Y"){
+                                epyDt.disabled = false;
+                            }else{
+                                epyDt.value = "";
+                                epyDt.disabled = true;
+                            }
+                        }
+                    }
+                }
+            }, 
             {title: "만기일", element:"date", name:"epyDt", width:100, align:"left", edit:"date"}, 
-            {title: "사용여부", element:"text", name:"useYn", width:65, align:"left", edit:"select",
+            {title: "사용여부", element:"text", name:"useYn", width:75, align:"left", edit:"select",
                 data:{
-                    mapping: {Y: "사용", N: "미사용"},
-                    select: {list: [{value:"Y", text:"사용"}, {value:"N", text:"미사용"}]}
+                    mapping: useYn,
+                    select: {list: useYnList}
                 }
             },
             {title: "상세정보", element:"button", name:"detail", width:80, text:"보기",
