@@ -110,6 +110,26 @@ class wGrid {
         return this._element.bodyTb;
     }
 
+    //seqIndex 넣기
+	setSeqIndex(sequence, index){
+		this._state.seqIndex[sequence] = index;
+	}
+	
+	//seqIndex 가져오기
+	getSeqIndex(sequence){
+		return this._state.seqIndex[sequence];
+	}
+	
+	//idxSequence 넣기
+	setIdxSequence(index, sequence){
+		this._state.idxSequence[index] = sequence;
+	}
+	
+	//idxSequence 가져오기
+	getIdxSequence(index){
+		return this._state.idxSequence[index];
+	}
+
     //데이터 set
     //list: 데이터, isRefresh: setData시 갱신여부, callbackFn: 완료후 콜백함수
     setData(obj){
@@ -133,28 +153,22 @@ class wGrid {
         }
     }
 
-    getData(rowSeq){
-        if(this.util.isEmpty(rowSeq)){
-            return this._data;
-        }else{
-            return this._data[rowSeq];
-        }
+    getData(){
+        return this._data;
     }
 
-     /**
-     * 데이터 추가
-     * @param {*} data
-     * @param {*} option 
-     */
+    getDataRowSeq(rowSeq){
+        return this._data[this.getSeqIndex(rowSeq)];
+    }
+
+    getDataIndex(index){
+        return this._data[index];
+    }
+   
     append(data, option){
 
     }
-    
-    /**
-     * 데이터목록 추가
-     * @param {*} list
-     * @param {*} option 
-     */
+   
     appends(list, option){
 
     }   
@@ -169,7 +183,7 @@ class wGrid {
         row._state = this.CONSTANT.STATE.INSERT;
         this._data.push(row);
 
-        let tr = this._bodyListRowCreate(row, row._rowSeq);
+        let tr = this._bodyListRowCreate(row, this._data.length-1);
         tr.classList.add("wgrid-insert-tr")
         this._element.bodyTb.appendChild(tr);
     }
@@ -203,6 +217,26 @@ class wGrid {
     //행단위 리셋
     resetRow(){
 
+    }
+
+    //한개의 행 삭제
+    removeRow(rowSeq){
+        this._data.splice(this.getSeqIndex(rowSeq), 1);
+        this.getElementBodyTable().querySelectorAll("tr[data-row-seq='" + rowSeq + "']")[0].remove();
+        this.dataReIndexing();
+    }
+
+    //여러개의 행 삭제
+    rowmoveRows(rowSeqList){
+
+    }
+
+    //데이터 인덱싱
+    dataReIndexing(){
+        this._state.seqIndex = [];
+        this._data.forEach((item, index) => {
+            this._state.seqIndex[item._rowSeq] = index;
+        });
     }
 
     //그리드 새로고침
@@ -324,7 +358,11 @@ class wGrid {
     //바디 생성 - 리스트 - 행
     _bodyListRowCreate(row, rIdx){
         let tr = document.createElement("tr");
-        tr.dataset.rowSeq = rIdx;
+        tr.dataset.rowSeq = row._rowSeq;
+
+        //앞키 뒤값
+        this.setSeqIndex(row._rowSeq, rIdx);
+		this.setIdxSequence(rIdx, row._rowSeq);
 
         //cell 생성후 태그 연결
         this._field.forEach((field, fIdx) => {
@@ -479,7 +517,12 @@ class wGrid {
 
         //스타일 적용        
         this.util.addElementStyleAttribute(div, "width", field.width);
-        this.util.addElementStyleAttribute(div, "textAlign", "center"); 
+        this.util.addElementStyleAttribute(div, "textAlign", "center");
+        
+        //행 생성직전 콜백함수 호출
+        if(this.util.isFunction(field.loaded)){
+            field.loaded(tag, row);
+        }
         return td;
     }
 
@@ -520,11 +563,11 @@ class wGrid {
         });
         //바디 클릭이벤트        
         this._element.body.addEventListener("click", event => {
-            //빈값 체크 후
-           if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "click", "body")){
+			//빈값 체크 후
+			if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "click", "body")){
                if(this.util.isFunction(this._event[event.target.name].click.body)){
                    //연결된 이벤트 호출(event, row)
-                   this._event[event.target.name].click.body(event, this._data[this.util.getTrNode(event.target).dataset.rowSeq]);
+                   this._event[event.target.name].click.body(event, this._data[this.getSeqIndex(this.util.getTrNode(event.target).dataset.rowSeq)]);
                }
            }
            event.stopPropagation();
@@ -546,7 +589,7 @@ class wGrid {
             if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "change", "body")){
                 if(this.util.isFunction(this._event[event.target.name].change.body)){
                     //연결된 이벤트 호출(event, row)
-                    this._event[event.target.name].change.body(event, this._data[this.util.getTrNode(event.target).dataset.rowSeq]);
+                    this._event[event.target.name].change.body(event, this._data[this.getSeqIndex(this.util.getTrNode(event.target).dataset.rowSeq)]);
                 }
             }
             event.stopPropagation();
@@ -572,7 +615,7 @@ class wGrid {
 			}else if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "keyup", "body")){
                 if(this.util.isFunction(this._event[event.target.name].change.body)){
                     //연결된 이벤트 호출(event, row)
-                    this._event[event.target.name].keyup.body(event, this._data[this.util.getTrNode(event.target).dataset.rowSeq]);
+                    this._event[event.target.name].keyup.body(event, this._data[this.getSeqIndex(this.util.getTrNode(event.target).dataset.rowSeq)]);
                 }
             }
             event.stopPropagation();

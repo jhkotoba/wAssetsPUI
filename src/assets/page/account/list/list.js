@@ -10,8 +10,6 @@ PUI.FN.INIT = async function(){
     PUI.FN.createGrid();
 };
 
-
-
 //그리드 생성
 PUI.FN.createGrid = function(){
 
@@ -21,7 +19,7 @@ PUI.FN.createGrid = function(){
     //그리드
     PUI.V.wGrid = new wGrid("acctList", {
         field: [
-            {element:"checkbox", name: "check", width:30, align:"center",  edit: "checkbox",           
+            {element:"checkbox", name: "check", width:30, align:"center",  edit: "checkbox",
                 event: {
                     change:{
                         header: event => {
@@ -38,6 +36,12 @@ PUI.FN.createGrid = function(){
                                 });
                         },
                         body: (event, item) => {
+
+                            //신규행 체크상태에서 체크 해제시 행 삭제
+                            if(item._state === "INSERT"){
+                                PUI.V.wGrid.removeRow(item._rowSeq);
+                            }
+                            
                             //바디 체크박스 전체 체크(전체 체크시 헤더 체크박스 선택, 전체가 아닐경우 해제)
                             let isCheck = true;
                             let check = null;
@@ -61,6 +65,11 @@ PUI.FN.createGrid = function(){
                                 check.checked = false;
                             }
                         }
+                    }
+                },
+                loaded: (target, item) => {
+                    if(item._state == "INSERT"){
+                        target.checked = true;
                     }
                 }
             },
@@ -135,15 +144,22 @@ PUI.FN.createGrid = function(){
 //클릭 이벤트
 PUI.EV.CLICK = function(event){
     switch(event.target.id){
+        //행추가
         case "acctAdd":
             PUI.V.wGrid.appendNewRow();
             PUI.V.wGrid.getElementHeadTableRow()
                 .querySelectorAll("input[name=check]")[0]
                 .checked = false;
             break;
+        //목록 초기상태로 리셋
         case "acctRst":
             PUI.V.wGrid.reset();
             break;
+        //변경사항 저장
+        case "acctReg":
+
+            break;
+        //상세등록페이지 이동
         case "acctDtlReg":
             document.location.href = "/assets/account/register";
             break;
