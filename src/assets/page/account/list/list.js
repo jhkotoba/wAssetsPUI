@@ -6,6 +6,12 @@ PUI.FN.INIT = async function(){
     PUI.V.acctTgtCd = response.data.filter(item => item.grpCode === "ACCT_TGT_CD");
     PUI.V.acctDivCd = response.data.filter(item => item.grpCode === "ACCT_DIV_CD");
 
+    //검색항목 계좌사용처 항목추가
+    PUI.UTL.appendCodeOptions(document.getElementById("acctTgtCd"), PUI.V.acctTgtCd);
+
+    //검색항목 계좌구분 항목추가
+    PUI.UTL.appendCodeOptions(document.getElementById("acctDivCd"), PUI.V.acctDivCd);
+
     //그리드 생성 호출
     PUI.FN.createGrid();
 };
@@ -37,9 +43,13 @@ PUI.FN.createGrid = function(){
                         },
                         body: (event, item) => {
 
-                            //신규행 체크상태에서 체크 해제시 행 삭제
-                            if(item._state === "INSERT"){
+                            //신규행 체크상태에서 체크 해제시 확인 후 행 삭제
+                            if(item._state === "INSERT" && confirm("신규행 작성을 삭제하시겠습니까?")){
                                 PUI.V.wGrid.removeRow(item._rowSeq);
+                            //취소 시 로직 종료
+                            }else{ 
+                                event.target.checked = !event.target.checked;
+                                return;
                             }
                             
                             //바디 체크박스 전체 체크(전체 체크시 헤더 체크박스 선택, 전체가 아닐경우 해제)
@@ -155,14 +165,27 @@ PUI.EV.CLICK = function(event){
         case "acctRst":
             PUI.V.wGrid.reset();
             break;
-        //변경사항 저장
-        case "acctReg":
-
-            break;
         //상세등록페이지 이동
         case "acctDtlReg":
             document.location.href = "/assets/account/register";
             break;
+        //변경사항 저장
+        case "acctReg":
+            PUI.FN.applyAccount();
+            break;
 
     }
+}
+
+//계좌 수정, 삭제, 추가
+PUI.FN.applyAccount = function(){
+    PUI.FT.postFetch("/api/assets/applyAccount/list" , PUI.V.wGrid.getApplyData())
+        .then(response => {
+            if(response.resultCode === "0000"){
+                alert("저장하였습니다.");
+                
+            }else{
+                alert("ERROR CODE::" + response.resultCode);
+            }
+        });
 }

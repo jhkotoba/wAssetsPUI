@@ -381,4 +381,34 @@ export const wUtil = {
         }
         return node;
     },
+
+    //자식 노드 비우기
+    childElementEmpty(element){
+        while(element.hasChildNodes()){
+            element.removeChild(element.firstChild);
+        }
+    },
+
+    //SELECT태그, 데이터, 텍스트명, 값명, 빈값명을 받아서 셀렉트박스에 자식노드추가
+    appendOptions(element, dataList, valueName, textName, emptyName){
+        let option = null;
+
+        if(this.isNotEmpty(emptyName)){
+            option = document.createElement("option");
+            option.textContent(emptyName);
+            element.appendChild(option);
+        }
+
+        dataList.forEach(item => {
+            option = document.createElement("option");
+            option.textContent = item[textName];
+            option.value = item[valueName];
+            element.appendChild(option);
+        });
+    },
+
+    //SELECT태그, 데이터, 빈값명을 받아서 셀렉트박스에 자식노드추가
+    appendCodeOptions(element, dataList, emptyName){
+        this.appendOptions(element, dataList, "code", "codeNm", emptyName);
+    }
 }
