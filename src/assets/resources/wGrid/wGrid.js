@@ -164,6 +164,31 @@ class wGrid {
     getDataIndex(index){
         return this._data[index];
     }
+
+    //상태가 조회(SELECT)인 데이터 가져오기
+    getSelectData(){
+        return this._data.filter(item => this.isSelect(item._state));
+    }
+
+    //상태가 추가(INSERT)인 데이터 가져오기
+    getInsertData(){
+        return this._data.filter(item => this.isInsert(item._state));
+    }
+
+    //상태가 수정(UPDATE)인 데이터 가져오기
+    getUpdateData(){
+        return this._data.filter(item => this.isUpdate(item._state));
+    }
+
+    //상태가 삭제(DELETE)인 데이터 가져오기
+    getDeleteData(){
+        return this._data.filter(item => this.isDelete(item._state));
+    }
+
+    //상태가 변경(INSERT, UPDATE, DELETE)인 데이터 가져오기
+    getApplyData(){
+        return this._data.filter(item => !this.isSelect(item._state));
+    }
    
     append(data, option){
 
@@ -223,20 +248,12 @@ class wGrid {
     removeRow(rowSeq){
         this._data.splice(this.getSeqIndex(rowSeq), 1);
         this.getElementBodyTable().querySelectorAll("tr[data-row-seq='" + rowSeq + "']")[0].remove();
-        this.dataReIndexing();
+        this._dataReIndexing();
     }
 
     //여러개의 행 삭제
     rowmoveRows(rowSeqList){
 
-    }
-
-    //데이터 인덱싱
-    dataReIndexing(){
-        this._state.seqIndex = [];
-        this._data.forEach((item, index) => {
-            this._state.seqIndex[item._rowSeq] = index;
-        });
     }
 
     //그리드 새로고침
@@ -246,6 +263,14 @@ class wGrid {
         //TABLE 태그만 수정 - TD생성
         this._data.forEach((row, rIdx) => {
             this._element.bodyTb.appendChild(this._bodyListRowCreate(row, rIdx));
+        });
+    }
+
+    //데이터 인덱싱
+    _dataReIndexing(){
+        this._state.seqIndex = [];
+        this._data.forEach((item, index) => {
+            this._state.seqIndex[item._rowSeq] = index;
         });
     }
 
