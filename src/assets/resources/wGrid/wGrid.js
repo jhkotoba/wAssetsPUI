@@ -3,7 +3,7 @@ import { util } from "./plugin/util.js"
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.5.0
+ * @version 0.6.0
  */
 class wGrid {
 
@@ -20,6 +20,12 @@ class wGrid {
                 INSERT: "INSERT",
                 UPDATE: "UPDATE",
                 REMOVE: "REMOVE"
+            },
+            TR_CLS_STATE: {
+                SELECT: "",
+                INSERT: "wgrid-insert-tr",
+                UPDATE: "wgrid-update-tr",
+                REMOVE: "wgrid-remove-tr"
             },
             EMPTY: "EMPTY",
             EVENT_LIST: ["click", "change"]
@@ -140,7 +146,7 @@ class wGrid {
                 data._state = this.CONSTANT.STATE.SELECT;
             });
             this._data = obj.list;
-            this._orgData = this._data;
+            this._orgData = Object.assign([], this._data);
 
             //새로고침 false아니면 새로고침
             if(obj.isRefresh !== false){
@@ -209,28 +215,39 @@ class wGrid {
         this._data.push(row);
 
         let tr = this._bodyListRowCreate(row, this._data.length-1);
-        tr.classList.add("wgrid-insert-tr")
+        tr.classList.add(this.CONSTANT.TR_CLS_STATE.INSERT);
         this._element.bodyTb.appendChild(tr);
     }
 
-    //name으로 체크된 체크박스 가져오기
-    getCheckeds(name){
-
+    //name으로 체크된 체크박스 노드 가져오기
+    getNameCheckedNodes(name){
+        return this.getElementBodyTable()
+            .querySelectorAll("input[type='checkbox'][name='"+name+"']:checked");
     }
 
-    //여러개의 행 편집모드로 변경
-    changeEditRows(){
-
+    //name으로 체크된 체크박스 seq(list)번호 가져오기
+    getNameCheckedSeqs(name){
+        let seqList = [];
+        this.getNameCheckedNodes(name)
+            .forEach(check => {
+                seqList.push(Number(this.util.getTrNode(check).dataset.rowSeq));
+            });
+        return seqList;
     }
 
-    //행 편집모드로 변경
-    changeEditRow(){
-
+    //name으로 체크된 체크박스 행 데이터(itemList) 가져오기
+    getNameCheckedItems(name){
+        let itemList = [];
+        this.getNameCheckedNodes(name)
+            .forEach(check => {
+                itemList.push(this.getDataIndex(this.getSeqIndex(this.util.getTrNode(check).dataset.rowSeq)));
+            });
+        return Object.assign([], itemList);
     }
 
     //그리드 최후 조회상태로 리셋
     reset(){
-        this._data = this._orgData;
+        this._data = Object.assign([], this._orgData);
         this.refresh();
     }
 
@@ -244,17 +261,57 @@ class wGrid {
 
     }
 
-    //한개의 행 삭제
-    removeRow(rowSeq){
-        this._data.splice(this.getSeqIndex(rowSeq), 1);
-        this.getElementBodyTable().querySelectorAll("tr[data-row-seq='" + rowSeq + "']")[0].remove();
+    //여러개의 행 편집모드로 변경
+    modifyStateRowIdx(rowIdx){
+
+    }
+
+    //행 편집모드로 변경
+    modifyStateRowSeq(rowSeq){
+       
+    }
+
+    //여러행 삭제상태 변환(idx[])
+    removeStateRowIdxs(rowIdx){
+        rowIdx.forEach(idx => this.removeStateRowIdx(idx));
+    }
+
+    //여러행 삭제상태 변환(seq[])
+    removeStateRowSeqs(rowSeq){
+        rowSeq.forEach(req => this.removeStateRowSeq(req));
+    }
+
+    //한행 삭제상태 변환(idx)
+    removeStateRowIdx(rowIdx){
+        this._data[rowIdx]._state = this.CONSTANT.STATE.REMOVE;
+
+        this.getElementBodyTable()
+            .querySelectorAll("tr[data-row-seq='"+ this.getIdxSequence(rowIdx) +"']")[0]
+            .classList.add(this.CONSTANT.TR_CLS_STATE.REMOVE);
+    }
+
+    //한행 삭제상태 변환(seq)
+    removeStateRowSeq(rowSeq){
+        this._data[this.getSeqIndex(rowSeq)]._state = this.CONSTANT.STATE.REMOVE;
+
+        this.getElementBodyTable()
+            .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0]
+            .classList.add(this.CONSTANT.TR_CLS_STATE.REMOVE);
+    }
+
+    //한개의 행 삭제(idx)
+    removeRowIdx(rowIdx){
+        this._data.splice(rowIdx, 1);
+        this.getElementBodyTable().querySelectorAll("tr[data-row-seq='" + this.getIdxSequence(rowSeq) + "']")[0].remove();
         this._dataReIndexing();
     }
 
-    //여러개의 행 삭제
-    rowmoveRows(rowSeqList){
-
-    }
+    //한개의 행 삭제(seq)
+    removeRowSeq(rowSeq){
+        this._data.splice(this.getSeqIndex(rowSeq), 1);
+        this.getElementBodyTable().querySelectorAll("tr[data-row-seq='" + rowSeq + "']")[0].remove();
+        this._dataReIndexing();
+    }  
 
     //그리드 새로고침
     refresh(){        

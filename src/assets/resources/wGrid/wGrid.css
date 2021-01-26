@@ -29,9 +29,9 @@
 .wgrid-addremove-btn:hover{background: #3A3A3A;}
 .wgrid-addremove-btn:active{background: #5E5E5E;}
 
-.wgrid-delete-tr{background: #795757 !important;}
-.wgrid-delete-tag{background: #654A4A !important; pointer-events: none; color: #777777 !important;}
-.wgrid-delete-tag:disabled{background: #654A4A !important;}
+.wgrid-remove-tr{background: #795757 !important;}
+.wgrid-remove-tag{background: #654A4A !important; pointer-events: none; color: #777777 !important;}
+.wgrid-remove-tag:disabled{background: #654A4A !important;}
 .wgrid-update-tr{background: #5A607D;}
 .wgrid-update-tag{background: #535473;}
 .wgrid-update-tag:disabled{background: #535473;}

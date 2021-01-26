@@ -29,27 +29,30 @@ PUI.FN.createGrid = function(){
                 event: {
                     change:{
                         header: event => {
-                            //헤드 체크박스 클릭시 바디 체크박스 전체선택 & 전체해제
+                            //헤드 체크박스 클릭시 바디 체크박스 전체선택 & 전체해제 (기본상태만)
                             PUI.V.wGrid
                                 .getElementBody()
                                 .querySelectorAll("input[name=" + event.target.name + "]")
                                 .forEach(check => {
-                                    if(event.target.checked){
-                                        check.checked = true;
-                                    }else{
-                                        check.checked = false;
+                                    if(PUI.UTL.isEmpty(PUI.UTL.getTrNode(check).classList.value)){
+                                        if(event.target.checked){
+                                            check.checked = true;
+                                        }else{
+                                            check.checked = false;
+                                        }
                                     }
                                 });
                         },
                         body: (event, item) => {
 
                             //신규행 체크상태에서 체크 해제시 확인 후 행 삭제
-                            if(item._state === "INSERT" && confirm("신규행 작성을 삭제하시겠습니까?")){
-                                PUI.V.wGrid.removeRow(item._rowSeq);
-                            //취소 시 로직 종료
-                            }else{ 
-                                event.target.checked = !event.target.checked;
-                                return;
+                            if(item._state === "INSERT"){
+                                if(confirm("신규행 작성을 삭제하시겠습니까?")){
+                                    PUI.V.wGrid.removeRowSeq(item._rowSeq);
+                                }else{
+                                    event.target.checked = !event.target.checked;
+                                    return;
+                                }
                             }
                             
                             //바디 체크박스 전체 체크(전체 체크시 헤더 체크박스 선택, 전체가 아닐경우 해제)
@@ -160,6 +163,18 @@ PUI.EV.CLICK = function(event){
             PUI.V.wGrid.getElementHeadTableRow()
                 .querySelectorAll("input[name=check]")[0]
                 .checked = false;
+            break;
+        //체크된 행 삭제상태로 변환
+        case "acctDel":
+            let chkList = [];
+            PUI.V.wGrid.getNameCheckedNodes("check")
+                .forEach(check => {
+                    let tr = PUI.UTL.getTrNode(check);
+                    if(tr.classList.value == ""){
+                        chkList.push(tr.dataset.rowSeq);
+                    }
+                });
+            PUI.V.wGrid.removeStateRowSeqs(chkList);
             break;
         //목록 초기상태로 리셋
         case "acctRst":
