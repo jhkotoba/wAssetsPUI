@@ -27,6 +27,12 @@ class wGrid {
                 UPDATE: "wgrid-update-tr",
                 REMOVE: "wgrid-remove-tr"
             },
+            TAG_CLS_STATE:{
+                SELECT: "",
+                INSERT: "wgrid-insert-tag",
+                UPDATE: "wgrid-update-tag",
+                REMOVE: "wgrid-remove-tag"
+            },
             EMPTY: "EMPTY",
             EVENT_LIST: ["click", "change"]
         }
@@ -271,6 +277,16 @@ class wGrid {
        
     }
 
+    //행의 상태를 취소(삭제, 편집상태를 취소) (idx)
+    cancelStateRowIdx(){
+
+    }
+
+    //행의 상태를 취소(삭제, 편집상태를 취소) (seq)
+    cancelStateRowSeq(rowSeq){
+
+    }
+
     //여러행 삭제상태 변환(idx[])
     removeStateRowIdxs(rowIdx){
         rowIdx.forEach(idx => this.removeStateRowIdx(idx));
@@ -285,18 +301,36 @@ class wGrid {
     removeStateRowIdx(rowIdx){
         this._data[rowIdx]._state = this.CONSTANT.STATE.REMOVE;
 
-        this.getElementBodyTable()
-            .querySelectorAll("tr[data-row-seq='"+ this.getIdxSequence(rowIdx) +"']")[0]
-            .classList.add(this.CONSTANT.TR_CLS_STATE.REMOVE);
+        let tr = this.getElementBodyTable()
+            .querySelectorAll("tr[data-row-seq='"+ this.getIdxSequence(rowIdx) +"']")[0];
+
+        tr.classList.add(this.CONSTANT.TR_CLS_STATE.REMOVE);
+        tr.childNodes.forEach(td => {
+            switch(td.firstChild.firstChild.tagName){
+                case "INPUT":
+                case "BUTTON":
+                    td.firstChild.firstChild.classList.add(this.CONSTANT.TAG_CLS_STATE.REMOVE);
+                break;
+            }
+        });
     }
 
     //한행 삭제상태 변환(seq)
     removeStateRowSeq(rowSeq){
         this._data[this.getSeqIndex(rowSeq)]._state = this.CONSTANT.STATE.REMOVE;
 
-        this.getElementBodyTable()
-            .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0]
-            .classList.add(this.CONSTANT.TR_CLS_STATE.REMOVE);
+        let tr = this.getElementBodyTable()
+            .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
+
+        tr.classList.add(this.CONSTANT.TR_CLS_STATE.REMOVE);
+        tr.childNodes.forEach(td => {
+            switch(td.firstChild.firstChild.tagName){
+                case "INPUT":
+                case "BUTTON":
+                    td.firstChild.firstChild.classList.add(this.CONSTANT.TAG_CLS_STATE.REMOVE);
+                break;
+            }
+        });
     }
 
     //한개의 행 삭제(idx)

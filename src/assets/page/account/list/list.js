@@ -46,13 +46,19 @@ PUI.FN.createGrid = function(){
                         body: (event, item) => {
 
                             //신규행 체크상태에서 체크 해제시 확인 후 행 삭제
-                            if(item._state === "INSERT"){
-                                if(confirm("신규행 작성을 삭제하시겠습니까?")){
+                            switch(item._state){
+                            case "INSERT":
+                                if(confirm("신규행 작성을 삭제 하시겠습니까?")){
                                     PUI.V.wGrid.removeRowSeq(item._rowSeq);
                                 }else{
                                     event.target.checked = !event.target.checked;
                                     return;
                                 }
+                                break;
+                            case "UPDATE":
+                                break;
+                            case "REMOVE":
+                                break;
                             }
                             
                             //바디 체크박스 전체 체크(전체 체크시 헤더 체크박스 선택, 전체가 아닐경우 해제)
