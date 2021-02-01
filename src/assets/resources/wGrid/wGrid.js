@@ -278,13 +278,34 @@ class wGrid {
     }
 
     //행의 상태를 취소(삭제, 편집상태를 취소) (idx)
-    cancelStateRowIdx(){
-
+    cancelStateRowIdx(rowIdx){
+        this._cancelStateRow(rowIdx, this.getIdxSequence(rowIdx));
     }
 
     //행의 상태를 취소(삭제, 편집상태를 취소) (seq)
     cancelStateRowSeq(rowSeq){
+        this._cancelStateRow(this.getSeqIndex(rowSeq), rowSeq);
+    }
 
+    //행의 상태를 취소(삭제, 편집상태를 취소)
+    _cancelStateRow(rowIdx, rowSeq){
+        switch(this._data[rowIdx]._state){
+            //삭제상태 취소
+            case this.CONSTANT.STATE.REMOVE:
+                this._data[rowIdx]._state = this.CONSTANT.STATE.SELECT;
+    
+                let tr = this.getElementBodyTable()
+                    .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
+                tr.classList.remove(this.CONSTANT.TR_CLS_STATE.REMOVE);
+    
+                for(let remove of tr.getElementsByClassName(this.CONSTANT.TAG_CLS_STATE.REMOVE)){
+                    remove.classList.remove(this.CONSTANT.TAG_CLS_STATE.REMOVE);
+                }
+                break;
+            case this.CONSTANT.STATE.UPDATE:
+    
+                break;
+            }
     }
 
     //여러행 삭제상태 변환(idx[])
@@ -296,7 +317,7 @@ class wGrid {
     removeStateRowSeqs(rowSeq){
         rowSeq.forEach(req => this.removeStateRowSeq(req));
     }
-
+    
     //한행 삭제상태 변환(idx)
     removeStateRowIdx(rowIdx){
         this._data[rowIdx]._state = this.CONSTANT.STATE.REMOVE;
@@ -326,6 +347,9 @@ class wGrid {
         tr.childNodes.forEach(td => {
             switch(td.firstChild.firstChild.tagName){
                 case "INPUT":
+                    if(td.firstChild.firstChild.type == "checkbox"){
+                        break;
+                    }
                 case "BUTTON":
                     td.firstChild.firstChild.classList.add(this.CONSTANT.TAG_CLS_STATE.REMOVE);
                 break;
@@ -335,17 +359,19 @@ class wGrid {
 
     //한개의 행 삭제(idx)
     removeRowIdx(rowIdx){
-        this._data.splice(rowIdx, 1);
-        this.getElementBodyTable().querySelectorAll("tr[data-row-seq='" + this.getIdxSequence(rowSeq) + "']")[0].remove();
-        this._dataReIndexing();
+        this._removeRowIdx(rowIdx, this.getIdxSequence(rowIdx));
     }
 
     //한개의 행 삭제(seq)
     removeRowSeq(rowSeq){
-        this._data.splice(this.getSeqIndex(rowSeq), 1);
+        this._removeRowIdx(this.getSeqIndex(rowSeq), rowSeq);
+    }
+
+    _removeRowIdx(rowIdx, rowSeq){
+        this._data.splice(rowIdx, 1);
         this.getElementBodyTable().querySelectorAll("tr[data-row-seq='" + rowSeq + "']")[0].remove();
         this._dataReIndexing();
-    }  
+    }
 
     //그리드 새로고침
     refresh(){        

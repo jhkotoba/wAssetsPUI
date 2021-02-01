@@ -58,6 +58,7 @@ PUI.FN.createGrid = function(){
                             case "UPDATE":
                                 break;
                             case "REMOVE":
+                                PUI.V.wGrid.cancelStateRowSeq(item._rowSeq);
                                 break;
                             }
                             
