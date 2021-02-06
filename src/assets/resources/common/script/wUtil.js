@@ -1,4 +1,15 @@
 export const wUtil = {
+
+    //상수
+    CONST: {
+        VALID:{
+            EMPTY: "EMPTY",
+            DATE_YYYYMMDD: "DATE_YYYYMMDD",
+            DATE_YYYYMMDDHHMM: "DATE_YYYYMMDDHHMM",
+            DATE_YYYYMMDDHHMMSS: "DATE_YYYYMMDDHHMMSS"
+        }
+    },
+
     //빈값 체크
     isEmpty(data){
         let val = null;
@@ -117,6 +128,7 @@ export const wUtil = {
     },
 
     //파라미터 가져오기
+    ////@deactivated
     getParams(list, option){
         let element, value, temp = null, data = {};
         let result = {isValid: true, message: null, data: null};
@@ -188,6 +200,7 @@ export const wUtil = {
 
     //파라미터 가져오기 및 밸리데이션 체크
     //id값의 value값 가져오기 id는 밸류데이션 체크
+    ////@deactivated
     getParams_old(objs){
         let result = {isValid: true, msg: null, data: null};
         if(this.isNotArray(objs)){
@@ -242,6 +255,7 @@ export const wUtil = {
     //  accountNum  => 계좌번호 형식체크                => "계좌번호 형식이 바르지 않습니다."
     //  date        => 날짜체크(YYYY-MM-DD)             => "날짜형식이 바르지 않습니다."
     //  datetime    => 날짜체크(YYYY-MM-DD HH:MM:SS)    => "날짜형식이 바르지 않습니다."
+    //@deactivated
     validCheck(validNm, value, title){
         let result = {};
 
@@ -276,6 +290,11 @@ export const wUtil = {
         return result;
     },
 
+    valid(data, typeList){
+
+    },
+
+    //계좌번호 유효성 검사
     isAccountNumber(value){
         let pattern = /^[0-9]*$/;
         if(pattern.test(value)){
@@ -289,18 +308,18 @@ export const wUtil = {
         }
     },
 
-    //날짜 밸리데이션 체크
+    //날짜 유효성 검사
     isDate(date, pattern){
         let datePattern = null;
         
         switch(pattern.toUpperCase()){
-        case "YYYY-MM-DD":	
+        case this.CONST.VALID.DATE_YYYYMMDD:	
             datePattern = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1])$/;	
             break;
-        case "YYYY-MM-DD HH:MM":
+        case this.CONST.VALID.DATE_YYYYMMDDHHMM:
             datePattern = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1]) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
             break;	
-        case "YYYY-MM-DD HH:MM:SS":
+        case this.CONST.VALID.DATE_YYYYMMDDHHMMSS:
             datePattern = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1]) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
             break;
         }
@@ -338,6 +357,41 @@ export const wUtil = {
         }catch(err){
             return false;
         }
+    },
+    
+    //유효성 검사 value, checkList[]
+    valid(value, key, checkList){
+
+        console.log("value:", value);
+
+        let result = {};
+        checkList.forEach(validType => {
+            if(result.isValid == false) return;
+
+            switch(validType){
+            case this.CONST.VALID.EMPTY:
+                result.isValid = this.isNotEmpty(value);
+                break;
+            case this.CONST.VALID.DATE_YYYYMMDD:
+                result.isValid = this.isDate(value, this.CONST.VALID.DATE_YYYYMMDD)
+                break;
+            case this.CONST.VALID.DATE_YYYYMMDDHHMM:
+                result.isValid = this.isDate(value, this.CONST.VALID.DATE_YYYYMMDDHHMM);
+                break;
+            case this.CONST.VALID.DATE_YYYYMMDDHHMMSS:
+                result.isValid = this.isDate(value, this.CONST.VALID.DATE_YYYYMMDDHHMMSS);
+                break;
+            }
+
+            //유효성 검사된 항목 세팅
+            if(result.isValid == false){
+                result.validType = validType;
+                result.key = key;
+                result.value = value;
+            }
+        });
+
+        return result;
     },
    
     //리스트 -> 코드Map형식으로 변환

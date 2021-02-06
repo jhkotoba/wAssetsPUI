@@ -56,7 +56,6 @@ PUI.FN.createGrid = function(){
                                 }
                                 break;
                             case "UPDATE":
-                                break;
                             case "REMOVE":
                                 PUI.V.wGrid.cancelStateRowSeq(item._rowSeq);
                                 break;
@@ -88,7 +87,7 @@ PUI.FN.createGrid = function(){
                     }
                 },
                 loaded: (target, item) => {
-                    if(item._state == "INSERT"){
+                    if(item._state == "INSERT" || item._state == "UPDATE"){
                         target.checked = true;
                     }
                 }
@@ -134,11 +133,11 @@ PUI.FN.createGrid = function(){
                     select: {list: useYnList}
                 }
             },
-            {title: "상세정보", element:"button", name:"detail", width:80, text:"보기",
+            {title: "상세정보", element:"button", name:"detail", width:80, text:"보기", edit:"button",
                 event:{
                     click:{
                         body: (event, item) => {
-                            if(item.acctSeq){
+                            if(item.acctSeq && confirm(item.acctNm + "계좌의 상세정보 페이지로 이동하시겠습니까?")){
                                 document.location.href = "/assets/account/detail?acctSeq="+ item.acctSeq
                             }
                         }
@@ -163,6 +162,7 @@ PUI.FN.createGrid = function(){
 
 //클릭 이벤트
 PUI.EV.CLICK = function(event){
+    let chkList = [];
     switch(event.target.id){
         //행추가
         case "acctAdd":
@@ -171,9 +171,18 @@ PUI.EV.CLICK = function(event){
                 .querySelectorAll("input[name=check]")[0]
                 .checked = false;
             break;
+        case "acctMod":
+            PUI.V.wGrid.getNameCheckedNodes("check")
+                .forEach(check => {
+                    let tr = PUI.UTL.getTrNode(check);
+                    if(tr.classList.value == ""){
+                        chkList.push(tr.dataset.rowSeq);
+                    }
+                });
+            PUI.V.wGrid.modifyStateRowSeqs(chkList);
+            break;
         //체크된 행 삭제상태로 변환
         case "acctDel":
-            let chkList = [];
             PUI.V.wGrid.getNameCheckedNodes("check")
                 .forEach(check => {
                     let tr = PUI.UTL.getTrNode(check);
@@ -201,13 +210,51 @@ PUI.EV.CLICK = function(event){
 
 //계좌 수정, 삭제, 추가
 PUI.FN.applyAccount = function(){
-    PUI.FT.postFetch("/api/assets/applyAccount/list" , PUI.V.wGrid.getApplyData())
-        .then(response => {
-            if(response.resultCode === "0000"){
-                alert("저장하였습니다.");
-                
-            }else{
-                alert("ERROR CODE::" + response.resultCode);
+
+    //변경사항 데이터 가져오기(신규, 수정, 삭제)
+    let applyData = PUI.V.wGrid.getApplyData();
+
+    //유효성검사
+    let valid = {};
+    applyData.forEach(item => {
+        if(valid.isValid == false) return;
+        for(let key in item){
+            if(valid.isValid == false) break;
+            switch(key){
+                case "acctDivCd": valid = PUI.UTL.valid(item[key], key, ["EMPTY"]); break;
+                case "acctNm": valid = PUI.UTL.valid(item[key], key, ["EMPTY"]); break;
+                case "acctNum": valid = PUI.UTL.valid(item[key], key, ["EMPTY"]); break;
+                case "acctTgtCd": valid = PUI.UTL.valid(item[key], key, ["EMPTY"]); break;
+                case "cratDt": valid = PUI.UTL.valid(item[key], key, ["DATE_YYYYMMDD"]); break;
+                case "epyDt":
+                    if(item.epyDtUseYn == "Y"){
+                        valid = PUI.UTL.valid(item[key], key, ["DATE_YYYYMMDD"]);
+                    }
+                break;
             }
-        });
+
+            if(valid.isValid == false){
+                valid.item = item;
+            }else{
+                valid.item = {};
+            }
+        }
+    });
+
+    console.log("valid:", valid);
+
+    if(valid.isValid == false){
+
+    }else{
+        if(confirm("적용하시겠습니까?")){
+            PUI.FT.postFetch("/api/assets/applyAccount/list" , applyData)
+            .then(response => {
+                if(response.resultCode === "0000"){
+                    alert("적용하였습니다.");                    
+                }else{
+                    alert("ERROR CODE::" + response.resultCode);
+                }
+            });
+        }
+    }
 }

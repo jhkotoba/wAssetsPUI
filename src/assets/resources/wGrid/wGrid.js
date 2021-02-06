@@ -3,7 +3,7 @@ import { util } from "./plugin/util.js"
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.6.0
+ * @version 0.7.0
  */
 class wGrid {
 
@@ -267,16 +267,6 @@ class wGrid {
 
     }
 
-    //여러개의 행 편집모드로 변경
-    modifyStateRowIdx(rowIdx){
-
-    }
-
-    //행 편집모드로 변경
-    modifyStateRowSeq(rowSeq){
-       
-    }
-
     //행의 상태를 취소(삭제, 편집상태를 취소) (idx)
     cancelStateRowIdx(rowIdx){
         this._cancelStateRow(rowIdx, this.getIdxSequence(rowIdx));
@@ -289,23 +279,103 @@ class wGrid {
 
     //행의 상태를 취소(삭제, 편집상태를 취소)
     _cancelStateRow(rowIdx, rowSeq){
+        var cancelTr = null;
+        var cancelTag = null;
+        
         switch(this._data[rowIdx]._state){
-            //삭제상태 취소
-            case this.CONSTANT.STATE.REMOVE:
+            //편집상태 취소(편집의 경우 행 재생성)
+            case this.CONSTANT.STATE.UPDATE:
+
+                //데이터 상태 조회로 변경
                 this._data[rowIdx]._state = this.CONSTANT.STATE.SELECT;
-    
+
                 let tr = this.getElementBodyTable()
                     .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
-                tr.classList.remove(this.CONSTANT.TR_CLS_STATE.REMOVE);
-    
-                for(let remove of tr.getElementsByClassName(this.CONSTANT.TAG_CLS_STATE.REMOVE)){
-                    remove.classList.remove(this.CONSTANT.TAG_CLS_STATE.REMOVE);
-                }
+
+                //자식노드 비우기
+                this.util.childElementEmpty(tr);
+
+                //cell 생성후 태그 연결
+                this._field.forEach((field, fIdx) => {
+                    tr.appendChild(this._bodyListCellCreate(field, fIdx, this._data[rowIdx], rowIdx));
+                });
+
+                //취소할 상태값 저장
+                cancelTr = this.CONSTANT.TR_CLS_STATE.UPDATE;
+                cancelTag = this.CONSTANT.TAG_CLS_STATE.UPDATE;
                 break;
-            case this.CONSTANT.STATE.UPDATE:
-    
+            //삭제상태 취소
+            case this.CONSTANT.STATE.REMOVE:
+
+                //데이터 상태 조회로 변경
+                this._data[rowIdx]._state = this.CONSTANT.STATE.SELECT;
+                
+                //취소할 상태값 저장
+                cancelTr = this.CONSTANT.TR_CLS_STATE.REMOVE;
+                cancelTag = this.CONSTANT.TAG_CLS_STATE.REMOVE;
                 break;
             }
+    
+            //ROW스타일 row 태그 스타일 삭제
+            let tr = this.getElementBodyTable()
+                .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
+            tr.classList.remove(cancelTr);
+
+            //행 자식노드의 태그의 스타일(클래스) 삭제
+            for(let remove of tr.getElementsByClassName(this.CONSTANT.TAG_CLS_STATE.REMOVE)){
+                remove.classList.remove(cancelTag);
+            }
+    }
+
+    //행 편집모드로 변경(idx[])
+    modifyStateRowIdxs(rowIdx){
+        rowIdx.forEach(idx => this.modifyStateRowIdx(idx));
+    }
+
+    //행 편집모드로 변경(seq[])
+    modifyStateRowSeqs(rowSeq){
+        rowSeq.forEach(req => this.modifyStateRowSeq(req));
+    }
+
+    //행 편집모드로 변경(idx)
+    modifyStateRowIdx(rowIdx){
+        this._modifyStateRow(rowIdx, this.getIdxSequence(rowIdx));
+    }
+
+    //행 편집모드로 변경(seq)
+    modifyStateRowSeq(rowSeq){
+        this._modifyStateRow(this.getSeqIndex(rowSeq), rowSeq);
+    }
+
+    //행 편집모드로 변경   
+    _modifyStateRow(rowIdx, rowSeq){
+        let tr = this.getElementBodyTable()
+            .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
+
+        //데이터 행상태 값 변경
+        this._data[rowIdx]._state = this.CONSTANT.STATE.UPDATE;
+
+        //자식노드 비우기
+        this.util.childElementEmpty(tr);
+
+        //cell 생성후 태그 연결
+        this._field.forEach((field, fIdx) => {
+            tr.appendChild(this._bodyListCellCreate(field, fIdx, this._data[rowIdx], rowIdx));
+        });
+
+        tr.classList.add(this.CONSTANT.TR_CLS_STATE.UPDATE);
+        tr.childNodes.forEach(td => {
+            switch(td.firstChild.firstChild.tagName){
+                case "INPUT":
+                    if(td.firstChild.firstChild.type == "checkbox"){
+                        break;
+                    }
+                case "BUTTON":
+                case "SELECT":
+                    td.firstChild.firstChild.classList.add(this.CONSTANT.TAG_CLS_STATE.UPDATE);
+                break;
+            }
+        });
     }
 
     //여러행 삭제상태 변환(idx[])
@@ -320,25 +390,17 @@ class wGrid {
     
     //한행 삭제상태 변환(idx)
     removeStateRowIdx(rowIdx){
-        this._data[rowIdx]._state = this.CONSTANT.STATE.REMOVE;
-
-        let tr = this.getElementBodyTable()
-            .querySelectorAll("tr[data-row-seq='"+ this.getIdxSequence(rowIdx) +"']")[0];
-
-        tr.classList.add(this.CONSTANT.TR_CLS_STATE.REMOVE);
-        tr.childNodes.forEach(td => {
-            switch(td.firstChild.firstChild.tagName){
-                case "INPUT":
-                case "BUTTON":
-                    td.firstChild.firstChild.classList.add(this.CONSTANT.TAG_CLS_STATE.REMOVE);
-                break;
-            }
-        });
+        this._removeStateRow(rowIdx, this.getIdxSequence(rowIdx));
     }
 
     //한행 삭제상태 변환(seq)
     removeStateRowSeq(rowSeq){
-        this._data[this.getSeqIndex(rowSeq)]._state = this.CONSTANT.STATE.REMOVE;
+        this._removeStateRow(this.getSeqIndex(rowSeq), rowSeq);
+    }
+
+    //한행 삭제상태 변환
+    _removeStateRow(rowIdx, rowSeq){
+        this._data[rowIdx]._state = this.CONSTANT.STATE.REMOVE;
 
         let tr = this.getElementBodyTable()
             .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
@@ -367,6 +429,7 @@ class wGrid {
         this._removeRowIdx(this.getSeqIndex(rowSeq), rowSeq);
     }
 
+    //행삭제
     _removeRowIdx(rowIdx, rowSeq){
         this._data.splice(rowIdx, 1);
         this.getElementBodyTable().querySelectorAll("tr[data-row-seq='" + rowSeq + "']")[0].remove();
@@ -508,7 +571,7 @@ class wGrid {
 
         //cell 생성후 태그 연결
         this._field.forEach((field, fIdx) => {
-            tr.appendChild(this._bodyListCellCreate(field, fIdx, row, rIdx));               
+            tr.appendChild(this._bodyListCellCreate(field, fIdx, row, rIdx));
         });
         return tr;
     }
