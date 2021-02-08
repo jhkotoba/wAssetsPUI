@@ -67,6 +67,7 @@ class wGrid {
         //그리드 인자값 세팅
         this._data = [];
         this._orgData = [];
+        this._editOrgData = {};
         this._option = option;
         if(this.util.isNotEmpty(args.option.style)){
             this._option.style = args.option.style;
@@ -267,6 +268,30 @@ class wGrid {
 
     }
 
+    //행의 변경상태를 체크
+    isChangeDataRowIdx(rowIdx){
+        return this._isChangeData(rowIdx, this.getIdxSequence(rowIdx));
+    }
+
+    //행의 변경상태를 체크
+    isChangeDataRowSeq(rowSeq){
+        return this._isChangeData(this.getSeqIndex(rowSeq), rowSeq);
+    }
+
+    //행의 변경상태를 체크
+    _isChangeData(rowIdx, rowSeq){
+        let result = false;
+        for(let key in this._data[rowIdx]){
+            if(key.indexOf("_") != 0){
+                if(this._data[rowIdx][key] != this._editOrgData[rowSeq][key]){
+                    result = true;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
     //행의 상태를 취소(삭제, 편집상태를 취소) (idx)
     cancelStateRowIdx(rowIdx){
         this._cancelStateRow(rowIdx, this.getIdxSequence(rowIdx));
@@ -285,6 +310,12 @@ class wGrid {
         switch(this._data[rowIdx]._state){
             //편집상태 취소(편집의 경우 행 재생성)
             case this.CONSTANT.STATE.UPDATE:
+                
+                //원본 데이터로 돌림
+                for(let key in this._editOrgData[rowSeq]){
+                    this._data[rowIdx][key] = this._editOrgData[rowSeq][key];
+                }
+                delete this._editOrgData[rowSeq];
 
                 //데이터 상태 조회로 변경
                 this._data[rowIdx]._state = this.CONSTANT.STATE.SELECT;
@@ -351,6 +382,14 @@ class wGrid {
     _modifyStateRow(rowIdx, rowSeq){
         let tr = this.getElementBodyTable()
             .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
+
+        console.log("rowSeq:", rowSeq);
+        console.log("this._editOrgData:", this._editOrgData);
+        //편집모드 변경전 본래값 저장
+        this._editOrgData[rowSeq] = {};
+        for(let key in this._data[rowIdx]){
+            this._editOrgData[rowSeq][key] = this._data[rowIdx][key];
+        }        
 
         //데이터 행상태 값 변경
         this._data[rowIdx]._state = this.CONSTANT.STATE.UPDATE;

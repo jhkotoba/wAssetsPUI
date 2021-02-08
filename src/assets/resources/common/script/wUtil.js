@@ -362,8 +362,6 @@ export const wUtil = {
     //유효성 검사 value, checkList[]
     valid(value, key, checkList){
 
-        console.log("value:", value);
-
         let result = {};
         checkList.forEach(validType => {
             if(result.isValid == false) return;
