@@ -3,7 +3,7 @@ import { util } from "./plugin/util.js"
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.7.0
+ * @version 0.8.0
  */
 class wGrid {
 
@@ -327,9 +327,17 @@ class wGrid {
                 this.util.childElementEmpty(tr);
 
                 //cell 생성후 태그 연결
+                let loaded = [];
                 this._field.forEach((field, fIdx) => {
-                    tr.appendChild(this._bodyListCellCreate(field, fIdx, this._data[rowIdx], rowIdx));
+                    let result = this._bodyListCellCreate(field, fIdx, this._data[rowIdx], rowIdx);
+                    tr.appendChild(result.td);
+                    //셀 행 직후 콜백함수 호출 세팅
+                    if(this.util.isFunction(field.loaded)){
+                        loaded.push({fn: field.loaded, tag: result.tag, row: Object.assign({}, this._data[rowIdx])});
+                    }
                 });
+                //행생성후 loaded함수 호출
+                loaded.forEach(item => item.fn(item.tag, item.row));
 
                 //취소할 상태값 저장
                 cancelTr = this.CONSTANT.TR_CLS_STATE.UPDATE;
@@ -382,9 +390,7 @@ class wGrid {
     _modifyStateRow(rowIdx, rowSeq){
         let tr = this.getElementBodyTable()
             .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
-
-        console.log("rowSeq:", rowSeq);
-        console.log("this._editOrgData:", this._editOrgData);
+       
         //편집모드 변경전 본래값 저장
         this._editOrgData[rowSeq] = {};
         for(let key in this._data[rowIdx]){
@@ -398,9 +404,17 @@ class wGrid {
         this.util.childElementEmpty(tr);
 
         //cell 생성후 태그 연결
+        let loaded = [];
         this._field.forEach((field, fIdx) => {
-            tr.appendChild(this._bodyListCellCreate(field, fIdx, this._data[rowIdx], rowIdx));
+            let result = this._bodyListCellCreate(field, fIdx, this._data[rowIdx], rowIdx);
+            tr.appendChild(result.td);
+            //셀 행 직후 콜백함수 호출 세팅
+            if(this.util.isFunction(field.loaded)){
+                loaded.push({fn: field.loaded, tag: result.tag, row: Object.assign({}, this._data[rowIdx])});
+            }
         });
+        //행생성후 loaded함수 호출
+        loaded.forEach(item => item.fn(item.tag, item.row));
 
         tr.classList.add(this.CONSTANT.TR_CLS_STATE.UPDATE);
         tr.childNodes.forEach(td => {
@@ -609,9 +623,18 @@ class wGrid {
 		this.setIdxSequence(rIdx, row._rowSeq);
 
         //cell 생성후 태그 연결
+        let loaded = [];
         this._field.forEach((field, fIdx) => {
-            tr.appendChild(this._bodyListCellCreate(field, fIdx, row, rIdx));
+            let result = this._bodyListCellCreate(field, fIdx, row, rIdx);
+            tr.appendChild(result.td);
+            //행 직후 콜백함수 호출 세팅
+            if(this.util.isFunction(field.loaded)){
+                loaded.push({fn: field.loaded, tag: result.tag, row: Object.assign({}, row)});
+            }
         });
+        //행생성후 loaded함수 호출
+        loaded.forEach(item => item.fn(item.tag, item.row));
+
         return tr;
     }
 
@@ -743,31 +766,27 @@ class wGrid {
         }
 
          //태그생성 후 상태에 따른 다른 스타일 적용을 위한 부분
-         if(this.util.isNotEmpty(tag)){
+        if(this.util.isNotEmpty(tag)){
             switch(row._state){
-                case this.CONSTANT.STATE.SELECT:
-                    break;
+                case this.CONSTANT.STATE.SELECT: break;
                 case this.CONSTANT.STATE.INSERT:
-                    tag.classList.add("wgrid-insert-tag");
+                    tag.classList.add(this.CONSTANT.TAG_CLS_STATE.INSERT);
                     break;
                 case this.CONSTANT.STATE.UPDATE:
+                    tag.classList.add(this.CONSTANT.TAG_CLS_STATE.UPDATE);
                     break;
                 case this.CONSTANT.STATE.REMOVE:
+                    tag.classList.add(this.CONSTANT.TAG_CLS_STATE.REMOVE);
                     break;
             }
-         }
-
+        }
         td.appendChild(div);
 
         //스타일 적용        
         this.util.addElementStyleAttribute(div, "width", field.width);
         this.util.addElementStyleAttribute(div, "textAlign", "center");
         
-        //행 생성직전 콜백함수 호출
-        if(this.util.isFunction(field.loaded)){
-            field.loaded(tag, row);
-        }
-        return td;
+        return {td, tag};
     }
 
     //그리드 이벤트 세팅

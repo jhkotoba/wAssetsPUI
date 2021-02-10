@@ -93,9 +93,9 @@ PUI.FN.createGrid = function(){
                         }
                     }
                 },
-                loaded: (target, item) => {
+                loaded: (element, item) => {
                     if(item._state == "INSERT" || item._state == "UPDATE"){
-                        target.checked = true;
+                        element.checked = true;
                     }
                 }
             },
@@ -121,14 +121,27 @@ PUI.FN.createGrid = function(){
                 },
                 event: {
                     change: {
-                        body: event => {
-                            let epyDt = PUI.UTL.getTrNode(event.target).querySelectorAll("input[name='epyDt']")[0];
-                            if(event.target.value == "Y"){
-                                epyDt.disabled = false;
-                            }else{
-                                epyDt.value = "";
-                                epyDt.disabled = true;
+                        body: (event, item) => {
+                            if(item._state == "INSERT" || item._state == "UPDATE"){
+                                let epyDt = PUI.UTL.getTrNode(event.target).querySelectorAll("input[name='epyDt']")[0];
+                                if(event.target.value == "Y"){
+                                    epyDt.disabled = false;
+                                }else{
+                                    epyDt.value = "";
+                                    epyDt.disabled = true;
+                                }
                             }
+                        }
+                    }
+                },
+                loaded: (element, item) => {
+                    if(item._state == "INSERT" || item._state == "UPDATE"){
+                        let epyDt = PUI.UTL.getTrNode(element).querySelectorAll("input[name='epyDt']")[0];
+                        if(element.value == "Y"){
+                            epyDt.disabled = false;
+                        }else{
+                            epyDt.value = "";
+                            epyDt.disabled = true;
                         }
                     }
                 }
