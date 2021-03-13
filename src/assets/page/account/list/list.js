@@ -232,7 +232,7 @@ PUI.EV.CLICK = function(event){
 PUI.FN.applyAccount = function(){
 
     //변경사항 데이터 가져오기(신규, 수정, 삭제)
-    let applyData = PUI.V.wGrid.getApplyData();
+    let applyData = PUI.V.wGrid.getApplyData();//.reverse();
 
     //유효성검사
     let valid = {};
@@ -261,15 +261,15 @@ PUI.FN.applyAccount = function(){
         }
     });
 
-    console.log("valid:", valid);
-
     if(valid.isValid == false){
-
+        console.log("===========================");
     }else{
         if(confirm("적용하시겠습니까?")){
-            PUI.FT.postFetch("/api/assets/applyAccount/list" , applyData)
+            PUI.FT.postFetch("/api/assets/applyAccount" , applyData)
             .then(response => {
-                if(response.resultCode === "0000"){
+                console.log("response:", response);
+                console.log("response.resultCode::", response.resultCode);
+                if(response.resultCode == "0000"){
                     alert("적용하였습니다.");                    
                 }else{
                     alert("ERROR CODE::" + response.resultCode);

@@ -215,7 +215,20 @@ class wGrid {
     appendNewRow(){
         let row = {};
         this._field.forEach(item => {
-             row[item.name] = "";
+            row[item.name] = "";
+            if(this.util.isNotEmptyChildObjct(item, "data", "select")){
+                //data.select.empty 항목이 존재하지 않거나 false인 경우
+                if(this.util.isEmpty(item.data.select.empty) || item.data.select.empty === false){
+                    //list에 데이터가 있으면 첫번째 데이터를 넣음
+                    if(item.data.select.list.length > 0){
+                        if(this.util.isNotEmpty(item.data.select.value)){
+                            row[item.name] = item.data.select.list[0][item.data.select.value];
+                        }else{
+                            row[item.name] = item.data.select.list[0].value;
+                        }
+                    }
+                }
+            }
         });
         row._rowSeq = this._getNextSeq();
         row._state = this.CONSTANT.STATE.INSERT;
@@ -651,6 +664,7 @@ class wGrid {
                 switch(field.edit.toLowerCase()){
                     case "text": elementType = "text-edit"; break;
                     case "date": elementType = "date-edit"; break;
+                    case "dateTime": elementType = "dateTime-edit"; break;
                     default: elementType = field.edit; break;
                 }
             }else{
@@ -741,7 +755,12 @@ class wGrid {
             tag.value = row[field.name];
             div.appendChild(tag);
             break;
-
+        //날짜(YYYY-MM-DD HH:MM:SS)
+        case "dateTime":
+            break;
+        //날짜 입력(YYYY-MM-DD HH:MM:SS)
+        case "dateTime-edit":
+            break;
         //텍스트(입력)
         case "text-edit":
             tag = document.createElement("input");
@@ -848,19 +867,28 @@ class wGrid {
         });
         //바디 체인지이벤트        
         this._element.body.addEventListener("change", event => {
+            let rowSeq = this.util.getTrNode(event.target).dataset.rowSeq;
             //빈값 체크 후
             if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "change", "body")){
                 if(this.util.isFunction(this._event[event.target.name].change.body)){
                     //연결된 이벤트 호출(event, row)
-                    this._event[event.target.name].change.body(event, this._data[this.getSeqIndex(this.util.getTrNode(event.target).dataset.rowSeq)]);
+                    this._event[event.target.name].change.body(event, this._data[this.getSeqIndex(rowSeq)]);
                 }
             }
+            //데이터 동기화
+            if(event.target.dataset.event === "date"){
+                this._data[this.getSeqIndex(rowSeq)][event.target.name] = event.target.value.replace(/-/gi, "")
+            }else if(event.target.dataset.event === "dateTime"){
+                this._data[this.getSeqIndex(rowSeq)][event.target.name] = event.target.value.replace(/-/gi, "").replace(/:/gi, "")
+            }else{
+                this._data[this.getSeqIndex(rowSeq)][event.target.name] = event.target.value;
+            }          
             event.stopPropagation();
         });
 
         //헤드 키업 이벤트
         this._element.head.addEventListener("keyup", event => {
-            //빈값 체크 후
+            //연결 이벤트 호출
             if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "keyup", "header")){
                 if(this.util.isFunction(this._event[event.target.name].change.header)){
                     this._event[event.target.name].keyup.header(event);
@@ -870,16 +898,25 @@ class wGrid {
         });
         //바디 키업 이벤트
         this._element.body.addEventListener("keyup", event => {
-            
+            let rowSeq = this.util.getTrNode(event.target).dataset.rowSeq;
             //date 포멧 이벤트
             if(event.target.dataset.event === "date"){
             	event.target.value = event.target.value.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
-            //빈값 체크 후
-			}else if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "keyup", "body")){
+			}
+            //연결 이벤트 호출
+            if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "keyup", "body")){
                 if(this.util.isFunction(this._event[event.target.name].change.body)){
                     //연결된 이벤트 호출(event, row)
-                    this._event[event.target.name].keyup.body(event, this._data[this.getSeqIndex(this.util.getTrNode(event.target).dataset.rowSeq)]);
+                    this._event[event.target.name].keyup.body(event, this._data[this.getSeqIndex(rowSeq)]);
                 }
+            }
+            //데이터 동기화
+            if(event.target.dataset.event === "date"){
+                this._data[this.getSeqIndex(rowSeq)][event.target.name] = event.target.value.replace(/-/gi, "")
+            }else if(event.target.dataset.event === "dateTime"){
+                this._data[this.getSeqIndex(rowSeq)][event.target.name] = event.target.value.replace(/-/gi, "").replace(/:/gi, "")
+            }else{
+                this._data[this.getSeqIndex(rowSeq)][event.target.name] = event.target.value;
             }
             event.stopPropagation();
         });

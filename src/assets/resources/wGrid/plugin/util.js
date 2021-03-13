@@ -107,7 +107,7 @@ export const util = {
             let date = new Date(value);
             return date.getFullYear() + "-" 
             + date.getMonth() < 11 ? "0" + (date.getMonth()+1) : (date.getMonth() + 1) + "-"
-            + date.getDate() < 10 ? "0" + date.getDate() : date.getDate()
+            + date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
         }else if(typeof value === "string"){
             if(value.length === 8){
                 return value.substring(0,4) + "-" + value.substring(4,6) + "-" + value.substring(6,8);
@@ -115,9 +115,9 @@ export const util = {
                 return value.replace(".", "-").replace(".", "-");
             }else if(value.length > 10){
                 if(value.indexOf("-") > -1 || value.indexOf(".") > -1){
-                    value.substring(0,10).replace(".", "-").replace(".", "-");
+                    return value.substring(0,10).replace(".", "-").replace(".", "-");
                 }else{
-                    value.substring(0,4) + "-" + value.substring(4,6) + "-" + value.substring(6,8);
+                    return value.substring(0,4) + "-" + value.substring(4,6) + "-" + value.substring(6,8);
                 }
             }else{
                 return "";
@@ -125,6 +125,39 @@ export const util = {
         }else{
             return "";
         }
-
+    },
+    //데이터 날짜 포멧(YYYY-MM-DD HH:MM:SS)
+    dateTimeFormat(value){
+        //밀리초로 판단
+        if(typeof value === "number"){
+            let date = new Date(value);
+            return date.getFullYear() + "-" 
+            + date.getMonth() < 11 ? "0" + (date.getMonth()+1) : (date.getMonth() + 1) + "-"
+            + date.getDate() < 10 ? "0" + date.getDate() : date.getDate()
+            + " "
+            + date.getHours() < 10 ? "0" + date.getHours() : date.getHours() + ":"
+            + date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes() + ":"
+            + date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+        }else if(typeof value === "string"){
+            if(value.length === 8){
+                return value.substring(0,4) + "-" + value.substring(4,6) + "-" + value.substring(6,8) + " 00:00:00";
+            }else if(value.length === 10){
+                return value.replace(".", "-").replace(".", "-") + " 00:00:00";
+            }else if(value.length === 14){
+                return value.substring(0,4) + "-" + value.substring(4,6) + "-" + value.substring(6,8)
+                    + " " + value.substring(8,10) + ":" + value.substring(10,12) + ":" + value.substring(12,14);
+            }else if(value.length > 19){
+                if(value.indexOf("-") > -1 || value.indexOf(".") > -1){
+                    return value.substring(0,10).replace(".", "-").replace(".", "-");
+                }else{
+                    return value.substring(0,4) + "-" + value.substring(4,6) + "-" + value.substring(6,8)
+                        + " " + value.substring(8,10) + ":" + value.substring(10,12) + ":" + value.substring(12,14);
+                }
+            }else{
+                return "";
+            }
+        }else{
+            return "";
+        }
     }
 }

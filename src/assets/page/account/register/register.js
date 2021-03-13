@@ -101,7 +101,7 @@ PUI.FN.accountRegister = function(event){
         {target:"acctNm", type:"input", title:"계좌명", valid:["notEmpty"]},
         {target:"acctNum", type:"input", title:"계좌번호", valid:["notEmpty", "accountNumber"]},
         {target:"useYn", type:"raido", title:"사용구분", valid:["notEmpty"]},
-        {target:"cratDt", type:"input", title:"생성일", valid:["notEmpty", "date"]},        
+        {target:"cratDt", type:"input", title:"생성일", valid:["notEmpty"]},        
         {target:"epyDtUseYn", type:"check"},
         {target:"epyDt", type:"input"},        
         {target:"fontClor", type:"input"},
@@ -124,6 +124,7 @@ PUI.FN.accountRegister = function(event){
                         alert("저장하였습니다.");
                         window.location.href = "/assets/account/list";
                     }else{
+                        console.log(response.resultCode);
                         alert("ERROR CODE::" + response.resultCode);
                     }
                 });
