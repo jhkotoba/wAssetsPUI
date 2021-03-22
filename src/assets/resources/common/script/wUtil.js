@@ -4,6 +4,7 @@ export const wUtil = {
     CONST: {
         VALID: {
             EMPTY: "EMPTY",
+            NUMBER: "NUMBER",
             DATE_YYYYMMDD: "DATE_YYYYMMDD",
             DATE_YYYYMMDDHHMM: "DATE_YYYYMMDDHHMM",
             DATE_YYYYMMDDHHMMSS: "DATE_YYYYMMDDHHMMSS"
@@ -368,6 +369,11 @@ export const wUtil = {
             switch(validType){
             case this.CONST.VALID.EMPTY:
                 result.isValid = this.isNotEmpty(value);
+                break;
+            case this.CONST.VALID.NUMBER:
+                if(window.isNaN(value)){
+                    result.isValid = false;
+                }
                 break;
             case this.CONST.VALID.DATE_YYYYMMDD:
                 result.isValid = this.isDate(value, this.CONST.VALID.DATE_YYYYMMDD)

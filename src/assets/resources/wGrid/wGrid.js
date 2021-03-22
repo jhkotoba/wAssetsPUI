@@ -211,8 +211,18 @@ class wGrid {
 
     }   
 
-    //신규행 추가
+    //신규행 추가(위에서)
+    prependNewRow(){
+        this._element.bodyTb.insertBefore(this._createNewRow(), this._element.bodyTb.firstChild);
+    }
+
+    //신규행 추가(아래에서)
     appendNewRow(){
+        this._element.bodyTb.appendChild(this._createNewRow());
+    }
+
+    //신규행 생성
+    _createNewRow(){
         let row = {};
         this._field.forEach(item => {
             row[item.name] = "";
@@ -236,7 +246,7 @@ class wGrid {
 
         let tr = this._bodyListRowCreate(row, this._data.length-1);
         tr.classList.add(this.CONSTANT.TR_CLS_STATE.INSERT);
-        this._element.bodyTb.appendChild(tr);
+        return tr;
     }
 
     //name으로 체크된 체크박스 노드 가져오기
@@ -782,6 +792,13 @@ class wGrid {
                 div.textContent = row[field.name];
             }
             break;
+        }
+
+        //빈값이 설정되었으면 적용
+        if(elementType == "text" || elementType == "dateTime" || elementType == "date"){
+            if(this.util.isEmpty(row[field.name]) && this.util.isNotEmpty(field.emptyText)){
+                div.textContent = field.emptyText;
+           }
         }
 
          //태그생성 후 상태에 따른 다른 스타일 적용을 위한 부분

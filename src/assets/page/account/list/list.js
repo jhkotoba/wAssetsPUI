@@ -99,7 +99,7 @@ PUI.FN.createGrid = function(){
                     }
                 }
             },
-            {title: "계좌사용처", element:"text", name:"acctTgtCd", width:175, align:"left", edit:"select",
+            {title: "계좌사용처", element:"text", name:"acctTgtCd", width:160, align:"left", edit:"select",
                 data:{
                     mapping: PUI.UTL.listToCode(PUI.V.acctTgtCd),
                     select: {list: PUI.V.acctTgtCd, value: "code", text: "codeNm", empty:"선택"}
@@ -111,7 +111,7 @@ PUI.FN.createGrid = function(){
                     select: {list: PUI.V.acctDivCd, value: "code", text: "codeNm", empty:"선택"}
                 },
             }, 
-            {title: "계좌명", element:"text", name:"acctNm", width:280, align:"left", edit:"text"}, 
+            {title: "계좌명", element:"text", name:"acctNm", width:230, align:"left", edit:"text"}, 
             {title: "계좌번호", element:"text", name:"acctNum", width:200, align:"left", edit:"text"}, 
             {title: "생성일", element:"date", name:"cratDt", width:100, align:"left", edit:"date"}, 
             {title: "만기일여부", element:"text", name:"epyDtUseYn", width:75, align:"left", edit:"select",
@@ -146,13 +146,14 @@ PUI.FN.createGrid = function(){
                     }
                 }
             }, 
-            {title: "만기일", element:"date", name:"epyDt", width:100, align:"left", edit:"date"}, 
+            {title: "만기일", element:"date", name:"epyDt", width:100, align:"left", edit:"date", emptyText:"-"}, 
             {title: "사용여부", element:"text", name:"useYn", width:75, align:"left", edit:"select",
                 data:{
                     mapping: useYn,
                     select: {list: useYnList}
                 }
             },
+            {title: "순번", element:"text", name:"acctOdr", width:50, align:"center", edit:"text"},
             {title: "상세정보", element:"button", name:"detail", width:80, text:"보기", edit:"button",
                 event:{
                     click:{
@@ -186,7 +187,7 @@ PUI.EV.CLICK = function(event){
     switch(event.target.id){
         //행추가
         case "acctAdd":
-            PUI.V.wGrid.appendNewRow();
+            PUI.V.wGrid.prependNewRow();
             PUI.V.wGrid.getElementHeadTableRow()
                 .querySelectorAll("input[name=check]")[0]
                 .checked = false;
@@ -241,6 +242,7 @@ PUI.FN.applyAccount = function(){
         for(let key in item){
             if(valid.isValid == false) break;
             switch(key){
+                case "acctOdr": valid = PUI.UTL.valid(item[key], key, ["EMPTY", "NUMBER"]); break;
                 case "acctDivCd": valid = PUI.UTL.valid(item[key], key, ["EMPTY"]); break;
                 case "acctNm": valid = PUI.UTL.valid(item[key], key, ["EMPTY"]); break;
                 case "acctNum": valid = PUI.UTL.valid(item[key], key, ["EMPTY"]); break;
@@ -262,7 +264,7 @@ PUI.FN.applyAccount = function(){
     });
 
     if(valid.isValid == false){
-        console.log("===========================");
+        console.log(valid);
     }else{
         if(confirm("적용하시겠습니까?")){
             PUI.FT.postFetch("/api/assets/applyAccount" , applyData)
