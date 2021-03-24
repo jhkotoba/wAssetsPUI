@@ -606,7 +606,9 @@ class wGrid {
                 case "text":
                 default :
                     //제목적용
-                    div.textContent = field.title;
+                    tag = document.createElement("span");
+                    tag.textContent = field.title;
+                    div.appendChild(tag);
                     break;
             }
 
@@ -798,19 +800,25 @@ class wGrid {
         //바디 - 디폴트(텍스트)
         case "text":
         default:
+            tag = document.createElement("span");
+            tag.setAttribute("name", field.name);
             //코드맵핑
             if(this.util.isNotEmpty(field.data) && this.util.isNotEmpty(field.data.mapping)){
-                div.textContent = field.data.mapping[row[field.name]];
+                tag.textContent = field.data.mapping[row[field.name]];
             }else{
-                div.textContent = row[field.name];
+                tag.textContent = row[field.name];
             }
+            div.appendChild(tag);
             break;
         }
 
         //빈값이 설정되었으면 적용
         if(elementType == "text" || elementType == "dateTime" || elementType == "date"){
             if(this.util.isEmpty(row[field.name]) && this.util.isNotEmpty(field.emptyText)){
-                div.textContent = field.emptyText;
+                tag = document.createElement("span");
+                tag.setAttribute("name", field.name);
+                tag.textContent = field.emptyText;
+                div.appendChild(tag);
            }
         }
 
