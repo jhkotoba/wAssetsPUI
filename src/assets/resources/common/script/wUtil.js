@@ -9,9 +9,26 @@ export const wUtil = {
             DATE_YYYYMMDDHHMM: "DATE_YYYYMMDDHHMM",
             DATE_YYYYMMDDHHMMSS: "DATE_YYYYMMDDHHMMSS"
         },
+        VALID_MESSAGE: {
+            EMPTY: "값을 입력(선택) 해주세요.",
+            NUMBER: "숫자만 입력할 수 있습니다.",
+            DATE_YYYYMMDD: "날짜형식이 바르지 않습니다. (예: 2020-01-01)",
+            DATE_YYYYMMDDHHMM: "날짜형식이 바르지 않습니다. (예: 2020-01-01 12:00)",
+            DATE_YYYYMMDDHHMMSS: "날짜형식이 바르지 않습니다. (예: 2020-01-01 12:00:00)"
+        },
         VALUE: {
             LAST_DAYS: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         }
+    },
+
+    //유효성 메시지
+    getValidMessage(validType){
+        return this.CONST.VALID_MESSAGE(validType);
+    },
+
+    //툴팁
+    tooltip(offset, message, millisec){
+
     },
 
     //빈값 체크

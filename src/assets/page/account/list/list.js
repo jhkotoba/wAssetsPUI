@@ -177,7 +177,7 @@ PUI.FN.createGrid = function(){
     //데이터 조회
     PUI.FT.getFetch("/api/assets/getAccountList")
     .then(response => {
-        PUI.V.wGrid.setData({list:response.data, isRefresh:true});
+        PUI.V.wGrid.setData({list:response.data.sort((a, b) => a.acctOdr - b.acctOdr), isRefresh:true});
     });
 };
 
@@ -264,7 +264,16 @@ PUI.FN.applyAccount = function(){
     });
 
     if(valid.isValid == false){
-        console.log(valid);
+        let offset = PUI.V.wGrid.getCellOffset(valid.item._rowSeq, valid.key);
+        switch(valid.key){
+            case "acctOdr": PUI.UTL.tooltip(offset, PUI.UTL.getValidMessage(validType)); break;
+            case "acctDivCd": PUI.UTL.tooltip(offset, PUI.UTL.getValidMessage(validType)); break;
+            case "acctNm": PUI.UTL.tooltip(offset, PUI.UTL.getValidMessage(validType)); break;
+            case "acctNum": PUI.UTL.tooltip(offset, PUI.UTL.getValidMessage(validType)); break;
+            case "acctTgtCd": PUI.UTL.tooltip(offset, PUI.UTL.getValidMessage(validType)); break;
+            case "cratDt": PUI.UTL.tooltip(offset, PUI.UTL.getValidMessage(validType)); break;
+            case "epyDt": PUI.UTL.tooltip(offset, PUI.UTL.getValidMessage(validType)); break;
+        }
     }else{
         if(confirm("적용하시겠습니까?")){
             PUI.FT.postFetch("/api/assets/applyAccount" , applyData)
