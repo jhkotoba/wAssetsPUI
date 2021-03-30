@@ -23,12 +23,36 @@ export const wUtil = {
 
     //유효성 메시지
     getValidMessage(validType){
-        return this.CONST.VALID_MESSAGE(validType);
+        return this.CONST.VALID_MESSAGE[validType];
     },
 
     //툴팁
-    tooltip(offset, message, millisec){
+    tooltip(element, message, millisec){
+        element.classList.add("tooltip-border");
+        element.focus();
 
+        let div = document.createElement("div");
+		div.classList.add("tooltip");
+		div.textContent = message;
+		document.body.appendChild(div);
+
+		div.style.top = (window.pageYOffset + element.getBoundingClientRect().top - 42) + "px";
+		div.style.left = (window.pageYOffset + element.getBoundingClientRect().left) + "px";
+		
+		element.addEventListener("blur", () => {
+            element.classList.remove("tooltip-border");
+            element.removeEventListener("blur", this, false);
+            div.remove();
+        });
+
+        if(millisec > 100){
+            setTimeout(() => div.classList.add("tooltip-remove"), millisec);
+            setTimeout(() => {
+                element.classList.remove("tooltip-border");
+                element.removeEventListener("blur", this, false);
+                div.remove();
+            }, millisec + 500);
+        }
     },
 
     //빈값 체크

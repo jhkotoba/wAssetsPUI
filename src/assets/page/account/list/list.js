@@ -263,23 +263,17 @@ PUI.FN.applyAccount = function(){
         }
     });
 
+    //유효성 검사
     if(valid.isValid == false){
-        let offset = PUI.V.wGrid.getCellOffset(valid.item._rowSeq, valid.key);
-        switch(valid.key){
-            case "acctOdr": PUI.UTL.tooltip(offset, PUI.UTL.getValidMessage(validType)); break;
-            case "acctDivCd": PUI.UTL.tooltip(offset, PUI.UTL.getValidMessage(validType)); break;
-            case "acctNm": PUI.UTL.tooltip(offset, PUI.UTL.getValidMessage(validType)); break;
-            case "acctNum": PUI.UTL.tooltip(offset, PUI.UTL.getValidMessage(validType)); break;
-            case "acctTgtCd": PUI.UTL.tooltip(offset, PUI.UTL.getValidMessage(validType)); break;
-            case "cratDt": PUI.UTL.tooltip(offset, PUI.UTL.getValidMessage(validType)); break;
-            case "epyDt": PUI.UTL.tooltip(offset, PUI.UTL.getValidMessage(validType)); break;
-        }
+        PUI.UTL.tooltip(
+            PUI.V.wGrid.getCellElement(valid.item._rowSeq, valid.key), 
+            PUI.UTL.getValidMessage(valid.validType),
+            3000
+        );
     }else{
         if(confirm("적용하시겠습니까?")){
             PUI.FT.postFetch("/api/assets/applyAccount" , applyData)
             .then(response => {
-                console.log("response:", response);
-                console.log("response.resultCode::", response.resultCode);
                 if(response.resultCode == "0000"){
                     alert("적용하였습니다.");                    
                 }else{

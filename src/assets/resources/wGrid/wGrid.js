@@ -171,16 +171,10 @@ class wGrid {
     }
 
     //시퀀스와 컬럼명으로 해당 좌표 구함
-    getCellOffset(rowSeq, name){
+    getCellElement(rowSeq, name){
         let tr = this.getElementBodyTable()
             .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
-        let tag = tr.querySelectorAll("[name='" + name + "']")[0];
-        return {
-            offsetHeight: tag.offsetHeight,
-            offsetLeft: tag.offsetLeft,
-            offsetTop: tag.offsetTop,
-            offsetWidth: tag.offsetWidth
-        }
+        return tr.querySelectorAll("[name='" + name + "']")[0];
     }
 
     getDataRowSeq(rowSeq){
