@@ -233,7 +233,13 @@ PUI.EV.CLICK = function(event){
 PUI.FN.applyAccount = function(){
 
     //변경사항 데이터 가져오기(신규, 수정, 삭제)
-    let applyData = PUI.V.wGrid.getApplyData();//.reverse();
+    let applyData = PUI.V.wGrid.getApplyData();
+
+    //변경사항 체크
+    if(applyData.length === 0){
+        alert("변경항목이 없습니다.");
+        return;
+    }
 
     //유효성검사
     let valid = {};
