@@ -150,18 +150,6 @@ export const wUtil = {
         }
     },
 
-    //블라인트 보이기
-    blindShow(){
-        let blind = document.getElementById("blind");
-        blind.classList.remove("hide");
-    },
-    
-    //블라인트 숨기기
-    blindHide(){
-        let blind = document.getElementById("blind");
-        blind.classList.add("hide");
-    },
-
     //라디오값 가져오기
     getRadioValue(name){
         let radio = document.getElementsByName(name);

@@ -110,9 +110,11 @@ PUI.FN.createGrid = function(){
                     mapping: PUI.UTL.listToCode(PUI.V.acctDivCd),
                     select: {list: PUI.V.acctDivCd, value: "code", text: "codeNm", empty:"선택"}
                 },
-            }, 
-            {title: "계좌명", element:"text", name:"acctNm", width:230, align:"left", edit:"text"}, 
+            },
+            {title: "계좌명", element:"text", name:"acctNm", width:215, align:"left", edit:"text"}, 
             {title: "계좌번호", element:"text", name:"acctNum", width:200, align:"left", edit:"text"}, 
+            {title: "글자색", element:"text", name:"fontClor", width:40, align:"left"},
+            {title: "배경색", element:"text", name:"bkgdClor", width:40, align:"left"},
             {title: "생성일", element:"date", name:"cratDt", width:100, align:"left", edit:"date"}, 
             {title: "만기일여부", element:"text", name:"epyDtUseYn", width:75, align:"left", edit:"select",
                 data: {
@@ -153,18 +155,7 @@ PUI.FN.createGrid = function(){
                     select: {list: useYnList}
                 }
             },
-            {title: "순번", element:"text", name:"acctOdr", width:50, align:"center", edit:"text"},
-            {title: "상세정보", element:"button", name:"detail", width:80, text:"보기", edit:"button",
-                event:{
-                    click:{
-                        body: (event, item) => {
-                            if(item.acctSeq && confirm(item.acctNm + "계좌의 상세정보 페이지로 이동하시겠습니까?")){
-                                document.location.href = "/assets/account/detail?acctSeq="+ item.acctSeq
-                            }
-                        }
-                    }
-                }
-            }
+            {title: "순번", element:"text", name:"acctOdr", width:50, align:"center", edit:"text"}
         ],
         option: {
             style: {
@@ -175,7 +166,7 @@ PUI.FN.createGrid = function(){
     });
 
     //데이터 조회
-    PUI.FT.getFetch("/api/assets/getAccountList")
+    PUI.FT.getFetch("/api/assets/getAccountList", {isBlind:true})
     .then(response => {
         PUI.V.wGrid.setData({list:response.data.sort((a, b) => a.acctOdr - b.acctOdr), isRefresh:true});
     });
@@ -192,6 +183,7 @@ PUI.EV.CLICK = function(event){
                 .querySelectorAll("input[name=check]")[0]
                 .checked = false;
             break;
+        //체크된 행 수정상태
         case "acctMod":
             PUI.V.wGrid.getNameCheckedNodes("check")
                 .forEach(check => {
@@ -202,7 +194,7 @@ PUI.EV.CLICK = function(event){
                 });
             PUI.V.wGrid.modifyStateRowSeqs(chkList);
             break;
-        //체크된 행 삭제상태로 변환
+        //체크된 행 삭제상태
         case "acctDel":
             PUI.V.wGrid.getNameCheckedNodes("check")
                 .forEach(check => {
@@ -215,15 +207,18 @@ PUI.EV.CLICK = function(event){
             break;
         //목록 초기상태로 리셋
         case "acctRst":
-            PUI.V.wGrid.reset();
-            break;
-        //상세등록페이지 이동
-        case "acctDtlReg":
-            document.location.href = "/assets/account/register";
-            break;
+            PUI.FT.getFetch("/api/assets/getAccountList", {isBlind:true})
+            .then(response => {
+                PUI.V.wGrid.setData({list:response.data.sort((a, b) => a.acctOdr - b.acctOdr), isRefresh:true});
+            });
+            break;        
         //변경사항 저장
         case "acctReg":
             PUI.FN.applyAccount();
+            break;
+        
+        case "test":
+
             break;
 
     }
@@ -259,6 +254,7 @@ PUI.FN.applyAccount = function(){
                         valid = PUI.UTL.valid(item[key], key, ["DATE_YYYYMMDD"]);
                     }
                 break;
+                case "acctOdr": valid = PUI.UTL.valid(item[key], key, ["EMPTY", "NUMBER"]); break;
             }
 
             if(valid.isValid == false){

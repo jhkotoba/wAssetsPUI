@@ -29,20 +29,23 @@ export const wFetch = {
             .then(data => resolve(data));
         });
     },
-
+   
     //GET
-    getFetch(url){
+    getFetch(url, option){
+        if(PUI.UTL.isNotEmpty(option) && option.isBlind == true) PUI.GFN.BLIND.ON();
         return new Promise((resolve, reject) => {
             fetch(url, {
                 credentials: "same-origin"
             })
             .then(response => response.json())
-            .then(data => resolve(data));
+            .then(data => resolve(data))
+            .finally(() => PUI.GFN.BLIND.OFF());
         });
     },
 
     //POST
-    postFetch(url, param){
+    postFetch(url, param, option){
+        if(PUI.UTL.isNotEmpty(option) && option.isBlind == true) PUI.GFN.BLIND.ON();
         return new Promise((resolve, reject) => {
             fetch(url, {
                 method: "POST",
@@ -55,7 +58,8 @@ export const wFetch = {
                 body: JSON.stringify(param)
             })
             .then(response => response.json())
-            .then(data => resolve(data));
+            .then(data => resolve(data))
+            .finally(() => PUI.GFN.BLIND.OFF());
         });
     }
 }

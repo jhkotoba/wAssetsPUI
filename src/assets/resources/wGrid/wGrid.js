@@ -66,7 +66,7 @@ class wGrid {
 
         //그리드 인자값 세팅
         this._data = [];
-        this._orgData = [];
+        //this._orgData = [];
         this._editOrgData = {};
         this._option = option;
         if(this.util.isNotEmpty(args.option.style)){
@@ -153,7 +153,7 @@ class wGrid {
                 data._state = this.CONSTANT.STATE.SELECT;
             });
             this._data = obj.list;
-            this._orgData = Object.assign([], this._data);
+            //this._orgData = Object.assign([], this._data);
 
             //새로고침 false아니면 새로고침
             if(obj.isRefresh !== false){
@@ -280,12 +280,6 @@ class wGrid {
                 itemList.push(this.getDataIndex(this.getSeqIndex(this.util.getTrNode(check).dataset.rowSeq)));
             });
         return Object.assign([], itemList);
-    }
-
-    //그리드 최후 조회상태로 리셋
-    reset(){
-        this._data = Object.assign([], this._orgData);
-        this.refresh();
     }
 
     //여러개의 행 리셋
@@ -813,7 +807,7 @@ class wGrid {
                 tag.setAttribute("name", field.name);
                 tag.textContent = field.emptyText;
                 div.appendChild(tag);
-           }
+            }
         }
 
          //태그생성 후 상태에 따른 다른 스타일 적용을 위한 부분
