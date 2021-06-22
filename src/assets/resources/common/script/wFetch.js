@@ -32,7 +32,7 @@ export const wFetch = {
    
     //GET
     getFetch(url, option){
-        if(PUI.UTL.isNotEmpty(option) && option.isBlind == true) PUI.GFN.BLIND.ON();
+        PUI.GFN.BLIND.ON();
         return new Promise((resolve, reject) => {
             fetch(url, {
                 credentials: "same-origin"
@@ -45,7 +45,7 @@ export const wFetch = {
 
     //POST
     postFetch(url, param, option){
-        if(PUI.UTL.isNotEmpty(option) && option.isBlind == true) PUI.GFN.BLIND.ON();
+        PUI.GFN.BLIND.ON();
         return new Promise((resolve, reject) => {
             fetch(url, {
                 method: "POST",
