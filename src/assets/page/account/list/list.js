@@ -8,10 +8,10 @@ PUI.FN.INIT = async function(){
 
     //검색항목 계좌사용처 항목추가
     PUI.UTL.appendCodeOptions(document.getElementById("acctTgtCd"), PUI.V.acctTgtCd);
-
     //검색항목 계좌구분 항목추가
     PUI.UTL.appendCodeOptions(document.getElementById("acctDivCd"), PUI.V.acctDivCd);
-
+    //달력생성
+    PUI.V.datepicker = new wDatepicker();
     //그리드 생성 호출
     PUI.FN.createGrid();
 };
@@ -111,11 +111,11 @@ PUI.FN.createGrid = function(){
                     select: {list: PUI.V.acctDivCd, value: "code", text: "codeNm", empty:"선택"}
                 },
             },
-            {title: "계좌명", element:"text", name:"acctNm", width:215, align:"left", edit:"text"}, 
-            {title: "계좌번호", element:"text", name:"acctNum", width:200, align:"left", edit:"text"}, 
+            {title: "계좌명", element:"text", name:"acctNm", width:190, align:"left", edit:"text"}, 
+            {title: "계좌번호", element:"text", name:"acctNum", width:185, align:"left", edit:"text"}, 
             {title: "글자색", element:"text", name:"fontClor", width:40, align:"left"},
             {title: "배경색", element:"text", name:"bkgdClor", width:40, align:"left"},
-            {title: "생성일", element:"date", name:"cratDt", width:100, align:"left", edit:"date"}, 
+            {title: "생성일", element:"date", name:"cratDt", width:120, align:"left", edit:"date", loaded: PUI.FN.createCalendarBtn}, 
             {title: "만기일여부", element:"text", name:"epyDtUseYn", width:75, align:"left", edit:"select",
                 data: {
                     mapping: useYn,
@@ -128,9 +128,11 @@ PUI.FN.createGrid = function(){
                                 let epyDt = PUI.UTL.getTrNode(event.target).querySelectorAll("input[name='epyDt']")[0];
                                 if(event.target.value == "Y"){
                                     epyDt.disabled = false;
+                                    epyDt.nextSibling.disabled = false;
                                 }else{
                                     epyDt.value = "";
                                     epyDt.disabled = true;
+                                    epyDt.nextSibling.disabled = true;
                                 }
                             }
                         }
@@ -148,7 +150,7 @@ PUI.FN.createGrid = function(){
                     }
                 }
             }, 
-            {title: "만기일", element:"date", name:"epyDt", width:100, align:"left", edit:"date", emptyText:"-"}, 
+            {title: "만기일", element:"date", name:"epyDt", width:120, align:"left", edit:"date", emptyText:"-", loaded: PUI.FN.createCalendarBtn}, 
             {title: "사용여부", element:"text", name:"useYn", width:75, align:"left", edit:"select",
                 data:{
                     mapping: useYn,
@@ -217,8 +219,9 @@ PUI.EV.CLICK = function(event){
             PUI.FN.applyAccount();
             break;
         
-        case "test":
-
+        case "acctTest":
+            console.log("==============================");
+            PUI.V.datepicker.open();
             break;
 
     }
@@ -283,5 +286,33 @@ PUI.FN.applyAccount = function(){
                 }
             });
         }
+    }
+}
+
+//그리드 달력 버튼 생성 함수
+PUI.FN.createCalendarBtn = function(element, item){
+    //상태가 신규저장, 수정인 상태만
+    if(item._state == "INSERT" || item._state == "UPDATE"){
+        //달력 버튼 생성
+        let button = document.createElement("button");
+        button.classList.add("btn-calendar");
+        button.addEventListener("click", event => {
+            //달력 OPEN
+            PUI.V.datepicker.open({
+                event: event,
+                //달력 선택시 날짜 반환
+                selected: dateString => {
+                    //태그 값 반영
+                    element.value = dateString;
+                    //데이터 값 반영
+                    item.cratDt = dateString;
+                }
+            });
+        });
+        //스타일 수정
+        element.classList.remove("wgrid-wth90p");
+        element.classList.add("w80px");
+        //달력open 버튼 추가
+        element.parentNode.appendChild(button);
     }
 }

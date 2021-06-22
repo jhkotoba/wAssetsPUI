@@ -2,6 +2,7 @@
     <div class="path">자산관리 > 계좌관리 > 계좌목록</div>    
 </div>
 
+<!-- 검색영역 -->
 <section class="search-content">
     <div class="label-div"><span>사용여부</span></div>
     <div class="radio-div">
@@ -30,6 +31,7 @@
     <button class="btn-gray" id="search">조회</button>
 </section>
 
+<!-- 타이틀, 버튼영역 -->
 <section class="content">    
     <div class="table-title">■ 계좌목록</div>
     <div class="botton-box">
@@ -38,11 +40,19 @@
         <button class="btn-gray" id="acctDel" title="선택한 행을 삭제상태 변환">삭제</button>
         <button class="btn-gray" id="acctRst" title="마지막으로 조회상태로 초기화">초기화</button>
         <button class="btn-gray" id="acctReg" title="변경사항 저장">저장</button>
+        <button class="btn-gray" id="acctTest" title="테스트">테스트</button>
     </div>
     <div id="acctList"></div>
 </section>
 
+<!-- 그리드 -->
 <link rel="stylesheet" href="/assets/resources/wGrid/wGrid.css" type="text/css"/> 
 <script type="module" src="/assets/resources/wGrid/wGrid.js"></script>
+
+<!-- 달력 -->
+<link rel="stylesheet" href="/assets/resources/wDatepicker/wDatepicker.css" type="text/css"/> 
+<script type="module" src="/assets/resources/wDatepicker/wDatepicker.js"></script>
+
+<!-- 스크립트 -->
 <script type="module" src="/assets/page/account/list/list.js"></script>
 
