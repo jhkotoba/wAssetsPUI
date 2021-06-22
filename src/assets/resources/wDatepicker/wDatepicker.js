@@ -41,8 +41,6 @@ class wDatepicker {
             let day = event.target.dataset.day;
             let type = event.target.dataset.type;
             let element = this.element.background;
-            console.log("day:", day);
-            console.log("type:", type);
 
             switch(type){
             
@@ -74,12 +72,12 @@ class wDatepicker {
         }, false);
     }
 
+
+
     open(option){
 
-        console.log("option:", option);
-
-
-        if(this._isOpen) return;
+        if(this._isOpen == true) return;
+        this._isOpen = true;
 
         //option.event.pageX
         //option.event.pageY
@@ -111,7 +109,7 @@ class wDatepicker {
         let body = document.getElementsByTagName("body")[0];
         body.appendChild(element);
 
-        this._isOpen = true;
+        
 
         //this.element.background.classList.add("on");
 
@@ -122,6 +120,30 @@ class wDatepicker {
             if(typeof option.selected == "function"){
                 this._callback.selected = option.selected;
             }
+        }
+    }
+
+    isOpen(){
+        return this._isOpen;
+    }
+
+    /**
+     * 달력 닫기 함수
+     * @param {*} parameter.callback 달력 종료 후 콜백함수가 있으면 함수 호출
+     */
+    close(parameter){
+        //달력 엘리멘트 삭제
+        let element = this.element.background;
+        while(element.hasChildNodes()){
+            element.removeChild(element.firstChild);
+        }
+
+        //달력 오픈여부 false
+        this._isOpen = false;
+
+        //콜백함수 체크, 존재시 호출
+        if(parameter != null && typeof parameter.callback == "function"){
+            parameter.callback();
         }
     }
 
@@ -140,7 +162,6 @@ class wDatepicker {
         //기존 생성한 달력 엘리먼트가 있으면 가져오기
         let calender = this._getCreatedCalender(year, month);
         if(calender == null || calender == undefined){
-            console.log("create");
 
             //날짜변수
             let week, text, day = null;
@@ -164,6 +185,7 @@ class wDatepicker {
             //달력 상단영역
             let calenderHeader = document.createElement("div");
             calenderHeader.classList.add("wdatepicker-header");
+            
             
             let yearMonth = document.createElement("div");
 
@@ -246,7 +268,6 @@ class wDatepicker {
             
             return calenderArea;
         }else{
-            console.log("recycle");
             return calender;
         }
     }
@@ -280,24 +301,6 @@ class wDatepicker {
             }
         }else{
             return null;
-        }
-    }
-
-    /**
-     * 달력 닫기 함수
-     * @param {*} object.callback 달력 종료 후 콜백함수가 있으면 함수 호출
-     */
-    close(object){
-
-        //달력 엘리멘트 삭제
-        let element = document.getElementsByName("wDatepicker")[0];
-        if(element != null || element != undefined){
-            element.remove();
-        }
-
-        //콜백함수 체크, 존재시 호출
-        if(object != null && typeof object.callback == "function"){
-            object.callback(result);
         }
     }
 }

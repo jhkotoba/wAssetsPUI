@@ -298,16 +298,20 @@ PUI.FN.createCalendarBtn = function(element, item){
         button.classList.add("btn-calendar");
         button.addEventListener("click", event => {
             //달력 OPEN
-            PUI.V.datepicker.open({
-                event: event,
-                //달력 선택시 날짜 반환
-                selected: dateString => {
-                    //태그 값 반영
-                    element.value = dateString;
-                    //데이터 값 반영
-                    item.cratDt = dateString;
-                }
-            });
+            if(PUI.V.datepicker.isOpen() == true){
+                PUI.V.datepicker.close();
+            }else{
+                PUI.V.datepicker.open({
+                    event: event,
+                    //달력 선택시 날짜 반환
+                    selected: dateString => {
+                        //태그 값 반영
+                        element.value = dateString;
+                        //데이터 값 반영
+                        item.cratDt = dateString;
+                    }
+                });
+            }
         });
         //스타일 수정
         element.classList.remove("wgrid-wth90p");
