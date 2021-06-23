@@ -1,15 +1,13 @@
 /**
  * wDatepicker
  * @author JeHoon 
- * @version 0.3.0
+ * @version 0.3.1
  */
 class wDatepicker {
     constructor(option){
 
+        //상수
         this.CONST = {
-            // attrName: {
-            //     day: "_wcalenderDay"
-            // },
             char: {
                 week: ["일", "월", "화", "수", "목", "금", "토"]
             }
@@ -24,16 +22,13 @@ class wDatepicker {
         this.element.background.classList.add("wdatepicker");
         this.element.background.setAttribute("name", "wDatepicker");
 
-        //달력 배경
-        //this.element.calender = document.createElement("div");
-        //this.element.calender.classList.add("wdatepicker-calender");
-
         //데이터
         this._selectedDate = null;
 
         //콜백
         this._callback = {};
 
+        //달력이 오픈여부 변수
         this._isOpen = false;
 
         //이벤트 생성
@@ -42,8 +37,9 @@ class wDatepicker {
             let type = event.target.dataset.type;
             let element = this.element.background;
 
+            //달력 클릭 이벤트 분기
             switch(type){
-            
+            //선택달의 날짜    
             case "inner" :
                 while(element.hasChildNodes()){
                     element.removeChild(element.firstChild);
@@ -53,7 +49,9 @@ class wDatepicker {
                 }
                 this._isOpen = false;
                 break;
+            //선택달 이외의 날짜
             case "outer" : 
+            //이전달 다음달 버튼
             case "arrow" :
                 while(element.hasChildNodes()){
                     element.removeChild(element.firstChild);
@@ -64,36 +62,31 @@ class wDatepicker {
                 let body = document.getElementsByTagName("body")[0];
                 body.appendChild(element);
                 break;
+            //이외의 태그 미실행
             default:
                 break;
             }
-
             event.stopPropagation();
         }, false);
     }
-
-
-
+    
+    /**
+     * 달력오픈
+     * @param {*} option.event 이벤트 호출시 이벤트
+     * @param {*} option.opened 달력 오픈 콜백함수
+     * @param {*} option.selected 달력 일자 선택 콜백함수
+     * @returns 
+     */
     open(option){
 
+        //달력이 열려 있다면 종료
         if(this._isOpen == true) return;
         this._isOpen = true;
-
-        //option.event.pageX
-        //option.event.pageY
-       // pageX: 1058
-       // pageY: 235      
-       // div.style.top = (window.pageYOffset + element.getBoundingClientRect().top - 42) + "px";
-		//div.style.left = (window.pageYOffset + element.getBoundingClientRect().left) + "px";
-
-        //offsetX
-        //offsetY
 
         let calender = null;
         let element = this.element.background;
 
-        //option.event.target.getBoundingClientRect().top
-
+        //달력 생성 위치
         element.style.top = (window.pageYOffset + option.event.target.getBoundingClientRect().top + 30) + "px";
         element.style.left = (window.pageYOffset + option.event.target.getBoundingClientRect().left - 250) + "px";
 
@@ -103,16 +96,14 @@ class wDatepicker {
         }else{
             this._selectedDate = new Date();
         }
-        calender = this._createCalender(this._selectedDate, option.event);
 
+        //달력 엘리멘트 생성
+        calender = this._createCalender(this._selectedDate, option.event);
         element.appendChild(calender);
         let body = document.getElementsByTagName("body")[0];
         body.appendChild(element);
 
-        
-
-        //this.element.background.classList.add("on");
-
+        //콜백 함수 호출
         if(option != null){
             if(typeof option.opened == "function"){
                 option.opened();
@@ -123,6 +114,10 @@ class wDatepicker {
         }
     }
 
+    /**
+     * 달력 오픈여부 반환
+     * @returns 달력 오픈여부
+     */
     isOpen(){
         return this._isOpen;
     }
@@ -147,8 +142,12 @@ class wDatepicker {
         }
     }
 
-    //해당 년, 월의 달력생성
-    //이전에 생성했으면 불러오고 신규면 생성
+    /**
+     * 해당 년, 월의 달력생성
+     * 이전에 생성했으면 불러오고 신규면 생성
+     * @param {*} date YYYY-MM-DD 형식의 문자열
+     * @returns 
+     */
     _createCalender(date){
         //오늘 날짜
         let todate = new Date();
@@ -184,23 +183,26 @@ class wDatepicker {
 
             //달력 상단영역
             let calenderHeader = document.createElement("div");
-            calenderHeader.classList.add("wdatepicker-header");
+            calenderHeader.classList.add("wdatepicker-header");            
             
-            
+            //달력 달이동 버튼, 현재년월 태그
             let yearMonth = document.createElement("div");
 
+            //이전달 버튼
             let prevArrow = document.createElement("div");
             prevArrow.textContent = "<";
             prevArrow.dataset.day = this._convertDate(month == 0 ? year - 1 : year, month == 0 ? 12 : month, 1);
             prevArrow.classList.add("arrow");
             prevArrow.dataset.type = "arrow";
 
+            //다음달 버튼
             let nextArrow = document.createElement("div");
             nextArrow.textContent = ">";
             nextArrow.dataset.day = this._convertDate(month == 11 ? year + 1 : year, month == 11 ? 1 : month + 2, 1);
             nextArrow.classList.add("arrow");
             nextArrow.dataset.type = "arrow";
 
+            //현재년월 태그 생성
             yearMonth.textContent = year + "년 " + (month + 1) + "월";
             yearMonth.classList.add("year-month");
             calenderHeader.appendChild(prevArrow);
@@ -229,8 +231,6 @@ class wDatepicker {
                 //달력생성 (일 단위)
                 for(let j=0; j<7; j++){
                     day = document.createElement("div");
-                    //day.classList.add("wdatepicker-day");
-                    //day.classList.add("wday");
                     
                     //이전달
                     if(prevStartDay < prevLastDay){
