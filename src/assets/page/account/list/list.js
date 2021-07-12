@@ -178,52 +178,51 @@ PUI.FN.createGrid = function(){
 PUI.EV.CLICK = function(event){
     let chkList = [];
     switch(event.target.id){
-        //행추가
-        case "acctAdd":
-            PUI.V.wGrid.prependNewRow();
-            PUI.V.wGrid.getElementHeadTableRow()
-                .querySelectorAll("input[name=check]")[0]
-                .checked = false;
-            break;
-        //체크된 행 수정상태
-        case "acctMod":
-            PUI.V.wGrid.getNameCheckedNodes("check")
-                .forEach(check => {
-                    let tr = PUI.UTL.getTrNode(check);
-                    if(tr.classList.value == ""){
-                        chkList.push(tr.dataset.rowSeq);
-                    }
-                });
-            PUI.V.wGrid.modifyStateRowSeqs(chkList);
-            break;
-        //체크된 행 삭제상태
-        case "acctDel":
-            PUI.V.wGrid.getNameCheckedNodes("check")
-                .forEach(check => {
-                    let tr = PUI.UTL.getTrNode(check);
-                    if(tr.classList.value == ""){
-                        chkList.push(tr.dataset.rowSeq);
-                    }
-                });
-            PUI.V.wGrid.removeStateRowSeqs(chkList);
-            break;
-        //목록 초기상태로 리셋
-        case "acctRst":
-            PUI.FT.getFetch("/api/assets/getAccountList", {isBlind:true})
-            .then(response => {
-                PUI.V.wGrid.setData({list:response.data.sort((a, b) => a.acctOdr - b.acctOdr), isRefresh:true});
+    //행추가
+    case "acctAdd":
+        PUI.V.wGrid.prependNewRow();
+        PUI.V.wGrid.getElementHeadTableRow()
+            .querySelectorAll("input[name=check]")[0]
+            .checked = false;
+        break;
+    //체크된 행 수정상태
+    case "acctMod":
+        PUI.V.wGrid.getNameCheckedNodes("check")
+            .forEach(check => {
+                let tr = PUI.UTL.getTrNode(check);
+                if(tr.classList.value == ""){
+                    chkList.push(tr.dataset.rowSeq);
+                }
             });
-            break;        
-        //변경사항 저장
-        case "acctReg":
-            PUI.FN.applyAccount();
-            break;
-        
-        case "acctTest":
-            console.log("==============================");
-            PUI.V.datepicker.open();
-            break;
-
+        PUI.V.wGrid.modifyStateRowSeqs(chkList);
+        break;
+    //체크된 행 삭제상태
+    case "acctDel":
+        PUI.V.wGrid.getNameCheckedNodes("check")
+            .forEach(check => {
+                let tr = PUI.UTL.getTrNode(check);
+                if(tr.classList.value == ""){
+                    chkList.push(tr.dataset.rowSeq);
+                }
+            });
+        PUI.V.wGrid.removeStateRowSeqs(chkList);
+        break;
+    //목록 초기상태로 리셋
+    case "acctRst":
+        PUI.FT.getFetch("/api/assets/getAccountList")
+        .then(response => {
+            PUI.V.wGrid.setData({list:response.data.sort((a, b) => a.acctOdr - b.acctOdr), isRefresh:true});
+        });
+        break;
+    //변경사항 저장
+    case "acctReg":
+        PUI.FN.applyAccount();
+        break;
+    
+    case "acctTest":
+        console.log("==============================");
+        PUI.V.datepicker.open();
+        break;s
     }
 }
 

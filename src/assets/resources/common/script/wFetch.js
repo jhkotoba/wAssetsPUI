@@ -31,7 +31,7 @@ export const wFetch = {
     },
    
     //GET
-    getFetch(url, option){
+    getFetch(url){
         PUI.GFN.BLIND.ON();
         return new Promise((resolve, reject) => {
             fetch(url, {
@@ -44,7 +44,7 @@ export const wFetch = {
     },
 
     //POST
-    postFetch(url, param, option){
+    postFetch(url, param){
         PUI.GFN.BLIND.ON();
         return new Promise((resolve, reject) => {
             fetch(url, {

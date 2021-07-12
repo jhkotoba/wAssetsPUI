@@ -19,6 +19,8 @@ export const wUtil = {
         VALUE: {
             LAST_DAYS: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         }
+
+
     },
 
     //유효성 메시지
@@ -85,10 +87,10 @@ export const wUtil = {
     },
 
     //배열인지 체크
-    isArray(obj){
-        if(this.isEmpty(obj)){
+    isArray(object){
+        if(this.isEmpty(object)){
             return false;
-        }else if(typeof obj === "object" && typeof obj.length === "number"){
+        }else if(typeof object === "object" && typeof object.length === "number"){
             return true;
         }else{
             return false;
@@ -96,8 +98,8 @@ export const wUtil = {
     },
 
     //배열이 아닌지 체크
-    isNotArray(obj){
-        return !this.isArray(obj);
+    isNotArray(object){
+        return !this.isArray(object);
     },
 
     //비어있지 않으면 전달받은 함수 실행
@@ -468,14 +470,24 @@ export const wUtil = {
         return node;
     },
 
-    //자식 노드 비우기
+    /**
+     * 자식노드 비우기
+     * @param {element} element 비울 자식노드들의 부모노드 엘리먼트 
+     */
     childElementEmpty(element){
         while(element.hasChildNodes()){
             element.removeChild(element.firstChild);
         }
     },
-
-    //SELECT태그, 데이터, 텍스트명, 값명, 빈값명을 받아서 셀렉트박스에 자식노드추가
+    
+    /**
+     * SELECT태그, 데이터, 텍스트명, 값명, 빈값명을 받아서 셀렉트박스에 자식노드추가
+     * @param {element} element 적용할 태그 엘리먼트
+     * @param {objectList} dataList 적용할 데이터
+     * @param {string} valueName 데이터에서 가져올 밸류 데이터 키값
+     * @param {string} textName 데이터에서 가져올 텍스트 데이터 키값
+     * @param {string} emptyName 첫번쨰 빈값 텍스트(ex 전체, 선택 등) 넣지않으면 넘어감
+     */
     appendOptions(element, dataList, valueName, textName, emptyName){
         let option = null;
 
@@ -493,8 +505,51 @@ export const wUtil = {
         });
     },
 
-    //SELECT태그, 데이터, 빈값명을 받아서 셀렉트박스에 자식노드추가
+    /**
+     * SELECT태그, 데이터, 빈값명을 받아서 셀렉트박스에 자식노드추가 (공통코드용)
+     * @param {element} element 적용할 태그 엘리먼트
+     * @param {objectList} dataList 적용할 데이터
+     * @param {string} emptyName 첫번쨰 빈값 텍스트(ex 전체, 선택 등) 넣지않으면 넘어감
+     */
     appendCodeOptions(element, dataList, emptyName){
         this.appendOptions(element, dataList, "code", "codeNm", emptyName);
+    },
+
+    /**
+     * 라디오버튼 생성
+     * @param {element} element 적용할 태그 엘리먼트
+     * @param {objectList} dataList 적용할 데이터
+     * @param {string} radioName 라디오버튼 이름태그명
+     * @param {string} valueName 데이터에서 가져올 밸류 데이터 키값
+     * @param {string} textName 데이터에서 가져올 텍스트 데이터 키값
+     */
+    appendRadio(element, dataList, radioName, valueName, textName){
+        let input = null;
+        let label = null;
+        
+        dataList.forEach((item, idx) => {
+            input = document.createElement("input");
+            input.name = radioName;
+            input.id = radioName + idx;
+            input.value = item[valueName];
+            input.setAttribute("type", "radio");
+
+            label = document.createElement("label");
+            label.textContent = item[textName];
+            label.setAttribute("for", radioName + idx);
+
+            element.appendChild(input);
+            element.appendChild(label);
+        });
+    },
+
+    /**
+     * 라디오버튼 생성(공통코드용)
+     * @param {element} element 적용할 태그 엘리먼트
+     * @param {objectList} dataList 적용할 데이터
+     * @param {string} radioName 라디오버튼 이름태그명
+     */    
+    appendCodeRadio(element, dataList, radioName){
+        this.appendRadio(element, dataList, radioName, "code", "codeNm");
     }
 }
