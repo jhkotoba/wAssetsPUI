@@ -79,7 +79,8 @@ class wGrid {
         this.util.addElementStyleAttribute(this._element.target, "height", args.option.style.height);
 
         //이벤트 생성
-        this._event = {};
+        this._outerEvent = args.event;
+        this._innerEvent = {};
         this._createEvent();
        
         //생성시 바로 그리드 생성
@@ -835,7 +836,8 @@ class wGrid {
     }
 
     //그리드 이벤트 세팅
-    _createEvent(){
+    _createEvent(){        
+
         //필드 이벤트 세팅
         this._field.forEach(item => {
             //빈값이면 통과
@@ -845,15 +847,15 @@ class wGrid {
             //이벤트 종류만큼 루프
             this.CONSTANT.EVENT_LIST.forEach(evNm => {
                 if(this.util.isNotEmpty(item.event[evNm])){                    
-                    this._event[item.name] = {};
-                    this._event[item.name][evNm] = {};
+                    this._innerEvent[item.name] = {};
+                    this._innerEvent[item.name][evNm] = {};
                     //헤더
                     if(this.util.isFunction(item.event[evNm].header)){
-                        this._event[item.name][evNm]["header"] = item.event[evNm].header;
+                        this._innerEvent[item.name][evNm]["header"] = item.event[evNm].header;
                     }
                     //바디
                     if(this.util.isFunction(item.event[evNm].body)){
-                        this._event[item.name][evNm]["body"] = item.event[evNm].body;
+                        this._innerEvent[item.name][evNm]["body"] = item.event[evNm].body;
                     }
                 }
             });
@@ -862,9 +864,9 @@ class wGrid {
         //헤드 클릭이벤트
         this._element.head.addEventListener("click", event => {
              //빈값 체크 후
-            if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "click", "header")){
-                if(this.util.isFunction(this._event[event.target.name].click.header)){
-                    this._event[event.target.name].click.header(event);
+            if(this.util.isNotEmptyChildObjct(this._innerEvent, event.target.name, "click", "header")){
+                if(this.util.isFunction(this._innerEvent[event.target.name].click.header)){
+                    this._innerEvent[event.target.name].click.header(event);
                 }
             }
             event.stopPropagation();
@@ -872,21 +874,27 @@ class wGrid {
         //바디 클릭이벤트        
         this._element.body.addEventListener("click", event => {
 			//빈값 체크 후
-			if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "click", "body")){
-               if(this.util.isFunction(this._event[event.target.name].click.body)){
-                   //연결된 이벤트 호출(event, row)
-                   this._event[event.target.name].click.body(event, this._data[this.getSeqIndex(this.util.getTrNode(event.target).dataset.rowSeq)]);
-               }
-           }
-           event.stopPropagation();
+            if(this.util.isNotEmptyChildObjct(this._innerEvent, event.target.name, "click", "body")){
+                if(this.util.isFunction(this._innerEvent[event.target.name].click.body)){
+                    //연결된 이벤트 호출(event, row)
+                    this._innerEvent[event.target.name].click.body(event, this._data[this.getSeqIndex(this.util.getTrNode(event.target).dataset.rowSeq)]);
+                }
+            }
+            //외부 이벤트 정의
+            if(this._outerEvent){
+                if(this._outerEvent.click){
+                    this._outerEvent.click(event, this._data[this.getSeqIndex(this.util.getTrNode(event.target).dataset.rowSeq)]);
+                }
+            }
+            event.stopPropagation();
         });
 
         //헤드 체인지이벤트
         this._element.head.addEventListener("change", event => {
             //빈값 체크 후
-            if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "change", "header")){
-                if(this.util.isFunction(this._event[event.target.name].change.header)){
-                    this._event[event.target.name].change.header(event);
+            if(this.util.isNotEmptyChildObjct(this._innerEvent, event.target.name, "change", "header")){
+                if(this.util.isFunction(this._innerEvent[event.target.name].change.header)){
+                    this._innerEvent[event.target.name].change.header(event);
                 }
             }
             event.stopPropagation();
@@ -895,10 +903,10 @@ class wGrid {
         this._element.body.addEventListener("change", event => {
             let rowSeq = this.util.getTrNode(event.target).dataset.rowSeq;
             //빈값 체크 후
-            if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "change", "body")){
-                if(this.util.isFunction(this._event[event.target.name].change.body)){
+            if(this.util.isNotEmptyChildObjct(this._innerEvent, event.target.name, "change", "body")){
+                if(this.util.isFunction(this._innerEvent[event.target.name].change.body)){
                     //연결된 이벤트 호출(event, row)
-                    this._event[event.target.name].change.body(event, this._data[this.getSeqIndex(rowSeq)]);
+                    this._innerEvent[event.target.name].change.body(event, this._data[this.getSeqIndex(rowSeq)]);
                 }
             }
             //데이터 동기화
@@ -915,9 +923,9 @@ class wGrid {
         //헤드 키업 이벤트
         this._element.head.addEventListener("keyup", event => {
             //연결 이벤트 호출
-            if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "keyup", "header")){
-                if(this.util.isFunction(this._event[event.target.name].change.header)){
-                    this._event[event.target.name].keyup.header(event);
+            if(this.util.isNotEmptyChildObjct(this._innerEvent, event.target.name, "keyup", "header")){
+                if(this.util.isFunction(this._innerEvent[event.target.name].change.header)){
+                    this._innerEvent[event.target.name].keyup.header(event);
                 }
             }
             event.stopPropagation();
@@ -930,10 +938,10 @@ class wGrid {
             	event.target.value = event.target.value.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
 			}
             //연결 이벤트 호출
-            if(this.util.isNotEmptyChildObjct(this._event, event.target.name, "keyup", "body")){
-                if(this.util.isFunction(this._event[event.target.name].change.body)){
+            if(this.util.isNotEmptyChildObjct(this._innerEvent, event.target.name, "keyup", "body")){
+                if(this.util.isFunction(this._innerEvent[event.target.name].change.body)){
                     //연결된 이벤트 호출(event, row)
-                    this._event[event.target.name].keyup.body(event, this._data[this.getSeqIndex(rowSeq)]);
+                    this._innerEvent[event.target.name].keyup.body(event, this._data[this.getSeqIndex(rowSeq)]);
                 }
             }
             //데이터 동기화

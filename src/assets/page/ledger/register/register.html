@@ -5,7 +5,7 @@
 <section class="content" id="ledgerBasic">
     <div class="table-title">■ 장부 기본 정보</div>
     <div class="botton-box">
-        <button class="btn-gray" id="basicReg" title="저장">저장</button>
+        <button class="btn-gray" id="basicSave" title="저장">저장</button>
     </div>
     <div class="table-box">
         <table class="table">
@@ -20,19 +20,19 @@
                     <th>장부명</th>
                     <td>
                         <div>
-                            <input id="ledNm" type="text" class="input-gray w97pc">
+                            <input id="ledgerName" type="text" class="input-gray w97pc">
                         </div>
                     </td>
                     <th>장부유형</th>
                     <td>
-                        <div id="ledTpCd"></div>
+                        <div id="ledgerType"></div>
                     </td>                    
                 </tr>
                 <tr>
                     <th>비고</th>
                     <td colspan="3">
                         <div>
-                            <textarea id="ledRmk" class="input-gray w100pc h100px"></textarea>
+                            <textarea id="ledgerRemark" class="input-gray w100pc h100px"></textarea>
                         </div>
                     </td>              
                 </tr>
@@ -44,7 +44,7 @@
 <section class="content" id="ledgerItems" name="ledgerContent" style="display: none;">
     <div class="table-title">■ 가계부 세목</div>
     <div class="botton-box">
-        <button class="btn-gray" id="itemsReg" title="저장">저장</button>
+        <button class="btn-gray" id="btnItemsSave" title="저장">저장</button>
     </div>
     <div class="table-box">
         <table class="table">
@@ -65,7 +65,7 @@
 <section class="content" id="ledgerAccount" name="ledgerContent" style="display: none;">
     <div class="table-title">■ 가계부 계좌</div>
     <div class="botton-box">
-        <button class="btn-gray" id="itemsReg" title="저장">저장</button>
+        <button class="btn-gray" id="btnItemsSave" title="저장">저장</button>
     </div>
     <div class="table-box">
         <table class="table">
@@ -84,7 +84,7 @@
 </section>
 
 <div class="bottom-btn-box">        
-    <button id="cancel" class="btn-gray btn-big">취소</button>
-    <button id="allReg" class="btn-gray btn-big">전체저장</button>
+    <button id="btnCancel" class="btn-gray btn-big">취소</button>
+    <button id="btnAllSave" class="btn-gray btn-big">전체저장</button>
 </div>
 <script type="module" src="/assets/page/ledger/register/register.js"></script>

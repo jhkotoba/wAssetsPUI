@@ -325,10 +325,6 @@ export const wUtil = {
         return result;
     },
 
-    valid(data, typeList){
-
-    },
-
     //계좌번호 유효성 검사
     isAccountNumber(value){
         let pattern = /^[0-9]*$/;
@@ -389,8 +385,60 @@ export const wUtil = {
             return false;
         }
     },
-    
-    //유효성 검사 value, checkList[]
+
+    /**
+     * 
+     * @param {string} messageCode - 메시지코드
+     */
+    getMessage(messageCode){
+
+
+    },
+
+    /**
+     * 유효성 검사
+     * @param {*} value - 체크할 변수
+     * @param {stringList} list - 체크할 유형
+     */
+    simpleValidation(value, list){
+        for(let check in list){
+            switch(check){
+            //빈값체크
+            case this.CONST.VALID.EMPTY:
+                if(this.isEmpty(value)){
+                    return false;
+                }
+                break;
+            //숫자체크
+            case this.CONST.VALID.NUMBER:
+                if(window.isNaN(value)){
+                    return false;
+                }
+                break;
+            //날짜체크(YYYYMMDD)
+            case this.CONST.VALID.DATE_YYYYMMDD:
+                if(this.isDate(value, this.CONST.VALID.DATE_YYYYMMDD) == false){
+                    return false;
+                }
+                break;
+            //날짜체크(YYYYMMDDHHMM)
+            case this.CONST.VALID.DATE_YYYYMMDDHHMM:
+                if(this.isDate(value, this.CONST.VALID.DATE_YYYYMMDDHHMM) == false){
+                    return false;
+                }
+                break;
+            //날짜체크(YYYYMMDDHHMMSS)
+            case this.CONST.VALID.DATE_YYYYMMDDHHMMSS:
+                if(this.isDate(value, this.CONST.VALID.DATE_YYYYMMDDHHMMSS) == false){
+                    return false;
+                }
+                break;
+            }
+        }
+        return true;
+    },
+
+    //유효성 검사
     valid(value, key, checkList){
 
         let result = {};
@@ -427,18 +475,26 @@ export const wUtil = {
 
         return result;
     },
-   
-    //리스트 -> 코드Map형식으로 변환
+    
+    /**
+     * 인자로받은 코드 리스트를 오브젝트형식으로 변환 
+     * @param {objectList} list 
+     * @returns 
+     */
     listToCode(list){
         return this.listToMap(list, "code", "codeNm");
     },
-
-    //리스트 -> Map형식으로 변환
-    listToMap(list, keyName, valueName){
+   
+    /**
+     * 인자로받은 리스트, 키명칭, 값명칭을 받아서 오브젝트형식으로 변환 
+     * @param {objectList} list 
+     * @param {string} keyNm 
+     * @param {string} valueNm 
+     * @returns 
+     */
+    listToMap(list, keyNm, valueNm){
         let result = new Object();        
-        list.forEach(item => {
-            result[item[keyName]] = item[valueName];
-        });
+        list.forEach(item => result[item[keyNm]] = item[valueNm]);
         return result;
     },
 
@@ -545,7 +601,7 @@ export const wUtil = {
 
     /**
      * 라디오버튼 생성(공통코드용)
-     * @param {element} element 적용할 태그 엘리먼트
+     * @param {element} element 적용할 태그 엘리먼트 부모
      * @param {objectList} dataList 적용할 데이터
      * @param {string} radioName 라디오버튼 이름태그명
      */    
