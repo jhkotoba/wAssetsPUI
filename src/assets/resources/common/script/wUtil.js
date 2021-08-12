@@ -527,6 +527,16 @@ export const wUtil = {
     },
 
     /**
+     * element 자식노드의 input, textarea, select 항목의 데이터 직렬화
+     * @param {element} element 
+     */
+    serializeArray(element){
+        return Array.from(element.querySelectorAll("input, textarea, select"))
+            .filter(element => element.name != "" && element.type != "radio" && element.type != "checkbox")
+            .map(element => new Object({name: element.name, value: element.value}));
+    },
+
+    /**
      * 자식노드 비우기
      * @param {element} element 비울 자식노드들의 부모노드 엘리먼트 
      */

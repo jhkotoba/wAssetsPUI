@@ -4,58 +4,46 @@
 PUI.FN.INIT = async function(){
 
     //장부유형 조회
-    let response = await PUI.FT.getFetch("/api/admin/getCodeList?grpCode=LED_TP_CD&uprCode=ASSETS");
-    PUI.V.ledgerTypeList = response.data;
-
-    //장부유형 라디오 생성
-    PUI.UTL.appendCodeRadio(document.getElementById("ledgerType"), PUI.V.ledgerTypeList, "ledgerType");
+    let ledTpResp = await PUI.FT.getFetch("/api/admin/getCodeList?grpCode=LED_TP_CD&uprCode=ASSETS");
+    PUI.V.ledTpList = ledTpResp.data;
+    PUI.V.ledTpNm = PUI.UTL.listToCode(ledTpResp.data);    
 
     //장부인덱스 해당 정보 조회
-    let searchParams = new URL(location.href).searchParams; 
+    let searchParams = new URL(location.href).searchParams;
     if(searchParams.has("ledIdx")){
-        response = await PUI.FT.getFetch("/api/assets/getLedger?ledIdx="+searchParams.get("ledIdx"));
-        console.log("response:", response);
+        //장부조회
+        let ledIdxResp = await PUI.FT.getFetch("/api/assets/getLedger?ledIdx="+searchParams.get("ledIdx"));
+        //저장된 장부인 경우 저장된 데이터 표시
+        if(ledIdxResp.resultCode == "0000"){
+            //조회한 장부정보 데이터 적용 호출
+            PUI.FN.dataDisplay(ledIdxResp.data);
+        }else window.history.back();
+    }else{
+        //장부유형 라디오 생성
+        PUI.UTL.appendCodeRadio(document.getElementById("ledgerType"), PUI.V.ledTpList, "ledTpCd");
     }
 };
 
 /**
- * 클릭 이벤트
- * @param {event} event 
+ * 조회한 장부정보 데이터 적용
+ * @param {object} data 
  */
-PUI.EV.CLICK = function(event){
-    switch(event.target.id){
-    //장부 기본정보 저장
-    case "basicSave": 
-        PUI.FN.basicSave(event);
-        break;
-    //장부 전체저장 & 저장완료
-    case "allSave":
-        PUI.FN.allSave(event);
-        break;
-    }
-}
+PUI.FN.dataDisplay = function(data){
+    console.log(data);
+    //장부명
+    ledgerName.value = data.ledNm;
+    //장부유형
+    ledgerType.textContent = PUI.V.ledTpNm[data.ledTpCd];
+    //비고
+    ledgerRemark.value = data.ledRmk;
 
-/**
- * 체인지 이벤트
- * @param {event} event 
- */
-PUI.EV.CHANGE = function(event){
-    //장부유형 선택에 따라서 항목 표시/비표시
-    if(event.target.name == "ledgerType"){
-        let ledTpCd = document.querySelectorAll("input[name='ledgerType']:checked");
-        document.getElementsByName("ledgerContent").forEach(el => el.style.display = "none");
-        switch(ledTpCd[0].value){
-        case "CASH_BOOK":
-            //가계부 세목
-            document.getElementById("ledgerItems").style.display = "block";
-            //가계부 계좌
-            document.getElementById("ledgerAccount").style.display = "block";
-            break;
-        case "SIMP_CASH_BOOK":
-            break;
-        }
+    switch(data.ledTpCd){    
+    case "CASH_BOOK":
+        break;
+    case "SIMP_CASH_BOOK":
+        break;
     }
-}
+};
 
 /**
  * 장부 기본정보 저장
@@ -103,4 +91,43 @@ PUI.FN.basicSave = function(event){
  */
 PUI.FN.allSave = function(event){
 
+}
+
+/**
+ * 클릭 이벤트
+ * @param {event} event 
+ */
+PUI.EV.CLICK = function(event){
+    switch(event.target.id){
+    //장부 기본정보 저장
+    case "basicSave": 
+        PUI.FN.basicSave(event);
+        break;
+    //장부 전체저장 & 저장완료
+    case "allSave":
+        PUI.FN.allSave(event);
+        break;
+    }
+}
+
+/**
+ * 체인지 이벤트
+ * @param {event} event 
+ */
+PUI.EV.CHANGE = function(event){
+    //장부유형 선택에 따라서 항목 표시/비표시
+    if(event.target.name == "ledgerType"){
+        let ledTpCd = document.querySelectorAll("input[name='ledgerType']:checked");
+        document.getElementsByName("ledgerContent").forEach(el => el.style.display = "none");
+        switch(ledTpCd[0].value){
+        case "CASH_BOOK":
+            //가계부 세목
+            document.getElementById("ledgerItems").style.display = "block";
+            //가계부 계좌
+            document.getElementById("ledgerAccount").style.display = "block";
+            break;
+        case "SIMP_CASH_BOOK":
+            break;
+        }
+    }
 }
