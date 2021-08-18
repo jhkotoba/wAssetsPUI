@@ -39,7 +39,7 @@ PUI.FN.createGrid = function(){
             }
         },
         event: {
-            click: (event, item) => window.location.href = "/assets/ledger/register?ledIdx=" + item.ledIdx
+            click: (event, item) => window.location.href = "/assets/ledger/book?ledIdx=" + item.ledIdx
         }
     });
 

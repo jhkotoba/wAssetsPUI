@@ -1,4 +1,4 @@
-.wgrid-field{background: #3c3c3c; border: 1px solid #484848; margin: 5px 0px 5px 0px; overflow: overlay; position: absolute;}
+.wgrid-field{background: #3c3c3c; border: 1px solid #484848; margin: 5px 0px 5px 0px; overflow: overlay; /*position: absolute;*/}
 .wgrid-field::-webkit-scrollbar {width: 10px; height: 10px;}
 .wgrid-field::-webkit-scrollbar-button:start:decrement,::-webkit-scrollbar-button:end:increment {display: none;}
 .wgrid-field::-webkit-scrollbar-track {background: #5A5A5A; border: 1px solid #484747;}
