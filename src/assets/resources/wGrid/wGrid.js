@@ -72,6 +72,10 @@ class wGrid {
         if(this.util.isNotEmpty(args.option.style)){
             this._option.style = args.option.style;
         }
+        if(this._option.row && this._option.row.style){        
+            this._option.row = args.option.row;
+        }
+        
         
         //그리드 스타일세팅
         this._element.target.classList.add("wgrid-field");
@@ -662,6 +666,9 @@ class wGrid {
         //행생성후 loaded함수 호출
         loaded.forEach(item => item.fn(item.tag, item.row));
 
+        if(this._option.row && this._option.row.style && this._option.row.style.cursor){
+            this.util.addElementStyleAttribute(tr, "cursor", this._option.row.style.cursor);
+        }
         return tr;
     }
 

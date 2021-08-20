@@ -36,6 +36,11 @@ PUI.FN.createGrid = function(){
             style: {
                 width: 1385,
                 height: 566
+            },
+            row: {
+                style:{
+                    cursor: "pointer"
+                }
             }
         },
         event: {
@@ -45,9 +50,7 @@ PUI.FN.createGrid = function(){
 
     //데이터 조회
     PUI.FT.getFetch("/api/assets/getLedgerList")
-        .then(response => {
-            console.log(response.data); PUI.V.wGrid.setData({list:response.data})
-        });
+        .then(response => PUI.V.wGrid.setData({list:response.data}));
 };
 
 /**
