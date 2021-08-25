@@ -160,10 +160,12 @@ PUI.FN.createGrid = function(){
             {title: "순번", element:"text", name:"acctOdr", width:50, align:"center", edit:"text"}
         ],
         option: {
-            style: {
-                width: 1385,
-                height: 566
-            }
+            grid: {
+                style: {
+                    width: 1385,
+                    height: 566
+                },
+            },
         }
     });
 

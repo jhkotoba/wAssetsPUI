@@ -32,10 +32,12 @@ PUI.FN.createGrid = function(){
             {title: "총액", element:"text", name:"amount", width:50, align:"center", edit:"text"},
             {title: "저장여부", element:"text", name:"saveYn", width:50, align:"center", edit:"text", data:{mapping: PUI.V.saveYn}},
         ],
-        option: {
-            style: {
-                width: 1385,
-                height: 566
+        option: {           
+            grid: {
+                style: {
+                    width: 1385,
+                    height: 566
+                },
             },
             row: {
                 style:{
@@ -59,8 +61,8 @@ PUI.FN.createGrid = function(){
  */
 PUI.EV.CLICK = function(event){
     switch(event.target.id){
-    case "ledgerRegister":
-        window.location.href = "/assets/ledger/register";
+    case "ledgerRegist":
+        window.location.href = "/assets/ledger/regist";
         break;
     }
 }

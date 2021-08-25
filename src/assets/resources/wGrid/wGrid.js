@@ -1,41 +1,20 @@
-import { util } from "./plugin/util.js"
+import { UTL } from "./plugin/util.js";
+import { CRT } from "./plugin/create.js";
 
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.8.0
+ * @version 0.9.0
  */
 class wGrid {
 
     //생성자
-    constructor(targetId, args){
+    constructor(targetId, paramater){
 
         //그리드 유틸
-        this.util = util;
+        this.util = UTL;
 
-        //그리드내 상수값
-        this.CONSTANT = {
-            STATE: {
-                SELECT: "SELECT",
-                INSERT: "INSERT",
-                UPDATE: "UPDATE",
-                REMOVE: "REMOVE"
-            },
-            TR_CLS_STATE: {
-                SELECT: "",
-                INSERT: "wgrid-insert-tr",
-                UPDATE: "wgrid-update-tr",
-                REMOVE: "wgrid-remove-tr"
-            },
-            TAG_CLS_STATE:{
-                SELECT: "",
-                INSERT: "wgrid-insert-tag",
-                UPDATE: "wgrid-update-tag",
-                REMOVE: "wgrid-remove-tag"
-            },
-            EMPTY: "EMPTY",
-            EVENT_LIST: ["click", "change"]
-        }
+        
 
         //그리드 상태값
         this._state = {
@@ -56,34 +35,27 @@ class wGrid {
         }
 
         //필드저장
-        this._field = args.field;
+        this._field = paramater.field;
 
-        //그리드 옵션값 세팅
-        let option = {
-            isCreate: {isHeader:true, isBody:true, isFooter:false},
-            gridMode: "LIST" //list, thum
-        }
+        //상수세팅
+        this.constant = CRT.createConstant();
 
+        //옵션세팅
+        this.option = CRT.createOption(paramater);
+       
         //그리드 인자값 세팅
         this._data = [];
         //this._orgData = [];
         this._editOrgData = {};
-        this._option = option;
-        if(this.util.isNotEmpty(args.option.style)){
-            this._option.style = args.option.style;
-        }
-        if(this._option.row && this._option.row.style){        
-            this._option.row = args.option.row;
-        }
-        
+        this._option = this.option; 
         
         //그리드 스타일세팅
         this._element.target.classList.add("wgrid-field");
-        this.util.addElementStyleAttribute(this._element.target, "width", args.option.style.width);
-        this.util.addElementStyleAttribute(this._element.target, "height", args.option.style.height);
+        this._element.target.style.width = this.option.grid.style.width + "px";
+        this._element.target.style.height = this.option.grid.style.height + "px";        
 
         //이벤트 생성
-        this._outerEvent = args.event;
+        this._outerEvent = paramater.event;
         this._innerEvent = {};
         this._createEvent();
        
@@ -155,7 +127,7 @@ class wGrid {
             //내부데이터 세팅
             obj.list.forEach(data => {
                 data._rowSeq = this._getNextSeq();
-                data._state = this.CONSTANT.STATE.SELECT;
+                data._state = this.constant.STATE.SELECT;
             });
             this._data = obj.list;
             //this._orgData = Object.assign([], this._data);
@@ -253,11 +225,11 @@ class wGrid {
             }
         });
         row._rowSeq = this._getNextSeq();
-        row._state = this.CONSTANT.STATE.INSERT;
+        row._state = this.constant.STATE.INSERT;
         this._data.push(row);
 
         let tr = this._bodyListRowCreate(row, this._data.length-1);
-        tr.classList.add(this.CONSTANT.TR_CLS_STATE.INSERT);
+        tr.classList.add(this.constant.TR_CLS_STATE.INSERT);
         return tr;
     }
 
@@ -338,7 +310,7 @@ class wGrid {
         
         switch(this._data[rowIdx]._state){
             //편집상태 취소(편집의 경우 행 재생성)
-            case this.CONSTANT.STATE.UPDATE:
+            case this.constant.STATE.UPDATE:
                 
                 //원본 데이터로 돌림
                 for(let key in this._editOrgData[rowSeq]){
@@ -347,7 +319,7 @@ class wGrid {
                 delete this._editOrgData[rowSeq];
 
                 //데이터 상태 조회로 변경
-                this._data[rowIdx]._state = this.CONSTANT.STATE.SELECT;
+                this._data[rowIdx]._state = this.constant.STATE.SELECT;
 
                 let tr = this.getElementBodyTable()
                     .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
@@ -369,18 +341,18 @@ class wGrid {
                 loaded.forEach(item => item.fn(item.tag, item.row));
 
                 //취소할 상태값 저장
-                cancelTr = this.CONSTANT.TR_CLS_STATE.UPDATE;
-                cancelTag = this.CONSTANT.TAG_CLS_STATE.UPDATE;
+                cancelTr = this.constant.TR_CLS_STATE.UPDATE;
+                cancelTag = this.constant.TAG_CLS_STATE.UPDATE;
                 break;
             //삭제상태 취소
-            case this.CONSTANT.STATE.REMOVE:
+            case this.constant.STATE.REMOVE:
 
                 //데이터 상태 조회로 변경
-                this._data[rowIdx]._state = this.CONSTANT.STATE.SELECT;
+                this._data[rowIdx]._state = this.constant.STATE.SELECT;
                 
                 //취소할 상태값 저장
-                cancelTr = this.CONSTANT.TR_CLS_STATE.REMOVE;
-                cancelTag = this.CONSTANT.TAG_CLS_STATE.REMOVE;
+                cancelTr = this.constant.TR_CLS_STATE.REMOVE;
+                cancelTag = this.constant.TAG_CLS_STATE.REMOVE;
                 break;
             }
     
@@ -390,7 +362,7 @@ class wGrid {
             tr.classList.remove(cancelTr);
 
             //행 자식노드의 태그의 스타일(클래스) 삭제
-            for(let remove of tr.getElementsByClassName(this.CONSTANT.TAG_CLS_STATE.REMOVE)){
+            for(let remove of tr.getElementsByClassName(this.constant.TAG_CLS_STATE.REMOVE)){
                 remove.classList.remove(cancelTag);
             }
     }
@@ -427,7 +399,7 @@ class wGrid {
         }        
 
         //데이터 행상태 값 변경
-        this._data[rowIdx]._state = this.CONSTANT.STATE.UPDATE;
+        this._data[rowIdx]._state = this.constant.STATE.UPDATE;
 
         //자식노드 비우기
         this.util.childElementEmpty(tr);
@@ -445,7 +417,7 @@ class wGrid {
         //행생성후 loaded함수 호출
         loaded.forEach(item => item.fn(item.tag, item.row));
 
-        tr.classList.add(this.CONSTANT.TR_CLS_STATE.UPDATE);
+        tr.classList.add(this.constant.TR_CLS_STATE.UPDATE);
         tr.childNodes.forEach(td => {
             switch(td.firstChild.firstChild.tagName){
                 case "INPUT":
@@ -454,7 +426,7 @@ class wGrid {
                     }
                 case "BUTTON":
                 case "SELECT":
-                    td.firstChild.firstChild.classList.add(this.CONSTANT.TAG_CLS_STATE.UPDATE);
+                    td.firstChild.firstChild.classList.add(this.constant.TAG_CLS_STATE.UPDATE);
                 break;
             }
         });
@@ -482,12 +454,12 @@ class wGrid {
 
     //한행 삭제상태 변환
     _removeStateRow(rowIdx, rowSeq){
-        this._data[rowIdx]._state = this.CONSTANT.STATE.REMOVE;
+        this._data[rowIdx]._state = this.constant.STATE.REMOVE;
 
         let tr = this.getElementBodyTable()
             .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
 
-        tr.classList.add(this.CONSTANT.TR_CLS_STATE.REMOVE);
+        tr.classList.add(this.constant.TR_CLS_STATE.REMOVE);
         tr.childNodes.forEach(td => {
             switch(td.firstChild.firstChild.tagName){
                 case "INPUT":
@@ -495,7 +467,7 @@ class wGrid {
                         break;
                     }
                 case "BUTTON":
-                    td.firstChild.firstChild.classList.add(this.CONSTANT.TAG_CLS_STATE.REMOVE);
+                    td.firstChild.firstChild.classList.add(this.constant.TAG_CLS_STATE.REMOVE);
                 break;
             }
         });
@@ -606,8 +578,8 @@ class wGrid {
             }
 
             //스타일 적용             
-            this.util.addElementStyleAttribute(div, "width", field.width);
-            this.util.addElementStyleAttribute(div, "textAlign", "center");
+            this.util.addStyleAttribute(div, "width", field.width);
+            this.util.addStyleAttribute(div, "textAlign", "center");
 
             //태그연결
             th.appendChild(div);
@@ -666,8 +638,8 @@ class wGrid {
         //행생성후 loaded함수 호출
         loaded.forEach(item => item.fn(item.tag, item.row));
 
-        if(this._option.row && this._option.row.style && this._option.row.style.cursor){
-            this.util.addElementStyleAttribute(tr, "cursor", this._option.row.style.cursor);
+        if(this.option.row && this.option.row.style && this.option.row.style.cursor){            
+            this.util.addStyleAttribute(tr, "cursor", this.option.row.style.cursor);
         }
         return tr;
     }
@@ -821,23 +793,23 @@ class wGrid {
          //태그생성 후 상태에 따른 다른 스타일 적용을 위한 부분
         if(this.util.isNotEmpty(tag)){
             switch(row._state){
-                case this.CONSTANT.STATE.SELECT: break;
-                case this.CONSTANT.STATE.INSERT:
-                    tag.classList.add(this.CONSTANT.TAG_CLS_STATE.INSERT);
+                case this.constant.STATE.SELECT: break;
+                case this.constant.STATE.INSERT:
+                    tag.classList.add(this.constant.TAG_CLS_STATE.INSERT);
                     break;
-                case this.CONSTANT.STATE.UPDATE:
-                    tag.classList.add(this.CONSTANT.TAG_CLS_STATE.UPDATE);
+                case this.constant.STATE.UPDATE:
+                    tag.classList.add(this.constant.TAG_CLS_STATE.UPDATE);
                     break;
-                case this.CONSTANT.STATE.REMOVE:
-                    tag.classList.add(this.CONSTANT.TAG_CLS_STATE.REMOVE);
+                case this.constant.STATE.REMOVE:
+                    tag.classList.add(this.constant.TAG_CLS_STATE.REMOVE);
                     break;
             }
         }
         td.appendChild(div);
 
         //스타일 적용        
-        this.util.addElementStyleAttribute(div, "width", field.width);
-        this.util.addElementStyleAttribute(div, "textAlign", "center");
+        this.util.addStyleAttribute(div, "width", field.width);
+        this.util.addStyleAttribute(div, "textAlign", "center");
         
         return {td, tag};
     }
@@ -852,7 +824,7 @@ class wGrid {
                 return;
             }
             //이벤트 종류만큼 루프
-            this.CONSTANT.EVENT_LIST.forEach(evNm => {
+            this.constant.EVENT_LIST.forEach(evNm => {
                 if(this.util.isNotEmpty(item.event[evNm])){                    
                     this._innerEvent[item.name] = {};
                     this._innerEvent[item.name][evNm] = {};
@@ -964,12 +936,12 @@ class wGrid {
     }
 
     //상태체크 SELECT
-    isSelect(state){ return this.CONSTANT.STATE.SELECT === state}
+    isSelect(state){ return this.constant.STATE.SELECT === state}
     //상태체크 INSERT
-    isInsert(state){ return this.CONSTANT.STATE.INSERT === state}
+    isInsert(state){ return this.constant.STATE.INSERT === state}
     //상태체크 SELECT
-    isUpdate(state){ return this.CONSTANT.STATE.UPDATE === state}
+    isUpdate(state){ return this.constant.STATE.UPDATE === state}
     //상태체크 REMOVE
-    isRemove(state){ return this.CONSTANT.STATE.REMOVE === state}
+    isRemove(state){ return this.constant.STATE.REMOVE === state}
 }
 window.wGrid = wGrid;

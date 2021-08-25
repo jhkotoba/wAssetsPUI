@@ -1,4 +1,4 @@
-export const util = {
+export const UTL = {
     isEmpty(value){
         if(typeof value === "string"){
             if(value.trim() === "") return true;
@@ -51,7 +51,7 @@ export const util = {
             return false;
         }
     },
-    addElementStyleAttribute(element, style, attribute){
+    addStyleAttribute(element, style, attribute){
         switch(style){
             case "width":
             case "height":
