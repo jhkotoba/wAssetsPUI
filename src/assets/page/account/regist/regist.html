@@ -1,0 +1,99 @@
+<div>
+    <div class="path">자산관리 > 계좌관리 > 계좌목록 > 계좌등록</div>
+</div>
+
+<section class="content">
+    <div class="table-title">■ 계좌 기본정보 등록</div>           
+    <div class="table-box">
+        <table class="table">
+            <colgroup>
+                <col width="100px">
+                <col width="240px">
+                <col width="100px">
+                <col width="240px">
+                <col width="100px">
+                <col width="240px">
+                <col width="100px">
+                <col width="240px">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th>사용처</th>
+                    <td colspan="7">
+                        <div id="acctTgtCd"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>계좌구분</th>
+                    <td colspan="7">
+                        <div id="acctDivCd"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>계좌명</th>
+                    <td>
+                        <div>
+                            <input id="acctNm" type="text" class="input-gray w97pc">
+                        </div>
+                    </td>
+                    <th>계좌번호</th>
+                    <td>
+                        <div>
+                            <input id="acctNum" type="text" class="input-gray w97pc">
+                        </div>
+                    </td>
+                    <th>사용여부</th>
+                    <td>
+                        <div>
+                            <input type="radio" id="useY" name="useYn" value="Y" checked>
+                            <label for="useY">사용</label>
+                            <input type="radio" id="useN" name="useYn" value="N">
+                            <label for="useN">미사용/해약</label>
+                        </div>
+                    </td>
+                    <th>생성일</th>
+                    <td>
+                        <div>
+                            <input id="cratDt" type="text" class="input-gray w97pc">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>만기일</th>
+                    <td colspan="3">
+                        <div>
+                            <input type="checkbox" id="epyDtUseYn">
+                            <label for="epyDtUseYn">만기일 사용</label>
+                            <input type="text" id="epyDt" class="input-gray" value="2099-12-31" disabled>
+                        </div>
+                    </td>
+                    <th>글자색</th>
+                    <td>
+                        <div>
+                            <div id="fontClorDsp" class="color-display"></div>
+                            <input id="fontClor" type="text" class="input-gray w195px">                            
+                        </div>
+                    </td>
+                    <th>배경색</th>
+                    <td>
+                        <div>
+                            <div id="bkgdClorDsp" class="color-display"></div>
+                            <input id="bkgdClor" type="text" class="input-gray w195px">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>비고</th>
+                    <td colspan="7">
+                        <textarea id="remark" class="input-gray w100pc h100px"></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="bottom-btn-box">        
+        <button id="cancel" class="btn-gray btn-big">취소</button>
+        <button id="regist" class="btn-gray btn-big">저장</button>
+    </div>
+</section>
+<script type="module" src="/assets/page/account/regist/regist.js"></script>
