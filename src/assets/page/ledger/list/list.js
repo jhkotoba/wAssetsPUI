@@ -22,7 +22,7 @@ PUI.FN.createGrid = function(){
 
     //그리드
     PUI.V.wGrid = new wGrid("ledgerList", {
-        field: [
+        fields: [
             {title: "장부번호", element:"text", name:"ledIdx", width:160, align:"left"},
             {title: "장부유형", element:"text", name:"ledTpCd", width:170, align:"center",
                 data:{mapping: PUI.UTL.listToCode(PUI.V.ledTpcd)}

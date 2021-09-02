@@ -24,11 +24,11 @@ PUI.FN.createGrid = function(){
     
     //그리드
     PUI.V.wGrid = new wGrid("acctList", {
-        field: [
+        fields: [
             {element:"checkbox", name: "check", width:30, align:"center",  edit: "checkbox",
                 event: {
                     change:{
-                        header: event => {
+                        head: event => {
                             //헤드 체크박스 클릭시 바디 체크박스 전체선택 & 전체해제 (기본상태만)
                             PUI.V.wGrid
                                 .getElementBody()

@@ -3,6 +3,28 @@
  */
 export const CRT = {
 
+    //그리드 상태값 생성    
+    createState(){
+        return {
+            curSeq: 0,      //현재 시퀀스
+            seqIndex: {},   //데이터 맵 key sequence value index
+            idxSequence: {} //데이터 맵 key index value sequence
+        }
+    },
+
+     //엘리먼트 생성
+    createElement(targetId){
+        return {
+            id: targetId,
+            target: document.getElementById(targetId),
+            head : document.createElement("div"),
+            headTb : document.createElement("table"),
+            headTr : document.createElement("tr"),
+            body: document.createElement("div"),
+            bodyTb : document.createElement("table")
+        }
+    },
+
     //wGrid 내부상수 세팅 
     createConstant(){
         return {
