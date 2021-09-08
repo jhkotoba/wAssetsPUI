@@ -11,7 +11,6 @@ class wGrid {
 
     //생성자
     constructor(targetId, paramater){
-        console.log("paramater:", paramater);
 
         //데이터 변수 생성 
         this.data = [];
@@ -42,9 +41,16 @@ class wGrid {
 
         //내부 이벤트 생성        
         this.innerEvent = CST.createEvent(this, paramater);
-       
+          
+        //그리드 생성 함수 저장
+        this.createGrid = CRT.createGrid;
+        this.createFields = CRT.createFields;
+        this.createGrid(this, paramater);
         //생성시 바로 그리드 생성
-        this._create();
+        //
+        //this._create();
+
+        //그리드 객체 반환
         return this;
     }
 
@@ -112,38 +118,41 @@ class wGrid {
      */
     closest(tagName, node){
         while(true){
-            if(node.tagName === tagName){
-                break;						
-            }else if(node.tagName === "BODY" || node.tagName === "HTML"){
-                return null;						
-            }else{
-                node = node.parentNode;
-            }
+            if(node.tagName === tagName) break;
+            else if(node.tagName === "BODY" || node.tagName === "HTML") return null;						
+            else node = node.parentNode;
         }
         return node;
     }
+    
+    /**
+     * 데이서 추가
+     * @param {object} paramater 
+     */
+    setData(paramater){
+        //데이터를 그리드에 삽입
+        for(let i=0; i<paramater.list.length; i++){
 
-    //데이터 set
-    //list: 데이터, isRefresh: setData시 갱신여부, callbackFn: 완료후 콜백함수
-    setData(obj){
-        if(UTL.isNotEmpty(obj)){
-            //내부데이터 세팅
-            obj.list.forEach(data => {
-                data._rowSeq = this._getNextSeq();
-                data._state = this.constant.STATE.SELECT;
-            });
-            this.data = obj.list;
-            //this._orgData = Object.assign([], this.data);
+            let item = paramater.list[i];
 
-            //새로고침 false아니면 새로고침
-            if(obj.isRefresh !== false){
-                this.refresh();
-            }
-            //완료후 콜백함수
-            if(typeof obj.callbackFn === "function"){
-                this.callbackFn();
-            }
+            //기본 데이터 세팅
+            item._rowSeq = this._getNextSeq();
+            item._state = this.constant.STATE.SELECT;
         }
+
+        this.data = paramater.list;
+
+        //필드 새로고침
+        if(paramater.isRefresh) this.refresh();
+    }
+
+    //그리드 새로고침
+    refresh(){
+        //필드 비우기
+        while(this.element.bodyTb.hasChildNodes()){
+            this.element.bodyTb.removeChild(this.element.bodyTb.firstChild);
+        }
+        this.createFields(this);
     }
 
     getData(){
@@ -493,15 +502,7 @@ class wGrid {
         this._dataReIndexing();
     }
 
-    //그리드 새로고침
-    refresh(){        
-        //TABLE 태그만 수정 - 비우기
-        UTL.childElementEmpty(this.element.bodyTb);
-        //TABLE 태그만 수정 - TD생성
-        this.data.forEach((row, rIdx) => {
-            this.element.bodyTb.appendChild(this._bodyListRowCreate(row, rIdx));
-        });
-    }
+
 
     //데이터 인덱싱
     _dataReIndexing(){
@@ -513,7 +514,7 @@ class wGrid {
 
     //그리드 생성
     _create(){
-        this._headerCreate();
+        //this._headerCreate();
         this._bodyCreate();
         return this;
     }

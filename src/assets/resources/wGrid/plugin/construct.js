@@ -1,5 +1,3 @@
-import { UTL } from "./util.js";
-
 /**
  * wGird 초기생성
  */
@@ -76,6 +74,9 @@ export const CST = {
                 style:{
                     width: 1000, 
                     height: 500  
+                },
+                format:{
+                    date: "YYYY-MM-DD"
                 }
             },
             head: {
@@ -102,6 +103,11 @@ export const CST = {
                         option.grid.style.height = paramater.option.grid.style.height;
                     }
                 }
+                if(paramater.option.grid.format){
+                    if(paramater.option.grid.format.date){
+                        option.grid.format.date = paramater.option.grid.format.date
+                    }
+                }
             }
             if(paramater.option.row){
                 if(paramater.option.row.style){
@@ -126,10 +132,9 @@ export const CST = {
         element.target.style.height = paramater.option.grid.style.height + "px";
     },
 
-    //
     /**
      * wGrid 생성시 그리드 이벤트 세팅
-     * @param {element} self 
+     * @param {this} self 
      * @param {object} paramater 
      * @returns 
      */
@@ -176,7 +181,8 @@ export const CST = {
         }
 
         //바디 이벤트 세팅
-        for(let i=0; i<evList.length; i++){            
+        for(let i=0; i<evList.length; i++){
+
             self.element.body.addEventListener(evList[i], event => {
                 
                 let sequence = self.closest("TR", event.target).dataset.rowSeq;
