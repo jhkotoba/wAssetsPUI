@@ -1,5 +1,3 @@
-import { UTL } from "./util.js";
-
 /**
  * wGird 생성
  */
@@ -113,11 +111,15 @@ export const CRT = {
                 div = document.createElement("div");
 
                 //태그 생성전 엘리먼트 타입 구분
-                if(row._state == self.constant.STATE.SELECT || row._state == self.constant.STATE.UPDATE){
-                    if(cell.edit == "text") type = "text-edit";
-                    else if(cell.edit == "date") type = "date-edit";
-                    else if(cell.edit == "dateTime") type = "dateTime-edit";
-                    else type = cell.element;
+                if(row._state == self.constant.STATE.INSERT || row._state == self.constant.STATE.UPDATE){
+                    if(cell.edit){
+                        if(cell.edit == "text") type = "text-edit";
+                        else if(cell.edit == "date") type = "date-edit";
+                        else if(cell.edit == "dateTime") type = "dateTime-edit";
+                        else type = cell.edit;
+                    }else{
+                        type = cell.edit;
+                    }
                 }else{
                     type = cell.element;
                 }
@@ -176,7 +178,9 @@ export const CRT = {
                     div.appendChild(tag);
                 }else if(type == "date"){
                     //날짜표시
-                    div.textContent = this._dateFormat(row[cell.name], self.option.grid.format.date);
+                    console.log(this);
+                    console.log(this._dateFormat);
+                    div.textContent = CRT._dateFormat(row[cell.name], self.option.grid.format.date);
                 }else if(type == "date-edit"){
                     //날짜 입력박스 표시
                     tag = document.createElement("input");
@@ -244,7 +248,7 @@ export const CRT = {
 
                 //행 직후 콜백함수 호출 세팅
                 if(cell.loaded){
-                    loaded.push({loaded: cell.loaded, element: tr, row: Object.assign({}, row)});
+                    loaded.push({loaded: cell.loaded, element: tag, row: Object.assign({}, row)});
                 } 
 
                 //스타일 적용
@@ -260,7 +264,7 @@ export const CRT = {
             //ROW 생성후 loaded함수 호출
             loaded.forEach(item => item.loaded(item.element, item.row));
 
-            this.element.bodyTb.appendChild(tr);
+            self.element.bodyTb.appendChild(tr);
         }
 
         //바디 클래스 적용
@@ -278,10 +282,19 @@ export const CRT = {
      * @param {string} format 
      */
     _dateFormat(value, format){
+    
+        //YYYYMMDD형식으로 진입시 YYYY-MM-DD로 변환
+        if(typeof value == "string" && value.length == 8){
+            value = value.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+        //YYYYMMDDHHMMSS형식으로 진이시 YYYY-MM-DD HH:MM:SS로 변환
+        }else if(typeof value == "string" && value.length == 14){
+            value = value.replace(/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1-$2-$3 $4:$5:$6');
+        }
+
         //날짜객체 생성
         let date = new Date(value);
         //포멧 세팅
-        format ? format = option.grid.format.date : format = "YYYY-MM-DD";
+        format = format ? format : "YYYY-MM-DD";
         format = format.toUpperCase();
 
         let year = date.getFullYear();

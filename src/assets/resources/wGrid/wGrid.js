@@ -42,7 +42,7 @@ class wGrid {
         //내부 이벤트 생성        
         this.innerEvent = CST.createEvent(this, paramater);
           
-        //그리드 생성 함수 저장
+        //그리드 생성 함수 저장 및 실행
         this.createGrid = CRT.createGrid;
         this.createFields = CRT.createFields;
         this.createGrid(this, paramater);
