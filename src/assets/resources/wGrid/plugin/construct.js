@@ -158,23 +158,24 @@ export const CST = {
             //그리드 내부 연결 이벤트 세팅
             evList.forEach(evName => {                
                 if(item.event[evName]){
-                    innerEvent[item.name] = {
+                    innerEvent[evName] = {};
+                    innerEvent[evName][item.name] = {
                         head: item.event[evName].head ? item.event[evName].head : null,
                         body: item.event[evName].body ? item.event[evName].body : null
                     }
                 }
-            });            
+            });
         }
 
         //헤드 이벤트 세팅
         for(let i=0; i<evList.length; i++){
             //이벤트 등록
             self.element.head.addEventListener(evList[i], event => {
-                if(innerEvent[event.target.name]
-                    && innerEvent[event.target.name][evList[i]]
-                    && innerEvent[event.target.name][evList[i]].head ){
+                if(innerEvent[evList[i]]
+                    && innerEvent[evList[i]][event.target.name]
+                    && innerEvent[evList[i]][event.target.name].head ){
                     //연결된 이벤트 호출
-                    innerEvent[event.target.name][evList[i]].head(event);
+                    innerEvent[evList[i]][event.target.name].head(event);
                 }
                 event.stopPropagation();
             });
@@ -187,13 +188,13 @@ export const CST = {
                 
                 let sequence = self.closest("TR", event.target).dataset.rowSeq;
                 let index = self.getSeqIndex(sequence);
-                
+
                 //연결할 이벤트 체크
-                if(innerEvent[event.target.name]
-                    && innerEvent[event.target.name][evList[i]]
-                    && innerEvent[event.target.name][evList[i]].head ){
+                if(innerEvent[evList[i]]
+                    && innerEvent[evList[i]][event.target.name]
+                    && innerEvent[evList[i]][event.target.name].body ){
                     //연결된 이벤트 호출
-                    innerEvent[event.target.name][evList[i]].head(
+                    innerEvent[evList[i]][event.target.name].body(
                         event,
                         self.data[index],
                         index,

@@ -37,14 +37,6 @@ export const CRT = {
                 tag.classList.add("wgrid-btn");
                 tag.setAttribute("name", field.name);
                 tag.textContent = field.button.title;
-                
-                //버튼 이벤트 존재시 적용
-                // if(field.event && field.event.click && field.event.click.head){
-                //     tag.addEventListener("click", event => {
-                //         field.event.click.head(event);
-                //         event.stopPropagation();
-                //     });
-                // }
                 div.appendChild(tag);
             }else{
                 //제목적용
@@ -80,9 +72,6 @@ export const CRT = {
      * @param {this} self 
      */
     createFields(self){
-
-        console.log("createGridFields");
-        console.log("data:", self.data);
 
         let tr = null, td = null, tag = null, option = null, div = null;
         let loaded = [], type = null;
@@ -138,14 +127,6 @@ export const CRT = {
                     tag.classList.add("wgrid-btn");
                     tag.setAttribute("name", cell.name);
                     tag.textContent = cell.text;
-
-                    //버튼이벤트
-                    // if(field.event && field.event.click && field.event.click.body){
-                    //     tag.addEventListener("click", event => {
-                    //         field.event.click.body(event, row, i, j);
-                    //         event.stopPropagation();
-                    //     });
-                    // }
                     div.appendChild(tag);
                 }else if(type == "select"){
                     //셀릭트박스 생성
@@ -178,9 +159,8 @@ export const CRT = {
                     div.appendChild(tag);
                 }else if(type == "date"){
                     //날짜표시
-                    console.log(this);
-                    console.log(this._dateFormat);
-                    div.textContent = CRT._dateFormat(row[cell.name], self.option.grid.format.date);
+                    let dateContent = CRT._dateFormat(row[cell.name], self.option.grid.format.date);
+                    div.textContent = dateContent;
                 }else if(type == "date-edit"){
                     //날짜 입력박스 표시
                     tag = document.createElement("input");
@@ -220,10 +200,7 @@ export const CRT = {
                 if((type == "text" || type == "dateTime" || type == "date") 
                     && !row[cell.name] && cell.emptyText){                    
                     //정의된 빈값 표시
-                    tag = document.createElement("span");
-                    tag.setAttribute("name", cell.name);
-                    tag.textContent = cell.emptyText;
-                    div.appendChild(tag);
+                    div.textContent = cell.emptyText;
                 }
 
                 //그리드 상태값에 따른 색상변경

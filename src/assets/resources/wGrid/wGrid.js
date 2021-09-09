@@ -5,7 +5,7 @@ import { CRT } from "./plugin/create.js";
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.10.0
+ * @version 0.10.1
  */
 class wGrid {
 
