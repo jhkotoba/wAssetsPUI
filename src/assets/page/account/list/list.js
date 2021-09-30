@@ -182,7 +182,7 @@ PUI.EV.CLICK = function(event){
     switch(event.target.id){
     //행추가
     case "acctAdd":
-        PUI.V.wGrid.prependNewRow();
+        PUI.V.wGrid.prependRow();
         PUI.V.wGrid.getElementHeadTableRow()
             .querySelectorAll("input[name=check]")[0]
             .checked = false;

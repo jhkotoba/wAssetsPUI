@@ -1,4 +1,4 @@
-export const UTL = {
+export const util = { getUtils(){ return {
     isEmpty(value){
         if(typeof value === "string"){
             if(value.trim() === "") return true;
@@ -100,64 +100,58 @@ export const UTL = {
         }
         return node;
     },
-    //데이터 날짜 포멧(YYYY-MM-DD)
-    dateFormat(value){
-        //밀리초로 판단
-        if(typeof value === "number"){
-            let date = new Date(value);
-            return date.getFullYear() + "-" 
-            + date.getMonth() < 11 ? "0" + (date.getMonth()+1) : (date.getMonth() + 1) + "-"
-            + date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-        }else if(typeof value === "string"){
-            if(value.length === 8){
-                return value.substring(0,4) + "-" + value.substring(4,6) + "-" + value.substring(6,8);
-            }else if(value.length === 10){
-                return value.replace(".", "-").replace(".", "-");
-            }else if(value.length > 10){
-                if(value.indexOf("-") > -1 || value.indexOf(".") > -1){
-                    return value.substring(0,10).replace(".", "-").replace(".", "-");
-                }else{
-                    return value.substring(0,4) + "-" + value.substring(4,6) + "-" + value.substring(6,8);
-                }
-            }else{
-                return "";
-            }
+
+    /**
+     * 데이터 날짜 포멧 내부함수
+     * @param {string/number} value 
+     * @param {string} format 
+     */
+    dateFormat : function(value, format){
+    
+        //YYYYMMDD형식으로 진입시 YYYY-MM-DD로 변환
+        if(typeof value == "string" && value.length == 8){
+            value = value.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+        //YYYYMMDDHHMMSS형식으로 진이시 YYYY-MM-DD HH:MM:SS로 변환
+        }else if(typeof value == "string" && value.length == 14){
+            value = value.replace(/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1-$2-$3 $4:$5:$6');
+        }
+
+        //날짜객체 생성
+        let date = new Date(value);
+        //포멧 세팅
+        format = format ? format : "YYYY-MM-DD";
+        format = format.toUpperCase();
+
+        let year = date.getFullYear();
+        let month = date.getMonth() < 11 ? "0" + (date.getMonth()+1) : (date.getMonth() + 1);
+        let day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+        let hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+        let minute = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+        let second = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+                
+        if(format == "YYYY-MM-DD"){
+            return year + "-" + month + "-" + day;
+        }else if(format == "YYYY-MM-DD HH:MM"){
+            return year + "-" + month + "-" + day + " " + hour + ":" + minute;
+        }else if(format == "YYYY-MM-DD HH:MM:SS"){
+            return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
         }else{
             return "";
         }
     },
-    //데이터 날짜 포멧(YYYY-MM-DD HH:MM:SS)
-    dateTimeFormat(value){
-        //밀리초로 판단
-        if(typeof value === "number"){
-            let date = new Date(value);
-            return date.getFullYear() + "-" 
-            + date.getMonth() < 11 ? "0" + (date.getMonth()+1) : (date.getMonth() + 1) + "-"
-            + date.getDate() < 10 ? "0" + date.getDate() : date.getDate()
-            + " "
-            + date.getHours() < 10 ? "0" + date.getHours() : date.getHours() + ":"
-            + date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes() + ":"
-            + date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-        }else if(typeof value === "string"){
-            if(value.length === 8){
-                return value.substring(0,4) + "-" + value.substring(4,6) + "-" + value.substring(6,8) + " 00:00:00";
-            }else if(value.length === 10){
-                return value.replace(".", "-").replace(".", "-") + " 00:00:00";
-            }else if(value.length === 14){
-                return value.substring(0,4) + "-" + value.substring(4,6) + "-" + value.substring(6,8)
-                    + " " + value.substring(8,10) + ":" + value.substring(10,12) + ":" + value.substring(12,14);
-            }else if(value.length > 19){
-                if(value.indexOf("-") > -1 || value.indexOf(".") > -1){
-                    return value.substring(0,10).replace(".", "-").replace(".", "-");
-                }else{
-                    return value.substring(0,4) + "-" + value.substring(4,6) + "-" + value.substring(6,8)
-                        + " " + value.substring(8,10) + ":" + value.substring(10,12) + ":" + value.substring(12,14);
-                }
-            }else{
-                return "";
-            }
-        }else{
-            return "";
+
+    /**
+     * 찾을 태그의 부모엘리먼트 찾아서 반환
+     * @param {string} nodeNm 
+     * @param {element} element 
+     * @returns 
+     */
+    closest : function(tagName, node){
+        while(true){
+            if(node.tagName === tagName) break;
+            else if(node.tagName === "BODY" || node.tagName === "HTML") return null;						
+            else node = node.parentNode;
         }
+        return node;
     }
-}
+}}}

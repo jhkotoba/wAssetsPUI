@@ -1,7 +1,7 @@
 /**
  * wGird 초기생성
  */
-export const CST = {
+export const construct = {
 
     /**
      * 그리드 상태값 생성
@@ -186,7 +186,7 @@ export const CST = {
 
             self.element.body.addEventListener(evList[i], event => {
                 
-                let sequence = self.closest("TR", event.target).dataset.rowSeq;
+                let sequence = self.util.closest("TR", event.target).dataset.rowSeq;
                 let index = self.getSeqIndex(sequence);
 
                 //연결할 이벤트 체크
