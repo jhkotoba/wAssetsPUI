@@ -247,18 +247,18 @@ PUI.FN.applyAccount = function(){
         for(let key in item){
             if(valid.isValid == false) break;
             switch(key){
-                case "acctOdr": valid = PUI.UTL.valid(item[key], key, ["EMPTY", "NUMBER"]); break;
-                case "acctDivCd": valid = PUI.UTL.valid(item[key], key, ["EMPTY"]); break;
-                case "acctNm": valid = PUI.UTL.valid(item[key], key, ["EMPTY"]); break;
-                case "acctNum": valid = PUI.UTL.valid(item[key], key, ["EMPTY"]); break;
-                case "acctTgtCd": valid = PUI.UTL.valid(item[key], key, ["EMPTY"]); break;
-                case "cratDt": valid = PUI.UTL.valid(item[key], key, ["DATE_YYYYMMDD"]); break;
+                case "acctOdr": valid = PUI.UTL.validation(item[key], key, ["EMPTY", "NUMBER"]); break;
+                case "acctDivCd": valid = PUI.UTL.validation(item[key], key, ["EMPTY"]); break;
+                case "acctNm": valid = PUI.UTL.validation(item[key], key, ["EMPTY"]); break;
+                case "acctNum": valid = PUI.UTL.validation(item[key], key, ["EMPTY"]); break;
+                case "acctTgtCd": valid = PUI.UTL.validation(item[key], key, ["EMPTY"]); break;
+                case "cratDt": valid = PUI.UTL.validation(item[key], key, ["DATE_YYYYMMDD"]); break;
                 case "epyDt":
                     if(item.epyDtUseYn == "Y"){
-                        valid = PUI.UTL.valid(item[key], key, ["DATE_YYYYMMDD"]);
+                        valid = PUI.UTL.validation(item[key], key, ["DATE_YYYYMMDD"]);
                     }
                 break;
-                case "acctOdr": valid = PUI.UTL.valid(item[key], key, ["EMPTY", "NUMBER"]); break;
+                case "acctOdr": valid = PUI.UTL.validation(item[key], key, ["EMPTY", "NUMBER"]); break;
             }
 
             if(valid.isValid == false){
@@ -306,10 +306,12 @@ PUI.FN.createCalendarBtn = function(element, item){
                     event: event,
                     //달력 선택시 날짜 반환
                     selected: dateString => {
+                        console.log("dateString:", dateString);
                         //태그 값 반영
                         element.value = dateString;
                         //데이터 값 반영
                         item.cratDt = dateString;
+                        console.log("item:", item);
                     }
                 });
             }

@@ -339,48 +339,67 @@ export const wUtil = {
         }
     },
 
-    //날짜 유효성 검사
+    /**
+     * 날짜 유효성 검사(YYYYMMDD)
+     * @param {string} date 
+     * @returns 
+     */
+    isDateYYYYMMDD(date){
+        return this.isDate(date, this.CONST.VALID.DATE_YYYYMMDD);
+    },
+
+    /**
+     * 날짜 유효성 검사
+     * @param {string} date 
+     * @param {string} pattern 
+     * @returns 
+     */
     isDate(date, pattern){
+
+        // 패턴 분기
         let datePattern = null;
-        
         switch(pattern.toUpperCase()){
         case this.CONST.VALID.DATE_YYYYMMDD:	
-            datePattern = /^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])$/;	
+            datePattern = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1])$/;
             break;
         case this.CONST.VALID.DATE_YYYYMMDDHHMM:
-            datePattern = /^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])(0[0-9]|1[0-9]|2[0-3])([0-5][0-9])$/;
+            datePattern = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1]) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
             break;	
         case this.CONST.VALID.DATE_YYYYMMDDHHMMSS:
-            datePattern = /^(19|20)\d{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[0-1])(0[0-9]|1[0-9]|2[0-3])([0-5][0-9])([0-5][0-9])$/;
+            datePattern = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1]) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
             break;
         }
 
+        // 정규식 체크
+        if(datePattern.test(date) == false){
+            return false;
+        }
+
         try{
-            if(datePattern.test(date)){
-                if(isNaN(date) || date.length < 8){
-                    return false;
-                }
+            
+            let year = Number(date.substring(0, 4));
+            let month = Number(date.substring(5, 7));
+            let day = Number(date.substring(8, 10));
 
-                let year = Number(date.substring(0, 4));
-                let month = Number(date.substring(4, 6));
-                let day = Number(date.substring(6, 8));
-
-                if(month < 1 || month > 12 ) {
-                    return false;
-                }
-                let maxDay = this.CONST.VALUE.LAST_DAYS[month-1];
-                
-                if(month === 2 && (year % 4 === 0 && year % 100 !== 0 || year % 400 ===0)){
-                    maxDay = 29;
-                }
-                    
-                if(day <= 0 || day > maxDay){
-                    return false;
-                }
-                return true;
-            }else{
+            // 월 체크
+            if(month < 1 || month > 12 ) {
                 return false;
             }
+
+            // 마지막일
+            let maxDay = this.CONST.VALUE.LAST_DAYS[month-1];
+            
+            // 윤일체크
+            if(month === 2 && (year % 4 === 0 && year % 100 !== 0 || year % 400 ===0)){
+                maxDay = 29;
+            }
+            
+            // 마지막일 체크
+            if(day <= 0 || day > maxDay){
+                return false;
+            }
+            return true;
+            
         }catch(err){
             return false;
         }
@@ -438,8 +457,13 @@ export const wUtil = {
         return true;
     },
 
-    //유효성 검사
+    //@deactivated 함수명 변경
     valid(value, key, checkList){
+        return this.validation(value, key, checkList);
+    },
+
+    //유효성 검사 Validation
+    validation(value, key, checkList){
 
         let result = {};
         checkList.forEach(validType => {
