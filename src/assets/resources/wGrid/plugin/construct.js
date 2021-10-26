@@ -140,25 +140,29 @@ export const construct = {
      */
     createEvent(self, paramater){
 
-        //생성할 이벤트 종류
+        // 생성할 이벤트 종류
         let evList = ["click", "change", "keyup"];
-        //정의할 이벤트
+        // 정의할 이벤트
         let innerEvent = {};
 
-        //필드 이벤트 세팅
+        // 필드 이벤트 세팅
         for(let i=0; i<paramater.fields.length; i++){
             
             let item = paramater.fields[i];
             
-            //빈값이면 통과
+            // 빈값이면 통과
             if(item.event == undefined || item.event == null){
                 continue;
             }
 
-            //그리드 내부 연결 이벤트 세팅
+            // 그리드 내부 연결 이벤트 세팅
             evList.forEach(evName => {                
                 if(item.event[evName]){
-                    innerEvent[evName] = {};
+
+                    // 빈값체크
+                    if(!innerEvent[evName]) innerEvent[evName] = {};
+
+                    // 이벤트 등록
                     innerEvent[evName][item.name] = {
                         head: item.event[evName].head ? item.event[evName].head : null,
                         body: item.event[evName].body ? item.event[evName].body : null
@@ -167,21 +171,21 @@ export const construct = {
             });
         }
 
-        //헤드 이벤트 세팅
+        // 헤드 이벤트 세팅
         for(let i=0; i<evList.length; i++){
-            //이벤트 등록
+            // 이벤트 등록
             self.element.head.addEventListener(evList[i], event => {
                 if(innerEvent[evList[i]]
                     && innerEvent[evList[i]][event.target.name]
                     && innerEvent[evList[i]][event.target.name].head ){
-                    //연결된 이벤트 호출
+                    // 연결된 이벤트 호출
                     innerEvent[evList[i]][event.target.name].head(event);
                 }
                 event.stopPropagation();
             });
         }
 
-        //바디 이벤트 세팅
+        // 바디 이벤트 세팅
         for(let i=0; i<evList.length; i++){
 
             self.element.body.addEventListener(evList[i], event => {
@@ -223,6 +227,8 @@ export const construct = {
                 event.stopPropagation();
             });
         }
+
+        console.log("create innerEvent:", innerEvent);
         return innerEvent;
     }
 }

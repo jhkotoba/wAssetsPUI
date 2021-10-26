@@ -388,13 +388,11 @@ export const wUtil = {
 
             // 마지막일
             let maxDay = this.CONST.VALUE.LAST_DAYS[month-1];
-            
-            // 윤일체크
             if(month === 2 && (year % 4 === 0 && year % 100 !== 0 || year % 400 ===0)){
                 maxDay = 29;
             }
             
-            // 마지막일 체크
+            // 날짜 체크
             if(day <= 0 || day > maxDay){
                 return false;
             }
