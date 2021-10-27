@@ -9,9 +9,11 @@ export const construct = {
      */   
     createState(){
         return {
-            curSeq: 0,      //현재 시퀀스
-            seqIndex: {},   //데이터 맵 key sequence value index
-            idxSequence: {} //데이터 맵 key index value sequence
+            curSeq: 0,      // 현재 시퀀스
+            seqIndex: {},   // 데이터 맵 key sequence value index
+            idxSequence: {}, // 데이터 맵 key index value sequence
+            seqRowElement: {}, // 테이터 맵 key sequence value name element
+            seqCellElement: {} // 테이터 맵 key sequence value name element
         }
     },
 
@@ -68,7 +70,7 @@ export const construct = {
      */
     createOption(paramater){
 
-        //옵션 기본값 세팅
+        // 옵션 기본값 세팅
         let option = {           
             grid: {
                 style:{
@@ -92,7 +94,7 @@ export const construct = {
             }
         }
 
-        //옵션값 세팅
+        // 옵션값 세팅
         if(paramater.option){
             if(paramater.option.grid){
                 if(paramater.option.grid.style){
@@ -140,29 +142,29 @@ export const construct = {
      */
     createEvent(self, paramater){
 
-        // 생성할 이벤트 종류
+        //  생성할 이벤트 종류
         let evList = ["click", "change", "keyup"];
-        // 정의할 이벤트
+        //  정의할 이벤트
         let innerEvent = {};
 
-        // 필드 이벤트 세팅
+        //  필드 이벤트 세팅
         for(let i=0; i<paramater.fields.length; i++){
             
             let item = paramater.fields[i];
             
-            // 빈값이면 통과
+            //  빈값이면 통과
             if(item.event == undefined || item.event == null){
                 continue;
             }
 
-            // 그리드 내부 연결 이벤트 세팅
+            //  그리드 내부 연결 이벤트 세팅
             evList.forEach(evName => {                
                 if(item.event[evName]){
 
-                    // 빈값체크
+                    //  빈값체크
                     if(!innerEvent[evName]) innerEvent[evName] = {};
 
-                    // 이벤트 등록
+                    //  이벤트 등록
                     innerEvent[evName][item.name] = {
                         head: item.event[evName].head ? item.event[evName].head : null,
                         body: item.event[evName].body ? item.event[evName].body : null
@@ -171,21 +173,21 @@ export const construct = {
             });
         }
 
-        // 헤드 이벤트 세팅
+        //  헤드 이벤트 세팅
         for(let i=0; i<evList.length; i++){
-            // 이벤트 등록
+            //  이벤트 등록
             self.element.head.addEventListener(evList[i], event => {
                 if(innerEvent[evList[i]]
                     && innerEvent[evList[i]][event.target.name]
                     && innerEvent[evList[i]][event.target.name].head ){
-                    // 연결된 이벤트 호출
+                    //  연결된 이벤트 호출
                     innerEvent[evList[i]][event.target.name].head(event);
                 }
                 event.stopPropagation();
             });
         }
 
-        // 바디 이벤트 세팅
+        //  바디 이벤트 세팅
         for(let i=0; i<evList.length; i++){
 
             self.element.body.addEventListener(evList[i], event => {
@@ -193,11 +195,11 @@ export const construct = {
                 let sequence = self.util.closest("TR", event.target).dataset.rowSeq;
                 let index = self.getSeqIndex(sequence);
 
-                //연결할 이벤트 체크
+                // 연결할 이벤트 체크
                 if(innerEvent[evList[i]]
                     && innerEvent[evList[i]][event.target.name]
                     && innerEvent[evList[i]][event.target.name].body ){
-                    //연결된 이벤트 호출
+                    // 연결된 이벤트 호출
                     innerEvent[evList[i]][event.target.name].body(
                         event,
                         self.data[index],
@@ -206,9 +208,9 @@ export const construct = {
                     );
                 }
 
-                //외부 이벤트 체크
+                // 외부 이벤트 체크
                 if(self.outerEvent && self.outerEvent[evList[i]]){
-                    //정의된 외부 이벤트 호출
+                    // 정의된 외부 이벤트 호출
                     self.outerEvent[evList[i]](
                         event,
                         self.data[index],
@@ -217,7 +219,7 @@ export const construct = {
                     );
                 }
 
-                //데이터 동기화
+                // 데이터 동기화
                 switch(event.target.dataset.sync){
                 case "text": case "checkbox": case "select": case "date": case "dateTime":
                     self.data[self.getSeqIndex(sequence)][event.target.name] = event.target.value;
@@ -228,7 +230,6 @@ export const construct = {
             });
         }
 
-        console.log("create innerEvent:", innerEvent);
         return innerEvent;
     }
 }
