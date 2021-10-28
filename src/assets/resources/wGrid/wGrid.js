@@ -598,9 +598,29 @@ class wGrid {
      * name값으로 체크된 체크박스 찾아서 가져오기
      * @param {string} name 
      * @returns 
+     * @deprecated getCheckedElement로 대체
      */
     getNameCheckedNodes = (name) => this.getElementBodyTable()
         .querySelectorAll("input[type='checkbox'][name='"+name+"']:checked");
+
+     /**
+     * name값으로 체크된 체크박스된 엘리먼트 가져오기
+     * @param {string} name 
+     * @returns
+     */
+    getCheckedElement = name => Object.entries(this.state.seqCellElement)
+        .filter(f => f[1][name].checked == true)
+        .flatMap(fm => fm[1][name])
+
+    /**
+     * name값으로 body 체크박스 전체 선택/해제
+     * @param {string} name 
+     * @param {boolean} bool 
+     * @returns 
+     */
+    setAllChecked = (name, bool) => Object.entries(this.state.seqCellElement)
+        .flatMap(fm => fm[1][name])
+        .forEach(check => check.checked = bool)
 
     /**
      * name값으로 체크된 체크박스 seq(list)번호 가져오기
@@ -609,7 +629,7 @@ class wGrid {
      */
     getNameCheckedSeqs = (name) => {
         let seqList = [];
-        this.getNameCheckedNodes(name)
+        this.getCheckedElement(name)
             .forEach(check => {
                 seqList.push(Number(this.util.getTrNode(check).dataset.rowSeq));
             });
