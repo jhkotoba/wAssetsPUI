@@ -56,7 +56,7 @@ PUI.FN.createGrid = function(){
                                 }
                                 break;
                             case "UPDATE":
-                                if(PUI.V.wGrid.isChangeDataRowSeq(item._rowSeq)){
+                                if(PUI.V.wGrid.isModifyDataRowSeq(item._rowSeq)){
                                     if(!confirm("변경사항이 있습니다. 취소하시겠습니까?")){
                                         return;
                                     }

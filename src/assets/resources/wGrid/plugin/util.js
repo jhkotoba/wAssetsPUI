@@ -104,16 +104,16 @@ export const util = { getUtils(){ return {
     /**
      * 데이터 날짜 포멧 내부함수
      * @param {string/number} value 
-     * @param {string} format 
+     * @param {string} format
      */
     dateFormat : function(value, format){
     
         //YYYYMMDD형식으로 진입시 YYYY-MM-DD로 변환
-        if(typeof value == "string" && value.length == 8){
-            value = value.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+        if(typeof value == "string" && value.length == 10){
+            value = value.replace(/(\d{4})-(\d{2})-(\d{2})/, '$1-$2-$3');
         //YYYYMMDDHHMMSS형식으로 진이시 YYYY-MM-DD HH:MM:SS로 변환
-        }else if(typeof value == "string" && value.length == 14){
-            value = value.replace(/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1-$2-$3 $4:$5:$6');
+        }else if(typeof value == "string" && value.length == 19){
+            value = value.replace(/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/, '$1-$2-$3 $4:$5:$6');
         }
 
         //날짜객체 생성

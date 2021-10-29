@@ -5,7 +5,7 @@ import { construct } from "./plugin/construct.js";
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.10.2
+ * @version 0.10.3
  */
 class wGrid {
 
@@ -257,7 +257,7 @@ class wGrid {
         // 날짜표시
         }else if(type == "date"){
             tag = document.createElement("span");
-            tag.textContent = this.util.dateFormat(row[cell.name], this.option.grid.format.date);
+            tag.textContent = row[cell.name];
             div.appendChild(tag);
         }else if(type == "date-edit"){
             // 날짜 입력박스 표시
@@ -295,8 +295,8 @@ class wGrid {
         }
 
         // 텍스트, 날짜데이터가 비어있고 비어있을경우 표시하는 값이 정해지면 표시
-        if((type == "text" || type == "dateTime" || type == "date") 
-            && !row[cell.name] && cell.emptyText){                    
+        if((cell.emptyText && type == "text" || type == "dateTime" || type == "date") 
+            && !row[cell.name]){                    
             // 정의된 빈값 표시
             div.textContent = cell.emptyText;
         }
@@ -578,8 +578,8 @@ class wGrid {
 
     /**
      * 그리드 셀 엘리먼트 가져오기
-     * @param {*} sequence 
-     * @param {*} name 
+     * @param {string/number} sequence 
+     * @param {string} name 
      * @returns 
      */
     getSeqCellElement = (sequence, name) => this.state.seqCellElement[sequence][name];
@@ -602,6 +602,13 @@ class wGrid {
      */
     getNameCheckedNodes = (name) => this.getElementBodyTable()
         .querySelectorAll("input[type='checkbox'][name='"+name+"']:checked");
+
+    /**
+     * rowSeq 값으로 행 엘리먼트 가져오기
+     * @param {string/number} rowSeq 
+     * @returns 
+     */    
+    getRowElementRowSeq = rowSeq => this.state.seqRowElement[rowSeq];
 
      /**
      * name값으로 체크된 체크박스된 엘리먼트 가져오기
@@ -641,44 +648,46 @@ class wGrid {
      * @param {string} name 
      * @returns 
      */
-    getNameCheckedItems = (name) => {
+    getNameCheckedItems = name => {
         let itemList = [];
-        this.getNameCheckedNodes(name)
+        this.getCheckedElement(name)
             .forEach(check => {
-                itemList.push(this.getDataIndex(this.getSeqIndex(util.getTrNode(check).dataset.rowSeq)));
+                itemList.push(this.getDataIndex(this.getSeqIndex(this.util.getTrNode(check).dataset.rowSeq)));
             });
         return Object.assign([], itemList);
     }
 
-    // 여러개의 행 리셋
-    resetRows(){
-
+    /**
+     * 행의 변경상태를 체크 (index)
+     * @param {number} rowIdx 
+     * @returns 
+     */
+    isModifyDataRowIdx(rowIdx){
+        return this.isModifyData(rowIdx, this.getIdxSequence(rowIdx));
     }
 
-    // 행단위 리셋
-    resetRow(){
-
+    /**
+     * 행의 변경상태를 체크 (sequence)
+     * @param {string/number} rowSeq 
+     * @returns 
+     */
+    isModifyDataRowSeq(rowSeq){
+        return this.isModifyData(this.getSeqIndex(rowSeq), rowSeq);
     }
-
-    // 행의 변경상태를 체크
-    isChangeDataRowIdx(rowIdx){
-        return this._isChangeData(rowIdx, this.getIdxSequence(rowIdx));
-    }
-
-    // 행의 변경상태를 체크
-    isChangeDataRowSeq(rowSeq){
-        return this._isChangeData(this.getSeqIndex(rowSeq), rowSeq);
-    }
-
-    // 행의 변경상태를 체크
-    _isChangeData(rowIdx, rowSeq){
+    
+    /**
+     * 행의 변경상태를 체크
+     * @param {number} rowIdx 
+     * @param {string/number} rowSeq 
+     * @returns 
+     */
+    isModifyData(rowIdx, rowSeq){
         let result = false;
         for(let key in this.data[rowIdx]){
-            if(key.indexOf("_") != 0){
-                if(this.data[rowIdx][key] != this.originData[rowSeq][key]){
-                    result = true;
-                    break;
-                }
+            if(key.indexOf("_") != 0 
+                && this.data[rowIdx][key] != this.originData[rowSeq][key]){
+                result = true;
+                break;
             }
         }
         return result;
@@ -708,6 +717,9 @@ class wGrid {
     cancelStateRow(rowIdx, rowSeq){
         var cancelTr = null;
         var cancelTag = null;
+
+        // 변경할 행 엘리먼트
+        let tr = this.getRowElementRowSeq(rowSeq);
         
         switch(this.data[rowIdx]._state){
             // 편집상태 취소(편집의 경우 행 재생성)
@@ -721,9 +733,6 @@ class wGrid {
 
                 // 데이터 상태 조회로 변경
                 this.data[rowIdx]._state = this.constant.STATE.SELECT;
-
-                let tr = this.getElementBodyTable()
-                    .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
 
                 // 자식노드 비우기
                 this.util.childElementEmpty(tr);
@@ -757,9 +766,7 @@ class wGrid {
                 break;
             }
     
-            // ROW스타일 row 태그 스타일 삭제
-            let tr = this.getElementBodyTable()
-                .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
+            // ROW스타일 row 태그 스타일 삭제            
             tr.classList.remove(cancelTr);
 
             // 행 자식노드의 태그의 스타일(클래스) 삭제
@@ -768,31 +775,43 @@ class wGrid {
             }
     }
 
-    // 행 편집모드로 변경(idx[])
-    modifyStateRowIdxs(rowIdxArr){
-        rowIdxArr.forEach(idx => this.modifyStateRowIdx(idx));
+    /**
+     * 행 편집모드로 변경 (rowIdxList)
+     * @param {Array} rowIdxList 
+     */
+    modifyStateRowIdxs(rowIdxList){
+        rowIdxList.forEach(idx => this.modifyStateRowIdx(idx));
     }
 
-    // 행 편집모드로 변경(seq[])
-    modifyStateRowSeqs(rowSeqArr){
-        rowSeqArr.forEach(req => this.modifyStateRowSeq(req));
+    /**
+     * 행 편집모드로 변경(rowSeqList)
+     * @param {Array} rowSeqList 
+     */
+    modifyStateRowSeqs(rowSeqList){
+        rowSeqList.forEach(req => this.modifyStateRowSeq(req));
     }
 
-    // 행 편집모드로 변경(idx)
+    /**
+     * 행 편집모드로 변경 (rowIdx)
+     * @param {number} rowIdx 
+     */
     modifyStateRowIdx(rowIdx){
         this.modifyStateRow(rowIdx, this.getIdxSequence(rowIdx));
     }
-
-    // 행 편집모드로 변경(seq)
+    
+    /**
+     * 행 편집모드로 변경(seq)
+     * @param {string/number} rowSeq 
+     */
     modifyStateRowSeq(rowSeq){
         this.modifyStateRow(this.getSeqIndex(rowSeq), rowSeq);
     }
 
     // 행 편집모드로 변경   
     modifyStateRow(rowIdx, rowSeq){
-        let tr = this.getElementBodyTable()
-            .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
-        console.log("1. tr:", tr);
+
+        // 편집할 행 엘리먼트
+        let tr = this.getRowElementRowSeq(rowSeq);
        
         // 편집모드 변경전 본래값 저장
         this.originData[rowSeq] = {};
