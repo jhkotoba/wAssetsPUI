@@ -5,7 +5,7 @@ import { construct } from "./plugin/construct.js";
 /**
  * wGrid
  * @author JeHoon 
- * @version 0.10.3
+ * @version 0.10.4
  */
 class wGrid {
 
@@ -52,6 +52,25 @@ class wGrid {
 
         return this;
     }
+     
+    /**
+     * 데이터 인덱싱
+     * @param {string/number} rowSeq
+     */
+    dataReIndexing(rowSeq){
+
+        // seqIndex 재 인덱싱
+        this.state.seqIndex = [];
+        this.data.forEach((item, index) => {
+            this.state.seqIndex[item._rowSeq] = index;
+        });
+
+        // sequence가 키인 데이터 삭제
+        if(rowSeq){
+            delete this.state.seqRowElement[rowSeq];
+            delete this.state.seqCellElement[rowSeq];
+        }
+    }
 
     /**
      * 그리드 생성
@@ -61,6 +80,12 @@ class wGrid {
         this.createHead();
         // 바디 생성
         this.createBody();
+        
+        // 데이터 없을 경우 표시 메시지 영역
+        this.element.bodyEmpty.textContent = this.option.grid.empty.message;
+        this.element.bodyEmpty.classList.add("wgrid-empty-message");
+        this.emptyMessageDisply();
+        this.element.body.appendChild(this.element.bodyEmpty);
     }
 
     /**
@@ -598,7 +623,7 @@ class wGrid {
      * name값으로 체크된 체크박스 찾아서 가져오기
      * @param {string} name 
      * @returns 
-     * @deprecated getCheckedElement로 대체
+     * @deprecated getCheckedElement 로 대체
      */
     getNameCheckedNodes = (name) => this.getElementBodyTable()
         .querySelectorAll("input[type='checkbox'][name='"+name+"']:checked");
@@ -776,7 +801,7 @@ class wGrid {
     }
 
     /**
-     * 행 편집모드로 변경 (rowIdxList)
+     * 행 편집상태로 변경 (rowIdxList)
      * @param {Array} rowIdxList 
      */
     modifyStateRowIdxs(rowIdxList){
@@ -784,7 +809,7 @@ class wGrid {
     }
 
     /**
-     * 행 편집모드로 변경(rowSeqList)
+     * 행 편집상태로 변경(rowSeqList)
      * @param {Array} rowSeqList 
      */
     modifyStateRowSeqs(rowSeqList){
@@ -792,7 +817,7 @@ class wGrid {
     }
 
     /**
-     * 행 편집모드로 변경 (rowIdx)
+     * 행 편집상태로 변경 (rowIdx)
      * @param {number} rowIdx 
      */
     modifyStateRowIdx(rowIdx){
@@ -800,14 +825,14 @@ class wGrid {
     }
     
     /**
-     * 행 편집모드로 변경(seq)
+     * 행 편집상태로 변경 (seq)
      * @param {string/number} rowSeq 
      */
     modifyStateRowSeq(rowSeq){
         this.modifyStateRow(this.getSeqIndex(rowSeq), rowSeq);
     }
 
-    // 행 편집모드로 변경   
+    // 행 편집상태로 변경   
     modifyStateRow(rowIdx, rowSeq){
 
         // 편집할 행 엘리먼트
@@ -853,40 +878,49 @@ class wGrid {
         });
     }
 
-    // 여러행 삭제상태 변환(idx[])
-    removeStateRowIdxs(rowIdx){
-        rowIdx.forEach(idx => this.removeStateRowIdx(idx));
-    }
+    /**
+     * 행 삭제상태로 변경 (rowIdxList)
+     * @param {Array} rowIdxList 
+     * @returns 
+     */
+    removeStateRowIdxs = rowIdxList => rowIdxList.forEach(idx => this.removeStateRowIdx(idx));    
 
-    // 여러행 삭제상태 변환(seq[])
-    removeStateRowSeqs(rowSeq){
-        rowSeq.forEach(req => this.removeStateRowSeq(req));
-    }
-    
-    // 한행 삭제상태 변환(idx)
-    removeStateRowIdx(rowIdx){
-        this._removeStateRow(rowIdx, this.getIdxSequence(rowIdx));
-    }
+    /**
+     * 행 삭제상태로 변경 (rowSeqList)
+     * @param {Array} rowSeqList 
+     * @returns 
+     */
+    removeStateRowSeqs = rowSeqList => rowSeqList.forEach(req => this.removeStateRowSeq(req));
 
-    // 한행 삭제상태 변환(seq)
-    removeStateRowSeq(rowSeq){
-        this._removeStateRow(this.getSeqIndex(rowSeq), rowSeq);
-    }
+    /**
+     * 행 삭제상태로 변경 (rowIdx)
+     * @param {number} rowIdx 
+     * @returns 
+     */
+    removeStateRowIdx = rowIdx => this.removeStateRow(rowIdx, this.getIdxSequence(rowIdx));    
 
-    // 한행 삭제상태 변환
-    _removeStateRow(rowIdx, rowSeq){
+    /**
+     * 행 삭제상태로 변경 (rowSeq)
+     * @param {string/number} rowSeq 
+     * @returns 
+     */
+    removeStateRowSeq = rowSeq => this.removeStateRow(this.getSeqIndex(rowSeq), rowSeq);
+   
+    /**
+     *  행 삭제상태로 변경
+     * @param {number} rowIdx 
+     * @param {string/number} rowSeq 
+     */
+    removeStateRow(rowIdx, rowSeq){
         this.data[rowIdx]._state = this.constant.STATE.REMOVE;
 
-        let tr = this.getElementBodyTable()
-            .querySelectorAll("tr[data-row-seq='"+ rowSeq +"']")[0];
+        let tr = this.getRowElementRowSeq(rowSeq);
 
         tr.classList.add(this.constant.TR_CLS_STATE.REMOVE);
         tr.childNodes.forEach(td => {
             switch(td.firstChild.firstChild.tagName){
                 case "INPUT":
-                    if(td.firstChild.firstChild.type == "checkbox"){
-                        break;
-                    }
+                    if(td.firstChild.firstChild.type == "checkbox") break;
                 case "BUTTON":
                     td.firstChild.firstChild.classList.add(this.constant.TAG_CLS_STATE.REMOVE);
                 break;
@@ -894,476 +928,59 @@ class wGrid {
         });
     }
 
-    // 한개의 행 삭제(idx)
-    removeRowIdx(rowIdx){
-        this._removeRowIdx(rowIdx, this.getIdxSequence(rowIdx));
-    }
+    /**
+     * 한개의 행 삭제 (rowIdx)
+     * @param {number} rowIdx 
+     */
+    removeRowIdx = rowIdx => this.removeRow(rowIdx, this.getIdxSequence(rowIdx));
 
-    // 한개의 행 삭제(seq)
-    removeRowSeq(rowSeq){
-        this._removeRowIdx(this.getSeqIndex(rowSeq), rowSeq);
-    }
+    /**
+     * 한개의 행 삭제 (rowSeq)
+     * @param {string/number} rowSeq 
+     */
+    removeRowSeq = rowSeq => this.removeRow(this.getSeqIndex(rowSeq), rowSeq);
 
-    // 행삭제
-    _removeRowIdx(rowIdx, rowSeq){
+    /**
+     * 한개의 행 삭제
+     * @param {number} rowIdx 
+     * @param {string/number} rowSeq 
+     */
+    removeRow(rowIdx, rowSeq){
+
+        // 데이터 삭제
         this.data.splice(rowIdx, 1);
-        this.getElementBodyTable().querySelectorAll("tr[data-row-seq='" + rowSeq + "']")[0].remove();
-        this._dataReIndexing();
+
+        // 엘리먼트 삭제
+        this.getRowElementRowSeq(rowSeq).remove();
+
+        // 데이터 재 인덱싱
+        this.dataReIndexing(rowSeq);
     }
 
+    /**
+     * 목록데이터가 있음/없음에 따라서 메시지 표시/숨기기
+     * @returns 
+     */
+    emptyMessageDisply = () => this.data < 1 
+        ? this.emptyMessageShow(true) 
+        : this.emptyMessageShow(false);
 
-
-    // 데이터 인덱싱
-    _dataReIndexing(){
-        this.state.seqIndex = [];
-        this.data.forEach((item, index) => {
-            this.state.seqIndex[item._rowSeq] = index;
-        });
-    }
-
-    // 그리드 생성
-    _create(){
-        // this._headerCreate();
-        this._bodyCreate();
-        return this;
-    }
-
-    // 헤더 생성
-    _headerCreate(){
-        this._headerListCreate();
-    }
-
-    // 헤더 생성 - 리스트
-    _headerListCreate(){
-        let th, div, tag = null;
-        this.fields.forEach(field => {
-            // 태그생성
-            th = document.createElement("th");
-            div = document.createElement("div");
-            
-            switch(field.element){
-
-                // 헤더 - 체크박스
-                case "checkbox" :
-                    // 타이틀이 있는경우 체크박스 무시
-                    if(field.title){                        
-                        div.textContent = field.title;                       
-                    }else{
-                        // 체크박스 속성
-                        tag = document.createElement("input");
-                        tag.setAttribute("type", "checkbox");
-                        tag.setAttribute("name", field.name);
-                        div.appendChild(tag);
-                    }
-                    break;
-
-                // 헤더 - 버튼
-                case "button" :
-                    // 타이틀이 있는경우 버튼 무시
-                    if(field.title){                        
-                        div.textContent = field.title;     
-                    }else{
-                        // 버튼속성
-                        tag = document.createElement("button");
-                        tag.classList.add("wgrid-btn");
-                        tag.setAttribute("name", field.name);
-                        tag.textContent = field.button.title;
-                        
-                        // 버튼이벤트(사용자 정의)
-                        if(typeof field.click === "function"){
-                            tag.addEventListener("click", event => {
-                                field.event.click(event, {isBody:false});
-                                event.stopPropagation();
-                            });
-                        }
-                        div.appendChild(tag);
-                    }
-                    break;
-
-                // 헤더 - 디폴트(텍스트)
-                case "text":
-                default :
-                    // 제목적용
-                    tag = document.createElement("span");
-                    tag.textContent = field.title;
-                    div.appendChild(tag);
-                    break;
-            }
-
-            // 스타일 적용             
-            this.util.addStyleAttribute(div, "width", field.width);
-            this.util.addStyleAttribute(div, "textAlign", "center");
-
-            // 태그연결
-            th.appendChild(div);
-            this.element.headTr.appendChild(th);
-        });
-
-        // 클래스 적용
-        this.element.head.classList.add("wgrid-div-header");        
-        this.element.headTb.classList.add("wgrid-table-header");
-
-        // 태그연결
-        this.element.headTb.appendChild(this.element.headTr);
-		this.element.head.appendChild(this.element.headTb);
-        this.element.target.appendChild(this.element.head);
-    }
-
-    // 바디 생성
-    _bodyCreate(){
-        this._bodyListCreate();
-    }
-
-    // 바디 생성 - 리스트
-    _bodyListCreate(){
-        this.data.forEach((row, rIdx) => {
-            this.element.bodyTb.appendChild(this._bodyListRowCreate(row, rIdx));
-        });
-        
-        // 스타일, 클래스 적용
-        this.element.body.classList.add("wgrid-div-body");
-        this.element.bodyTb.classList.add("wgrid-table-body");        
-        
-        // 태그 연결
-        this.element.body.appendChild(this.element.bodyTb);
-        this.element.target.appendChild(this.element.body);
-    }
-
-    // 바디 생성 - 리스트 - 행
-    _bodyListRowCreate(row, rIdx){
-        let tr = document.createElement("tr");
-        tr.dataset.rowSeq = row._rowSeq;
-
-        // 앞키 뒤값
-        this.setSeqIndex(row._rowSeq, rIdx);
-		this.setIdxSequence(rIdx, row._rowSeq);
-
-        // 엘리먼트 인덱싱        
-        //this.setSeqRowElement(row._rowSeq, tr);
-
-        // cell 생성후 태그 연결
-        let loaded = [];
-        this.fields.forEach((field, fIdx) => {
-            let result = this._bodyListCellCreate(field, fIdx, row, rIdx);
-            tr.appendChild(result.td);
-            // 행 직후 콜백함수 호출 세팅
-            if(this.util.isFunction(field.loaded)){
-                loaded.push({fn: field.loaded, tag: result.tag, row: Object.assign({}, row)});
-            }
-        });
-        // 행생성후 loaded함수 호출
-        loaded.forEach(item => item.fn(item.tag, item.row));
-
-        if(this.option.row && this.option.row.style && this.option.row.style.cursor){            
-            util.addStyleAttribute(tr, "cursor", this.option.row.style.cursor);
-        }
-        return tr;
-    }
-
-    // 바디 생성 - 리스트 - 행 - 셀
-    _bodyListCellCreate(field, fieldIdx, row, rowIdx){
-        let td = document.createElement("td");
-        let div = document.createElement("div");
-        let tag = null;
-        let elementType = null;
-        
-        // 태그 생성전 엘리먼트 타입 구분
-        if(this.isInsert(row._state) || this.isUpdate(row._state)){
-            if(this.util.isNotEmpty(field.edit)){
-                switch(field.edit.toLowerCase()){
-                    case "text": elementType = "text-edit"; break;
-                    case "date": elementType = "date-edit"; break;
-                    case "dateTime": elementType = "dateTime-edit"; break;
-                    default: elementType = field.edit; break;
-                }
-            }else{
-                elementType = field.edit;
-            }
-        }else{
-            elementType = field.element;
-        }
-
-        // 엘리먼트 분기
-        switch(elementType){
-        // 바디 - 체크박스
-        case "checkbox":
-            tag = document.createElement("input");
-            tag.setAttribute("type", "checkbox");
-            tag.setAttribute("name", field.name);
-            div.appendChild(tag);
-            tag.dataset.sync = "checkbox";
-            break;
-        
-        // 버튼
-        case "button":
-
-            // 버튼속성
-            tag = document.createElement("button");
-            tag.classList.add("wgrid-btn");
-            tag.setAttribute("name", field.name);
-
-            // 버튼명
-            tag.textContent = field.text;
-
-            // 버튼이벤트
-            if(typeof field.event.click === "function"){
-                tag.addEventListener("click", event => {
-                    field.event.click(event, {isBody:true, row:row, index:rowIdx});
-                    event.stopPropagation();
-                });
-            }
-            div.appendChild(tag);
-            break;
-
-        // 셀렉트박스
-        case "select":
-
-            // 셀릭트박스 생성
-            tag = document.createElement("select");
-            tag.classList.add("wgrid-select");            
-            tag.classList.add("wgrid-wth100p");
-            tag.setAttribute("name", field.name);
-            tag.dataset.sync = "select";
-
-            let option = null;
-
-            if(this.util.isNotEmptyChildObjct(field, "data", "select", "empty")){
-                option = document.createElement("option");
-                option.textContent = field.data.select.empty;
-                tag.appendChild(option);
-            }
-            
-            if(this.util.isNotEmptyChildObjct(field, "data", "select", "list")){
-                field.data.select.list.forEach(item =>{
-                    option = document.createElement("option");
-                    option.value = item[field.data.select.value ? field.data.select.value : "value"];
-                    option.textContent = item[field.data.select.text ? field.data.select.text : "text"];
-
-                    if(option.value == row[field.name]){
-                        option.selected = true;
-                    }
-
-                    tag.appendChild(option);
-                });
-            }
-
-            div.appendChild(tag);
-            break;
-        // 날짜(YYYY-MM-DD)
-        case "date":
-            div.textContent = this.util.dateFormat(row[field.name]);
-            break;
-        
-        // 날짜 입력(YYYY-MM-DD)
-        case "date-edit":
-            tag = document.createElement("input");
-            tag.classList.add("wgrid-input");
-            tag.classList.add("wgrid-wth90p");
-            tag.setAttribute("maxlength", 10);
-            tag.setAttribute("name", field.name);
-            // tag.dataset.event = "date";
-            tag.dataset.sync = "date";
-
-            tag.value = row[field.name];
-            div.appendChild(tag);
-            break;
-        // 날짜(YYYY-MM-DD HH:MM:SS)
-        case "dateTime":
-            break;
-        // 날짜 입력(YYYY-MM-DD HH:MM:SS)
-        case "dateTime-edit":
-            break;
-        // 텍스트(입력)
-        case "text-edit":
-            tag = document.createElement("input");
-            tag.classList.add("wgrid-input");
-            tag.classList.add("wgrid-wth90p");
-            tag.setAttribute("name", field.name);
-            tag.dataset.sync = "text";
-            
-            tag.value = row[field.name];
-            div.appendChild(tag);
-            break;
-
-        // 바디 - 디폴트(텍스트)
-        case "text":
-        default:
-            tag = document.createElement("span");
-            tag.setAttribute("name", field.name);
-            // 코드맵핑
-            if(this.util.isNotEmpty(field.data) && this.util.isNotEmpty(field.data.mapping)){
-                tag.textContent = field.data.mapping[row[field.name]];
-            }else{
-                tag.textContent = row[field.name];
-            }
-            div.appendChild(tag);
-            break;
-        }
-
-        // 빈값이 설정되었으면 적용
-        if(elementType == "text" || elementType == "dateTime" || elementType == "date"){
-            if(this.util.isEmpty(row[field.name]) && this.util.isNotEmpty(field.emptyText)){
-                tag = document.createElement("span");
-                tag.setAttribute("name", field.name);
-                tag.textContent = field.emptyText;
-                div.appendChild(tag);
-            }
-        }
-
-         // 태그생성 후 상태에 따른 다른 스타일 적용을 위한 부분
-        if(this.util.isNotEmpty(tag)){
-            switch(row._state){
-                case this.constant.STATE.SELECT: break;
-                case this.constant.STATE.INSERT:
-                    tag.classList.add(this.constant.TAG_CLS_STATE.INSERT);
-                    break;
-                case this.constant.STATE.UPDATE:
-                    tag.classList.add(this.constant.TAG_CLS_STATE.UPDATE);
-                    break;
-                case this.constant.STATE.REMOVE:
-                    tag.classList.add(this.constant.TAG_CLS_STATE.REMOVE);
-                    break;
-            }
-        }
-        td.appendChild(div);
-
-        // 스타일 적용        
-        this.util.addStyleAttribute(div, "width", field.width);
-        this.util.addStyleAttribute(div, "textAlign", "center");
-        
-        return {td, tag};
-    }
-
-    // 그리드 이벤트 세팅
-    _createEvent(){        
-
-        console.log("::this.fields::", this.fields);
-
-        // 필드 이벤트 세팅
-        this.fields.forEach(item => {
-            // 빈값이면 통과
-            if(this.util.isEmpty(item.event)){
-                return;
-            }
-            // 이벤트 종류만큼 루프
-            ["click", "change"].forEach(evNm => {
-                if(this.util.isNotEmpty(item.event[evNm])){                    
-                    this.innerEvent[item.name] = {};
-                    this.innerEvent[item.name][evNm] = {};
-                    // 헤더
-                    if(this.util.isFunction(item.event[evNm].header)){
-                        this.innerEvent[item.name][evNm]["header"] = item.event[evNm].header;
-                    }
-                    // 바디
-                    if(this.util.isFunction(item.event[evNm].body)){
-                        this.innerEvent[item.name][evNm]["body"] = item.event[evNm].body;
-                    }
-                }
-            });
-        });
-
-        // 헤드 클릭이벤트
-        this.element.head.addEventListener("click", event => {
-             // 빈값 체크 후
-            if(this.util.isNotEmptyChildObjct(this.innerEvent, event.target.name, "click", "header")){
-                if(this.util.isFunction(this.innerEvent[event.target.name].click.header)){
-                    this.innerEvent[event.target.name].click.header(event);
-                }
-            }
-            event.stopPropagation();
-        });
-        // 바디 클릭이벤트        
-        this.element.body.addEventListener("click", event => {
-			// 빈값 체크 후
-            if(this.util.isNotEmptyChildObjct(this.innerEvent, event.target.name, "click", "body")){
-                if(this.util.isFunction(this.innerEvent[event.target.name].click.body)){
-                    // 연결된 이벤트 호출(event, row)
-                    this.innerEvent[event.target.name].click.body(event, this.data[this.getSeqIndex(this.util.getTrNode(event.target).dataset.rowSeq)]);
-                }
-            }
-            // 외부 이벤트 정의
-            if(this.outerEvent){
-                if(this.outerEvent.click){
-                    this.outerEvent.click(event, this.data[this.getSeqIndex(this.util.getTrNode(event.target).dataset.rowSeq)]);
-                }
-            }
-            event.stopPropagation();
-        });
-
-        // 헤드 체인지이벤트
-        this.element.head.addEventListener("change", event => {
-            // 빈값 체크 후
-            if(this.util.isNotEmptyChildObjct(this.innerEvent, event.target.name, "change", "header")){
-                if(this.util.isFunction(this.innerEvent[event.target.name].change.header)){
-                    this.innerEvent[event.target.name].change.header(event);
-                }
-            }
-            event.stopPropagation();
-        });
-        // 바디 체인지이벤트        
-        this.element.body.addEventListener("change", event => {
-            let rowSeq = this.util.getTrNode(event.target).dataset.rowSeq;
-            // 빈값 체크 후
-            if(this.util.isNotEmptyChildObjct(this.innerEvent, event.target.name, "change", "body")){
-                if(this.util.isFunction(this.innerEvent[event.target.name].change.body)){
-                    // 연결된 이벤트 호출(event, row)
-                    this.innerEvent[event.target.name].change.body(event, this.data[this.getSeqIndex(rowSeq)]);
-                }
-            }
-            // 데이터 동기화
-            if(event.target.dataset.sync === "date"){
-                this.data[this.getSeqIndex(rowSeq)][event.target.name] = event.target.value.replace(/-/gi, "")
-            }else if(event.target.dataset.sync === "dateTime"){
-                this.data[this.getSeqIndex(rowSeq)][event.target.name] = event.target.value.replace(/-/gi, "").replace(/:/gi, "")
-            }else{
-                this.data[this.getSeqIndex(rowSeq)][event.target.name] = event.target.value;
-            }          
-            event.stopPropagation();
-        });
-
-        // 헤드 키업 이벤트
-        this.element.head.addEventListener("keyup", event => {
-            // 연결 이벤트 호출
-            if(this.util.isNotEmptyChildObjct(this.innerEvent, event.target.name, "keyup", "header")){
-                if(this.util.isFunction(this.innerEvent[event.target.name].change.header)){
-                    this.innerEvent[event.target.name].keyup.header(event);
-                }
-            }
-            event.stopPropagation();
-        });
-        // 바디 키업 이벤트
-        this.element.body.addEventListener("keyup", event => {
-            let rowSeq = this.util.getTrNode(event.target).dataset.rowSeq;
-            // date 포멧 이벤트
-            if(event.target.dataset.sync === "date"){
-            	event.target.value = event.target.value.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
-			}
-            // 연결 이벤트 호출
-            if(this.util.isNotEmptyChildObjct(this.innerEvent, event.target.name, "keyup", "body")){
-                if(this.util.isFunction(this.innerEvent[event.target.name].change.body)){
-                    // 연결된 이벤트 호출(event, row)
-                    this.innerEvent[event.target.name].keyup.body(event, this.data[this.getSeqIndex(rowSeq)]);
-                }
-            }
-            // 데이터 동기화
-            if(event.target.dataset.sync === "date"){
-                this.data[this.getSeqIndex(rowSeq)][event.target.name] = event.target.value.replace(/-/gi, "")
-            }else if(event.target.dataset.sync === "dateTime"){
-                this.data[this.getSeqIndex(rowSeq)][event.target.name] = event.target.value.replace(/-/gi, "").replace(/:/gi, "")
-            }else{
-                this.data[this.getSeqIndex(rowSeq)][event.target.name] = event.target.value;
-            }
-            event.stopPropagation();
-        });
-    }
+    /**
+     * 그리드 목록 0건인경우 표시되는 메시지 표시/숨기기
+     * @param {boolean} bool 
+     * @returns 
+     */
+    emptyMessageShow = bool => bool 
+        ? this.element.bodyEmpty.classList.remove("wgrid-hide")
+        : this.element.bodyEmpty.classList.add("wgrid-hide");
 
     // 상태체크 SELECT
-    isSelect(state){ return this.constant.STATE.SELECT === state}
+    isSelect = state => this.constant.STATE.SELECT === state;
     // 상태체크 INSERT
-    isInsert(state){ return this.constant.STATE.INSERT === state}
-    // 상태체크 SELECT
-    isUpdate(state){ return this.constant.STATE.UPDATE === state}
+    isInsert = state => this.constant.STATE.INSERT === state;
+    // 상태체크 UPDATE
+    isUpdate = state => this.constant.STATE.UPDATE === state;
     // 상태체크 REMOVE
-    isRemove(state){ return this.constant.STATE.REMOVE === state}
+    isRemove = state => this.constant.STATE.REMOVE === state;
 }
 window.wGrid = wGrid;

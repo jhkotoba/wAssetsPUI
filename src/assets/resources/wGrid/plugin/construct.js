@@ -30,7 +30,8 @@ export const construct = {
             headTb : document.createElement("table"),
             headTr : document.createElement("tr"),
             body: document.createElement("div"),
-            bodyTb : document.createElement("table")
+            bodyTb : document.createElement("table"),
+            bodyEmpty: document.createElement("div")
         }
     },
 
@@ -79,6 +80,9 @@ export const construct = {
                 },
                 format:{
                     date: "YYYY-MM-DD"
+                },
+                empty:{
+                    message: "no data"
                 }
             },
             head: {
@@ -103,6 +107,11 @@ export const construct = {
                     }
                     if(paramater.option.grid.style.height){
                         option.grid.style.height = paramater.option.grid.style.height;
+                    }
+                }
+                if(paramater.option.grid.empty){
+                    if(paramater.option.grid.empty.message){
+                        option.grid.empty.message = paramater.option.grid.empty.message;
                     }
                 }
                 if(paramater.option.grid.format){

@@ -165,6 +165,9 @@ PUI.FN.createGrid = function(){
                     width: 1385,
                     height: 566
                 },
+                empty: {
+                    message: "조회내용이 없습니다."
+                }
             },
         }
     });
