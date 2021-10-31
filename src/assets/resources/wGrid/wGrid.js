@@ -82,7 +82,9 @@ class wGrid {
         this.createBody();
         
         // 데이터 없을 경우 표시 메시지 영역
-        this.element.bodyEmpty.textContent = this.option.grid.empty.message;
+        if(this.option.grid.empty.message) {
+            this.element.bodyEmpty.textContent = this.option.grid.empty.message;
+        }
         this.element.bodyEmpty.classList.add("wgrid-empty-message");
         this.emptyMessageDisply();
         this.element.body.appendChild(this.element.bodyEmpty);
@@ -199,6 +201,10 @@ class wGrid {
 
         // ROW 생성후 loaded함수 호출
         loaded.forEach(item => item.loaded(item.element, item.row));
+
+        // 조회목록 없을시 메시지 표시
+        this.emptyMessageDisply();
+
         return tr;
     }
 
@@ -399,6 +405,9 @@ class wGrid {
         }
         // 필드 재생성
         this.data.forEach((row, rIdx) => this.element.bodyTb.appendChild(this.createRow(row, rIdx)));
+
+        // 조회목록 없을시 메시지 표시
+        this.emptyMessageDisply();
     }
 
     /**
@@ -926,6 +935,9 @@ class wGrid {
                 break;
             }
         });
+
+        // 조회목록 없을시 메시지 표시
+        this.emptyMessageDisply();
     }
 
     /**
@@ -955,6 +967,9 @@ class wGrid {
 
         // 데이터 재 인덱싱
         this.dataReIndexing(rowSeq);
+
+        // 조회목록 없을시 메시지 표시
+        this.emptyMessageDisply();
     }
 
     /**
