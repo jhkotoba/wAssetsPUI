@@ -33,14 +33,18 @@
 
 <!-- 타이틀, 버튼영역 -->
 <section class="content">    
-    <div class="table-title">■ 계좌목록</div>
+    <div class="table-title">
+        <span>■ 계좌목록</span>
+    </div>
     <div class="botton-box">
-        <button class="btn-gray" id="acctAdd" title="계좌목록에 하나의 행을 추가">추가</button>
-        <button class="btn-gray" id="acctMod" title="선택한 행을 수정상태 변환">수정</button>
-        <button class="btn-gray" id="acctDel" title="선택한 행을 삭제상태 변환">삭제</button>
-        <button class="btn-gray" id="acctRst" title="마지막으로 조회상태로 초기화">초기화</button>
-        <button class="btn-gray" id="acctReg" title="변경사항 저장">저장</button>
-        <button class="btn-gray" id="acctTest" title="테스트">테스트</button>
+        <button class="btn-low-gray" id="acctAdd">추가</button>
+        <button class="btn-low-gray" id="acctMod">수정</button>
+        <button class="btn-low-gray" id="acctDel">삭제</button>
+        <button class="btn-low-gray" id="acctRst">초기화</button>
+    </div>
+    <div class="botton-box right">
+        <button class="btn-gray" id="acctReg">저장</button>
+        <button class="btn-gray" id="acctTest">테스트</button>
     </div>
     <div id="acctList"></div>
 </section>
