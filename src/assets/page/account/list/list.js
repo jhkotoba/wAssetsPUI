@@ -174,9 +174,7 @@ PUI.FN.createGrid = function(){
 
     //데이터 조회
     PUI.FT.getFetch("/api/assets/getAccountList", {isBlind:true})
-    .then(response => {
-        PUI.V.wGrid.setData({list:response.data.sort((a, b) => a.acctOdr - b.acctOdr), isRefresh:true});
-    });
+    .then(response => PUI.V.wGrid.setData({list:response.data.sort((a, b) => a.acctOdr - b.acctOdr), isRefresh:true}));
 };
 
 //클릭 이벤트
@@ -215,19 +213,12 @@ PUI.EV.CLICK = function(event){
     //목록 초기상태로 리셋
     case "acctRst":
         PUI.FT.getFetch("/api/assets/getAccountList")
-        .then(response => {
-            PUI.V.wGrid.setData({list:response.data.sort((a, b) => a.acctOdr - b.acctOdr), isRefresh:true});
-        });
+        .then(response => PUI.V.wGrid.setData({list:response.data.sort((a, b) => a.acctOdr - b.acctOdr), isRefresh:true}));
         break;
     //변경사항 저장
     case "acctReg":
         PUI.FN.applyAccount();
         break;
-    
-    case "acctTest":
-        console.log("==============================");
-        PUI.V.datepicker.open();
-        break;s
     }
 }
 

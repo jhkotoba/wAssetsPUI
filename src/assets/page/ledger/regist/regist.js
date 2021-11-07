@@ -20,58 +20,112 @@ PUI.FN.INIT = async function(){
         }else window.history.back();
     }else{
         //장부유형 라디오 생성
-        PUI.UTL.appendCodeRadio(document.getElementById("ledgerType"), PUI.V.ledTpList, "ledTpCd");
+        PUI.UTL.appendCodeRadio(document.getElementById("ledTp"), PUI.V.ledTpList, "ledTpCd");
     }
 };
+
+/**
+ * 클릭 이벤트
+ * @param {event} event 
+ */
+ PUI.EV.CLICK = function(event){
+    switch(event.target.id){
+    //장부 전체저장 & 저장완료
+    case "regist":
+        PUI.FN.regist(event);
+        break;
+    }
+}
 
 /**
  * 조회한 장부정보 데이터 적용
  * @param {object} data 
  */
-PUI.FN.dataDisplay = function(data){
-    //장부명
-    ledgerName.value = data.ledNm;
-    //장부유형
-    ledgerType.textContent = PUI.V.ledTpNm[data.ledTpCd];
-    //비고
-    ledgerRemark.value = data.ledRmk;
+// PUI.FN.dataDisplay = function(data){
+//     //장부명
+//     ledNm.value = data.ledNm;
+//     //장부유형
+//     ledTp.textContent = PUI.V.ledTpNm[data.ledTpCd];
+//     //비고
+//     ledRmk.value = data.ledRmk;
 
-    switch(data.ledTpCd){    
-    case "CASH_BOOK":
-        break;
-    case "SIMP_CASH_BOOK":
-        break;
-    }
-};
+//     switch(data.ledTpCd){    
+//     case "CASH_BOOK":
+//         break;
+//     case "SIMP_CASH_BOOK":
+//         break;
+//     }
+// };
 
 /**
  * 장부 기본정보 저장
  * @param {event} event 
  */
-PUI.FN.basicSave = function(event){
+// PUI.FN.basicSave = function(event){
 
-    //유효성 검사 - 장부명
-    if(PUI.UTL.simpleValidation(ledgerName.value, ["EMPTY"]) == false){
+//     //유효성 검사 - 장부명
+//     if(PUI.UTL.simpleValidation(ledNm.value, ["EMPTY"]) == false){
+//        alert("장부명을 입력해주세요.");
+//        ledNm.focus();
+//        return;
+//     //유효성 검사 - 장부유형
+//     }else if(document.querySelectorAll("input[name='ledTp']:checked").length === 0){
+//         alert("장부유형을 선택해주세요.");
+//         return;
+//     }
+
+//     if("CASH_BOOK" == document.querySelectorAll("input[name='ledTp']:checked")[0].value){
+//         alert("현재 개발중 입니다.");
+//         return;
+//     }
+
+//     //기본정보 저장
+//     if(confirm("저장 하시겠습니까?")){
+//         PUI.FT.postFetch("/api/assets/applyBasicLedger" , {
+//             ledNm: ledNm.value,
+//             ledTpCd: document.querySelectorAll("input[name='ledTp']:checked")[0].value,
+//             ledRmk: ledRmk.value
+//         })
+//         .then(response => {
+//             if(response.resultCode === "0000"){
+//                 alert("저장하였습니다.");
+//                 window.location.href = "/assets/ledger/list";
+//             }else{
+//                 alert("ERROR CODE::" + response.resultCode);
+//             }
+//         });
+//     }
+// }
+
+/**
+ * 장부 전제저장 
+ * @param {event} event 
+ */
+PUI.FN.regist = function(event){
+
+    console.log("ledNm.value:", ledNm.value);
+    console.log(PUI.UTL.simpleValidation(ledNm.value, ["EMPTY"]));
+
+    // 유효성 검사 - 장부명
+    if(PUI.UTL.simpleValidation(ledNm.value, ["EMPTY"]) == false){
        alert("장부명을 입력해주세요.");
-       ledgerName.focus();
+       ledNm.focus();
        return;
-    //유효성 검사 - 장부유형
-    }else if(document.querySelectorAll("input[name='ledgerType']:checked").length === 0){
+    // 유효성 검사 - 장부유형
+    }else if(document.querySelectorAll("input[name='ledTpCd']:checked").length === 0){
         alert("장부유형을 선택해주세요.");
         return;
     }
 
-    if("CASH_BOOK" == document.querySelectorAll("input[name='ledgerType']:checked")[0].value){
-        alert("현재 개발중 입니다.");
-        return;
-    }
+    // 장부유형
+    let ledTp = document.querySelectorAll("input[name='ledTpCd']:checked")[0].value;
 
-    //기본정보 저장
+    //장부 저장
     if(confirm("저장 하시겠습니까?")){
-        PUI.FT.postFetch("/api/assets/applyBasicLedger" , {
-            ledNm: ledgerName.value,
-            ledTpCd: document.querySelectorAll("input[name='ledgerType']:checked")[0].value,
-            ledRmk: ledgerRemark.value
+        PUI.FT.postFetch("/api/assets/registLedger" , {
+            ledNm: ledNm.value,
+            ledTpCd: ledTp,
+            ledRmk: ledRmk.value
         })
         .then(response => {
             if(response.resultCode === "0000"){
@@ -85,45 +139,20 @@ PUI.FN.basicSave = function(event){
 }
 
 /**
- * 장부 전제저장 
- * @param {event} event 
- */
-PUI.FN.allRegist = function(event){
-
-}
-
-/**
- * 클릭 이벤트
- * @param {event} event 
- */
-PUI.EV.CLICK = function(event){
-    switch(event.target.id){
-    //장부 기본정보 저장
-    case "basicRegist": 
-        PUI.FN.basicRegist(event);
-        break;
-    //장부 전체저장 & 저장완료
-    case "allRegist":
-        PUI.FN.allRegist(event);
-        break;
-    }
-}
-
-/**
  * 체인지 이벤트
  * @param {event} event 
  */
 PUI.EV.CHANGE = function(event){
     //장부유형 선택에 따라서 항목 표시/비표시
-    if(event.target.name == "ledgerType"){
-        let ledTpCd = document.querySelectorAll("input[name='ledgerType']:checked");
-        document.getElementsByName("ledgerContent").forEach(el => el.style.display = "none");
+    if(event.target.name == "ledTp"){
+        let ledTpCd = document.querySelectorAll("input[name='ledTp']:checked");
+        document.getElementsByName("ledContent").forEach(el => el.style.display = "none");
         switch(ledTpCd[0].value){
         case "CASH_BOOK":
             //가계부 세목
-            document.getElementById("ledgerItems").style.display = "block";
+            document.getElementById("ledCtgy").style.display = "block";
             //가계부 계좌
-            document.getElementById("ledgerAccount").style.display = "block";
+            document.getElementById("ledAcct").style.display = "block";
             break;
         case "SIMP_CASH_BOOK":
             break;

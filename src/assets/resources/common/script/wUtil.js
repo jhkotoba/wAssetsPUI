@@ -417,9 +417,9 @@ export const wUtil = {
      * @param {*} value - 체크할 변수
      * @param {stringList} list - 체크할 유형
      */
-    simpleValidation(value, list){
+    simpleValidation(value, list){        
         for(let check in list){
-            switch(check){
+            switch(list[check]){
             //빈값체크
             case this.CONST.VALID.EMPTY:
                 if(this.isEmpty(value)){
