@@ -103,9 +103,6 @@ PUI.FN.INIT = async function(){
  */
 PUI.FN.regist = function(event){
 
-    console.log("ledNm.value:", ledNm.value);
-    console.log(PUI.UTL.simpleValidation(ledNm.value, ["EMPTY"]));
-
     // 유효성 검사 - 장부명
     if(PUI.UTL.simpleValidation(ledNm.value, ["EMPTY"]) == false){
        alert("장부명을 입력해주세요.");
@@ -144,13 +141,13 @@ PUI.FN.regist = function(event){
  */
 PUI.EV.CHANGE = function(event){
     //장부유형 선택에 따라서 항목 표시/비표시
-    if(event.target.name == "ledTp"){
-        let ledTpCd = document.querySelectorAll("input[name='ledTp']:checked");
+    if(event.target.name == "ledTpCd"){
+        let ledTpCd = document.querySelectorAll("input[name='ledTpCd']:checked");
         document.getElementsByName("ledContent").forEach(el => el.style.display = "none");
         switch(ledTpCd[0].value){
         case "CASH_BOOK":
-            //가계부 세목
-            document.getElementById("ledCtgy").style.display = "block";
+            //가계부 분류
+            document.getElementById("ledClsfy").style.display = "block";
             //가계부 계좌
             document.getElementById("ledAcct").style.display = "block";
             break;

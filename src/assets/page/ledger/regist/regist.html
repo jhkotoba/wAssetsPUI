@@ -41,9 +41,9 @@
     </div>
 </section>
 
-<!-- 가계부 카테고리 -->
-<section class="content" id="ledCtgy" name="ledContent" style="display: none;">
-    <div class="table-title">■ 가계부 카테고리</div>
+<!-- 가계부 분류 -->
+<section class="content" id="ledClsfy" name="ledContent" style="display: none;">
+    <div class="table-title">■ 가계부 분류</div>
     <div class="table-box">
         <table class="table">
             <colgroup>
@@ -52,8 +52,26 @@
             </colgroup>
             <tbody>
                 <tr>
-                    <th>대분류</th>
-                    <th>소분류</th>
+                    <th>분류</th>
+                    <th>상세분류</th>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="btn-low-gray" id="clsfyMstAdd">추가</button>
+                        <button class="btn-low-gray" id="clsfyMstDel">삭제</button>
+                        <button class="btn-low-gray" id="clsfyMstUp">▲</button>
+                        <button class="btn-low-gray" id="clsfyMstDown">▼</button>
+                        <div id="clsfyMst">
+                        </div>
+                    </td>
+                    <td>
+                        <button class="btn-low-gray" id="clsfyDtlAdd">추가</button>
+                        <button class="btn-low-gray" id="clsfyDtlDel">삭제</button>
+                        <button class="btn-low-gray" id="clsfyDtlUp">▲</button>
+                        <button class="btn-low-gray" id="clsfyDtlDown">▼</button>
+                        <div id="clsfyDtl">                            
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>
