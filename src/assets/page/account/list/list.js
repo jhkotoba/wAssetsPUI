@@ -160,15 +160,13 @@ PUI.FN.createGrid = function(){
             {title: "순번", element:"text", name:"acctOdr", width:50, align:"center", edit:"text"}
         ],
         option: {
-            grid: {
-                style: {
-                    width: 1385,
-                    height: 566
-                },
-                empty: {
-                    message: "조회내용이 없습니다."
-                }
+            style: {
+                width: 1385,
+                height: 566
             },
+            empty: {
+                message: "조회내용이 없습니다."
+            }
         }
     });
 

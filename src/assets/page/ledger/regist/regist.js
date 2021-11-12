@@ -3,26 +3,50 @@
  */
 PUI.FN.INIT = async function(){
 
-    //장부유형 조회
+    // 장부유형 조회
     let ledTpResp = await PUI.FT.getFetch("/api/admin/getCodeList?grpCode=LED_TP_CD&uprCode=ASSETS");
     PUI.V.ledTpList = ledTpResp.data;
     PUI.V.ledTpNm = PUI.UTL.listToCode(ledTpResp.data);    
 
-    //장부인덱스 해당 정보 조회
+    // 장부인덱스 해당 정보 조회
     let searchParams = new URL(location.href).searchParams;
     if(searchParams.has("ledIdx")){
-        //장부조회
+        // 장부조회
         let ledIdxResp = await PUI.FT.getFetch("/api/assets/getLedger?ledIdx="+searchParams.get("ledIdx"));
-        //저장된 장부인 경우 저장된 데이터 표시
+        // 저장된 장부인 경우 저장된 데이터 표시
         if(ledIdxResp.resultCode == "0000"){
             //조회한 장부정보 데이터 적용 호출
             PUI.FN.dataDisplay(ledIdxResp.data);
         }else window.history.back();
     }else{
-        //장부유형 라디오 생성
+        // 장부유형 라디오 생성
         PUI.UTL.appendCodeRadio(document.getElementById("ledTp"), PUI.V.ledTpList, "ledTpCd");
     }
+
+    // 가계부 분류 그리드 세팅
+    PUI.FN.createClsfy();
+    
 };
+
+/**
+ * 가계부 분류 그리드 생성
+ */
+PUI.FN.createClsfy = function(){
+    let clsfyMst = {
+        fields:[
+            {element:"checkbox", name: "check", width:30, align:"center",  edit: "checkbox"},
+            {element:"text-edit", name:"acctNum", width:185, align:"left"}
+        ], 
+        option: { style: {width: 700, height: 300}, head: {show: false}}
+    }
+
+    let clsfyDtl = {
+
+    }
+
+    PUI.V.clsfyMstGrid = new wGrid("clsfyMst", clsfyMst);
+    PUI.V.clsfyDtlGrid = new wGrid("clsfyDtl", clsfyDtl);
+}
 
 /**
  * 클릭 이벤트

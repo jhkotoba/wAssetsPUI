@@ -72,52 +72,52 @@ export const construct = {
     createOption(paramater){
 
         // 옵션 기본값 세팅
-        let option = {           
-            grid: {
-                style:{
-                    width: 1000, 
-                    height: 500  
-                },
-                format:{
-                    date: "YYYY-MM-DD"
-                },
-                empty:{
-                    message: "no data"
-                }
+        let option = {
+            style:{
+                width: 1000, 
+                height: 500  
             },
-            head: {
-
-            },            
+            format:{
+                date: "YYYY-MM-DD"
+            },
+            empty:{
+                message: "no data"
+            },
+            head:{
+                show: true
+            },
             row: {
                 style:{                    
                     cursor: "inherit" 
                 }
-            },
-            cell: {
-
             }
         }
 
         // 옵션값 세팅
         if(paramater.option){
-            if(paramater.option.grid){
-                if(paramater.option.grid.style){
-                    if(paramater.option.grid.style.width){
-                        option.grid.style.width = paramater.option.grid.style.width;
-                    }
-                    if(paramater.option.grid.style.height){
-                        option.grid.style.height = paramater.option.grid.style.height;
-                    }
+            if(paramater.option.style){
+                if(paramater.option.style.width){
+                    option.style.width = paramater.option.style.width;
                 }
-                if(paramater.option.grid.empty){
-                    if(paramater.option.grid.empty.message){
-                        option.grid.empty.message = paramater.option.grid.empty.message;
-                    }
+                if(paramater.option.style.height){
+                    option.style.height = paramater.option.style.height;
                 }
-                if(paramater.option.grid.format){
-                    if(paramater.option.grid.format.date){
-                        option.grid.format.date = paramater.option.grid.format.date
-                    }
+            }
+            if(paramater.option.empty){
+                if(paramater.option.empty.message){
+                    option.empty.message = paramater.option.empty.message;
+                }
+            }
+            if(paramater.option.format){
+                if(paramater.option.format.date){
+                    option.format.date = paramater.option.format.date
+                }
+            }
+            if(paramater.option.head){
+                if(paramater.option.head.show == false){
+                    option.head.show = false;
+                }else{
+                    option.head.show = true;
                 }
             }
             if(paramater.option.row){

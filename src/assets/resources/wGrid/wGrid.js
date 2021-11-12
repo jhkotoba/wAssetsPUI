@@ -77,13 +77,15 @@ class wGrid {
      */
     create = function(){
         // 헤더 생성
-        this.createHead();
+        if(this.option.head.show){
+            this.createHead();
+        }
         // 바디 생성
         this.createBody();
         
         // 데이터 없을 경우 표시 메시지 영역
-        if(this.option.grid.empty.message) {
-            this.element.bodyEmpty.textContent = this.option.grid.empty.message;
+        if(this.option.empty.message) {
+            this.element.bodyEmpty.textContent = this.option.empty.message;
         }
         this.element.bodyEmpty.classList.add("wgrid-empty-message");
         this.emptyMessageDisply();
