@@ -36,16 +36,24 @@ PUI.FN.createClsfy = function(){
         fields:[
             {element:"checkbox", name: "check", width:30, align:"center",  edit: "checkbox"},
             {element:"text-edit", name:"acctNum", width:185, align:"left"}
-        ], 
-        option: { style: {width: 700, height: 300}, head: {show: false}}
+        ],
+        option: {
+            style: {width: 700, height: 300},
+            head: { show: false},
+            body: { state: { use: false }}
+        }
     }
 
-    let clsfyDtl = {
+    PUI.V.mstGrid = new wGrid("clsfyMst", clsfyMst);
+    PUI.V.mstGrid.refresh();
 
-    }
+    
 
-    PUI.V.clsfyMstGrid = new wGrid("clsfyMst", clsfyMst);
-    PUI.V.clsfyDtlGrid = new wGrid("clsfyDtl", clsfyDtl);
+    
+
+
+    
+   
 }
 
 /**
@@ -53,10 +61,15 @@ PUI.FN.createClsfy = function(){
  * @param {event} event 
  */
  PUI.EV.CLICK = function(event){
+
     switch(event.target.id){
-    //장부 전체저장 & 저장완료
+    // 장부 전체저장 & 저장완료
     case "regist":
         PUI.FN.regist(event);
+        break;
+    // 가계부 분류 마스터 - 추가
+    case "clsfyMstAdd":
+        PUI.V.mstGrid.appendRow();
         break;
     }
 }

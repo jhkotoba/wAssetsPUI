@@ -75,7 +75,7 @@ export const construct = {
         let option = {
             style:{
                 width: 1000, 
-                height: 500  
+                height: 500               
             },
             format:{
                 date: "YYYY-MM-DD"
@@ -86,9 +86,14 @@ export const construct = {
             head:{
                 show: true
             },
+            body: {
+                state:{
+                    use: true
+                }
+            },
             row: {
                 style:{                    
-                    cursor: "inherit" 
+                    cursor: "inherit",
                 }
             }
         }
@@ -120,15 +125,23 @@ export const construct = {
                     option.head.show = true;
                 }
             }
+            if(paramater.option.body){
+                if(paramater.option.body.state){
+                    if(paramater.option.body.state.use == false){
+                        option.body.state.use = false;
+                    }else{
+                        option.body.state.use = true;
+                    }
+                }
+            }
             if(paramater.option.row){
                 if(paramater.option.row.style){
                     if(paramater.option.row.style.cursor){
                         option.row.style.cursor = paramater.option.row.style.cursor;
-                    }
+                    }                    
                 }
             }
         }
-
         return option;
     },
 
@@ -139,8 +152,8 @@ export const construct = {
      */
     settingGrid(element, paramater){
         element.target.classList.add("wgrid-field");
-        element.target.style.width = paramater.option.grid.style.width + "px";
-        element.target.style.height = paramater.option.grid.style.height + "px";
+        element.target.style.width = paramater.option.style.width + "px";
+        element.target.style.height = paramater.option.style.height + "px";
     },
 
     /**

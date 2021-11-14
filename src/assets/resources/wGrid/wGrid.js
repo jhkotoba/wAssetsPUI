@@ -334,8 +334,8 @@ class wGrid {
             div.textContent = cell.emptyText;
         }
 
-        // 그리드 상태값에 따른 색상변경
-        if(tag){
+        // 그리드 상태값에 따른 색상변경, 행 색상 사용인 경우        
+        if(tag && this.option.body.state.use == true){
             switch(row._state){
             case this.constant.STATE.SELECT: break;
             case this.constant.STATE.INSERT:
@@ -447,7 +447,11 @@ class wGrid {
 
         // 신규행 추가
         let tr = this.createRow(row, this.data.length-1);
-        tr.classList.add(this.constant.TR_CLS_STATE.INSERT);
+
+        if(this.option.body.state.use == true){
+            tr.classList.add(this.constant.TR_CLS_STATE.INSERT);
+        }
+        
 
         return tr;
     }
@@ -758,50 +762,51 @@ class wGrid {
         let tr = this.getRowElementRowSeq(rowSeq);
         
         switch(this.data[rowIdx]._state){
-            // 편집상태 취소(편집의 경우 행 재생성)
-            case this.constant.STATE.UPDATE:
-                
-                // 원본 데이터로 돌림
-                for(let key in this.originData[rowSeq]){
-                    this.data[rowIdx][key] = this.originData[rowSeq][key];
-                }
-                delete this.originData[rowSeq];
-
-                // 데이터 상태 조회로 변경
-                this.data[rowIdx]._state = this.constant.STATE.SELECT;
-
-                // 자식노드 비우기
-                this.util.childElementEmpty(tr);
-
-                // cell 생성후 태그 연결
-                let loaded = [];
-                this.fields.forEach((field, fIdx) => {
-                    let result = this._bodyListCellCreate(field, fIdx, this.data[rowIdx], rowIdx);
-                    tr.appendChild(result.td);
-                    // 셀 행 직후 콜백함수 호출 세팅
-                    if(this.util.isFunction(field.loaded)){
-                        loaded.push({fn: field.loaded, tag: result.tag, row: Object.assign({}, this.data[rowIdx])});
-                    }
-                });
-                // 행생성후 loaded함수 호출
-                loaded.forEach(item => item.fn(item.tag, item.row));
-
-                // 취소할 상태값 저장
-                cancelTr = this.constant.TR_CLS_STATE.UPDATE;
-                cancelTag = this.constant.TAG_CLS_STATE.UPDATE;
-                break;
-            // 삭제상태 취소
-            case this.constant.STATE.REMOVE:
-
-                // 데이터 상태 조회로 변경
-                this.data[rowIdx]._state = this.constant.STATE.SELECT;
-                
-                // 취소할 상태값 저장
-                cancelTr = this.constant.TR_CLS_STATE.REMOVE;
-                cancelTag = this.constant.TAG_CLS_STATE.REMOVE;
-                break;
+        // 편집상태 취소(편집의 경우 행 재생성)
+        case this.constant.STATE.UPDATE:
+            
+            // 원본 데이터로 돌림
+            for(let key in this.originData[rowSeq]){
+                this.data[rowIdx][key] = this.originData[rowSeq][key];
             }
-    
+            delete this.originData[rowSeq];
+
+            // 데이터 상태 조회로 변경
+            this.data[rowIdx]._state = this.constant.STATE.SELECT;
+
+            // 자식노드 비우기
+            this.util.childElementEmpty(tr);
+
+            // cell 생성후 태그 연결
+            let loaded = [];
+            this.fields.forEach((field, fIdx) => {
+                let result = this._bodyListCellCreate(field, fIdx, this.data[rowIdx], rowIdx);
+                tr.appendChild(result.td);
+                // 셀 행 직후 콜백함수 호출 세팅
+                if(this.util.isFunction(field.loaded)){
+                    loaded.push({fn: field.loaded, tag: result.tag, row: Object.assign({}, this.data[rowIdx])});
+                }
+            });
+            // 행생성후 loaded함수 호출
+            loaded.forEach(item => item.fn(item.tag, item.row));
+
+            // 취소할 상태값 저장
+            cancelTr = this.constant.TR_CLS_STATE.UPDATE;
+            cancelTag = this.constant.TAG_CLS_STATE.UPDATE;
+            break;
+        // 삭제상태 취소
+        case this.constant.STATE.REMOVE:
+
+            // 데이터 상태 조회로 변경
+            this.data[rowIdx]._state = this.constant.STATE.SELECT;
+            
+            // 취소할 상태값 저장
+            cancelTr = this.constant.TR_CLS_STATE.REMOVE;
+            cancelTag = this.constant.TAG_CLS_STATE.REMOVE;
+            break;
+        }
+
+        if(this.option.body.state.use == true){
             // ROW스타일 row 태그 스타일 삭제            
             tr.classList.remove(cancelTr);
 
@@ -809,6 +814,7 @@ class wGrid {
             for(let remove of tr.getElementsByClassName(this.constant.TAG_CLS_STATE.REMOVE)){
                 remove.classList.remove(cancelTag);
             }
+        }
     }
 
     /**
@@ -874,19 +880,21 @@ class wGrid {
         // 행생성후 loaded함수 호출
         loaded.forEach(item => item.fn(item.tag, item.row));
 
-        tr.classList.add(this.constant.TR_CLS_STATE.UPDATE);
-        tr.childNodes.forEach(td => {
-            switch(td.firstChild.firstChild.tagName){
-                case "INPUT":
-                    if(td.firstChild.firstChild.type == "checkbox"){
-                        break;
-                    }
-                case "BUTTON":
-                case "SELECT":
-                    td.firstChild.firstChild.classList.add(this.constant.TAG_CLS_STATE.UPDATE);
-                break;
-            }
-        });
+        if(this.option.body.state.use == true){
+            tr.classList.add(this.constant.TR_CLS_STATE.UPDATE);
+            tr.childNodes.forEach(td => {
+                switch(td.firstChild.firstChild.tagName){
+                    case "INPUT":
+                        if(td.firstChild.firstChild.type == "checkbox"){
+                            break;
+                        }
+                    case "BUTTON":
+                    case "SELECT":
+                        td.firstChild.firstChild.classList.add(this.constant.TAG_CLS_STATE.UPDATE);
+                    break;
+                }
+            });
+        }        
     }
 
     /**
@@ -927,16 +935,18 @@ class wGrid {
 
         let tr = this.getRowElementRowSeq(rowSeq);
 
-        tr.classList.add(this.constant.TR_CLS_STATE.REMOVE);
-        tr.childNodes.forEach(td => {
-            switch(td.firstChild.firstChild.tagName){
-                case "INPUT":
-                    if(td.firstChild.firstChild.type == "checkbox") break;
-                case "BUTTON":
-                    td.firstChild.firstChild.classList.add(this.constant.TAG_CLS_STATE.REMOVE);
-                break;
-            }
-        });
+        if(this.option.body.state.use == true){
+            tr.classList.add(this.constant.TR_CLS_STATE.REMOVE);
+            tr.childNodes.forEach(td => {
+                switch(td.firstChild.firstChild.tagName){
+                    case "INPUT":
+                        if(td.firstChild.firstChild.type == "checkbox") break;
+                    case "BUTTON":
+                        td.firstChild.firstChild.classList.add(this.constant.TAG_CLS_STATE.REMOVE);
+                    break;
+                }
+            });
+        }        
 
         // 조회목록 없을시 메시지 표시
         this.emptyMessageDisply();
