@@ -192,8 +192,23 @@ class wGrid {
 
         // CELL 생성        
         let loaded = [];
-        for(let i=0; i<this.fields.length; i++){            
-            tr.appendChild(this.createCell(row, idx, this.fields[i], i, loaded));
+        for(let i=0; i<this.fields.length; i++){
+
+            // 행마다 세팅할 데이터 변수
+            if(this.fields[i].element == "data"){
+                switch(this.fields[i].type){
+                case "array":
+                    this.data[idx][this.fields[i].name] = new Array();
+                    break;
+                case "objcet":
+                default:
+                    this.data[idx][this.fields[i].name] = new Object();
+                    break;
+                }
+            // 태그 행인 경우
+            }else{
+                tr.appendChild(this.createCell(row, idx, this.fields[i], i, loaded));
+            }
         }
 
         // ROW 커서 옵션 적용
@@ -236,7 +251,7 @@ class wGrid {
                 else if(cell.edit == "dateTime") type = "dateTime-edit";
                 else type = cell.edit;
             }else{
-                type = cell.edit;
+                type = cell.element;
             }
         }else{
             type = cell.element;
@@ -250,7 +265,7 @@ class wGrid {
             tag.setAttribute("name", cell.name);
             div.appendChild(tag);
             tag.dataset.sync = "checkbox";
-        }else if(type == "button"){
+        }else if(type == "button"){            
             // 버튼 생성
             tag = document.createElement("button");
             tag.classList.add("wgrid-btn");
@@ -426,7 +441,8 @@ class wGrid {
 
         // 필드값 세팅
         for(let i=0; i<this.fields.length; i++){            
-            let item = this.fields[i];            
+            let item = this.fields[i];
+            
             row[item.name] = "";
 
             // 해당 행에 셀렉트박스 데이터가 있는 경우, 셀렉트박스 empty값이 없거나 false일 경우

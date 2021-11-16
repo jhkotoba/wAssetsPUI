@@ -32,10 +32,14 @@ PUI.FN.INIT = async function(){
  * 가계부 분류 그리드 생성
  */
 PUI.FN.createClsfy = function(){
+
+    // 가계부 분류
     let clsfyMst = {
         fields:[
             {element:"checkbox", name: "check", width:30, align:"center",  edit: "checkbox"},
-            {element:"text-edit", name:"acctNum", width:185, align:"left"}
+            {element:"text", name: "acctNum", width:600, align:"left", edit:"text"},
+            {element:"button", text: "▶", name: "arrow", width:50, align:"center"},
+            {element:"data", name: "clsfyDtl", type: "array"},
         ],
         option: {
             style: {width: 700, height: 300},
@@ -44,11 +48,24 @@ PUI.FN.createClsfy = function(){
         }
     }
 
-    PUI.V.mstGrid = new wGrid("clsfyMst", clsfyMst);
-    PUI.V.mstGrid.refresh();
+    PUI.V.clsfyMstGrid = new wGrid("clsfyMst", clsfyMst);
+    PUI.V.clsfyMstGrid.refresh();
 
-    
+    // 가계부 상세분류
+    let clsfyDtl = {
+        fields:[
+            {element:"checkbox", name: "check", width:30, align:"center",  edit: "checkbox"},
+            {element:"text", name: "acctNum", width:600, align:"left", edit:"text"}
+        ],
+        option: {
+            style: {width: 700, height: 300},
+            head: { show: false},
+            body: { state: { use: false }}
+        }
+    }
 
+    PUI.V.clsfyDtlGrid = new wGrid("clsfyDtl", clsfyDtl);
+    PUI.V.clsfyDtlGrid.refresh();
     
 
 
@@ -69,7 +86,11 @@ PUI.FN.createClsfy = function(){
         break;
     // 가계부 분류 마스터 - 추가
     case "clsfyMstAdd":
-        PUI.V.mstGrid.appendRow();
+        PUI.V.clsfyMstGrid.appendRow();
+        break;
+    // 가계부 상세분류 마스터 - 추가
+    case "clsfyDtlAdd":
+        PUI.V.clsfyDtlGrid.appendRow();
         break;
     }
 }
