@@ -38,13 +38,23 @@ PUI.FN.createClsfy = function(){
         fields:[
             {element:"checkbox", name: "check", width:30, align:"center",  edit: "checkbox"},
             {element:"text", name: "acctNum", width:600, align:"left", edit:"text"},
-            {element:"button", text: "▶", name: "arrow", width:50, align:"center"},
+            {element:"button", text: "▶", name: "arrow", width:37, align:"center",
+                event:{
+                    click:{
+                        body:(event, item) => {
+                            console.log("event:", event);
+                            console.log("item:", item);
+                        }
+                    }
+                }
+            },
             {element:"data", name: "clsfyDtl", type: "array"},
         ],
         option: {
             style: {width: 700, height: 300},
-            head: { show: false},
-            body: { state: { use: false }}
+            head: {show: false},
+            body: {state: { use: false}},
+            empty: {message: "분류를 입력해주세요."}
         }
     }
 
@@ -59,8 +69,9 @@ PUI.FN.createClsfy = function(){
         ],
         option: {
             style: {width: 700, height: 300},
-            head: { show: false},
-            body: { state: { use: false }}
+            head: {show: false},
+            body: {state: {use: false}},
+            empty: {message: "상세분류를 입력해주세요."}
         }
     }
 

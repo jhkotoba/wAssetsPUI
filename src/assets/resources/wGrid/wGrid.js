@@ -311,7 +311,7 @@ class wGrid {
             // 날짜 입력박스 표시
             tag = document.createElement("input");
             tag.classList.add("wgrid-input");
-            tag.classList.add("wgrid-wth90p");
+            tag.classList.add("wgrid-wth");
             tag.setAttribute("maxlength", 10);
             tag.setAttribute("name", cell.name);
             tag.dataset.sync = "date";
@@ -335,7 +335,7 @@ class wGrid {
             // 입력내용 표시
             tag = document.createElement("input");
             tag.classList.add("wgrid-input");
-            tag.classList.add("wgrid-wth90p");
+            tag.classList.add("wgrid-wth-edit");
             tag.setAttribute("name", cell.name);
             tag.dataset.sync = "text";
             tag.value = row[cell.name];
